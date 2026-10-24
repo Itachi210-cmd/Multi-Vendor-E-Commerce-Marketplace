@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
+
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -21,7 +29,7 @@ export default function ProductDetailPage() {
           setSelectedImage(p.images[0]);
         }
       } catch (err) {
-        setError(err.message || 'Product not found or currently unavailable');
+        setError(err.response?.data?.message || err.message || 'Product not found or currently unavailable');
       } finally {
         setLoading(false);
       }
@@ -29,6 +37,24 @@ export default function ProductDetailPage() {
 
     fetchProduct();
   }, [id]);
+
+  const maxSelectable = product ? Math.min(10, product.stock) : 1;
+
+  // Check if current user is vendor who owns this product
+  const isOwner = user?.role === 'vendor' && product?.vendorId?.userId === user._id;
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (isOwner) return;
+
+    setIsAdding(true);
+    await addToCart(product._id, quantity);
+    setIsAdding(false);
+  };
 
   if (loading) {
     return (
@@ -101,7 +127,7 @@ export default function ProductDetailPage() {
         <div className="product-info-section">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
             <span className="badge badge-secondary">{product.category}</span>
-            <span className={`badge ${product.stock > 0 ? 'badge-connected' : 'badge-error'}`}>
+            <span className={`badge ${product.stock > 0 ? 'badge-connected' : 'badge-danger'}`}>
               <span className="badge-dot"></span>
               {product.stock > 0 ? `In Stock (${product.stock} units)` : 'Sold Out'}
             </span>
@@ -144,14 +170,49 @@ export default function ProductDetailPage() {
             </div>
           )}
 
-          <div style={{ marginTop: '2rem' }}>
+          {/* Purchase Action Box */}
+          <div className="product-purchase-box">
+            {product.stock > 0 && !isOwner && (
+              <div className="quantity-selector-row">
+                <label htmlFor="qty-select" className="qty-label">Quantity:</label>
+                <div className="qty-controls">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                    className="qty-btn"
+                  >
+                    -
+                  </button>
+                  <span className="qty-val">{quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.min(maxSelectable, q + 1))}
+                    disabled={quantity >= maxSelectable}
+                    className="qty-btn"
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="stock-hint">(Max {maxSelectable})</span>
+              </div>
+            )}
+
             <button
-              onClick={() => alert('Redis-backed shopping cart and checkout will be enabled in Phase 5!')}
-              className="btn btn-primary"
-              style={{ padding: '0.85rem 2rem', fontSize: '1.05rem', width: '100%' }}
-              disabled={product.stock <= 0}
+              onClick={handleAddToCart}
+              className="btn btn-primary btn-lg"
+              style={{ width: '100%' }}
+              disabled={product.stock <= 0 || isOwner || isAdding}
             >
-              🛒 Add to Cart (Phase 5)
+              {isAdding ? (
+                'Adding to Cart...'
+              ) : isOwner ? (
+                'You own this store product'
+              ) : product.stock <= 0 ? (
+                'Out of Stock'
+              ) : (
+                '🛒 Add to Cart'
+              )}
             </button>
           </div>
         </div>

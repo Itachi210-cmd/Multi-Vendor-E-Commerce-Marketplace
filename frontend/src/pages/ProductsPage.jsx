@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
+import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
 
 export default function ProductsPage() {
+  const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Extract state from URL query parameters
@@ -496,13 +500,33 @@ export default function ProductsPage() {
 
                         <div className="product-card-footer">
                           <div className="product-price">₹{product.price.toLocaleString()}</div>
-                          <span
-                            className={`badge ${
-                              product.stock > 0 ? 'badge-connected' : 'badge-danger'
-                            }`}
-                          >
-                            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-                          </span>
+                          <div className="card-actions-row">
+                            <span
+                              className={`badge ${
+                                product.stock > 0 ? 'badge-connected' : 'badge-danger'
+                              }`}
+                            >
+                              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                            </span>
+                            {product.stock > 0 && (
+                              <button
+                                type="button"
+                                className="card-quick-cart-btn"
+                                title="Add 1 to Cart"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (!isAuthenticated) {
+                                    window.location.href = '/login';
+                                  } else {
+                                    addToCart(product._id, 1);
+                                  }
+                                }}
+                              >
+                                + 🛒
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </Link>

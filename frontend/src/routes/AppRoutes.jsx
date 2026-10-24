@@ -13,6 +13,11 @@ import VendorProductsPage from '../pages/vendor/VendorProductsPage';
 import VendorProfilePage from '../pages/vendor/VendorProfilePage';
 import VendorOrdersPage from '../pages/vendor/VendorOrdersPage';
 import VendorApprovalsPage from '../pages/admin/VendorApprovalsPage';
+import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
+import CartPage from '../pages/CartPage';
+import CheckoutPage from '../pages/CheckoutPage';
+import MyOrdersPage from '../pages/MyOrdersPage';
+import OrderDetailPage from '../pages/OrderDetailPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ProtectedRoute from '../components/ProtectedRoute';
 import RequireRole from '../components/RequireRole';
@@ -28,6 +33,40 @@ export default function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/rbac-demo" element={<RbacDemoPage />} />
+
+        {/* Customer Cart, Checkout & Orders */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <MyOrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Customer Onboarding */}
         <Route
@@ -54,12 +93,20 @@ export default function AppRoutes() {
           <Route path="orders" element={<VendorOrdersPage />} />
         </Route>
 
-        {/* Admin Approvals & Management */}
+        {/* Admin Approvals & Order Management */}
         <Route
           path="/admin/vendors"
           element={
             <RequireRole roles={['admin']}>
               <VendorApprovalsPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <RequireRole roles={['admin']}>
+              <AdminOrdersPage />
             </RequireRole>
           }
         />

@@ -240,10 +240,32 @@ const seedVendors = async () => {
       console.warn(`[Seed] Notice: Could not sync with Elasticsearch (${esErr.message}). You can run 'npm run reindex' once Elasticsearch is up.`);
     }
 
+    // Test Customer: customer@marketplace.com / Customer@123
+    const customerEmail = 'customer@marketplace.com';
+    const customerPasswordHash = await User.hashPassword('Customer@123');
+    let customerUser = await User.findOne({ email: customerEmail });
+    if (!customerUser) {
+      customerUser = await User.create({
+        name: 'Priya Sharma',
+        email: customerEmail,
+        passwordHash: customerPasswordHash,
+        role: 'customer',
+      });
+      console.log(`[Seed] Created test customer: ${customerEmail}`);
+    }
+
     console.log('\n=============================================');
-    console.log('[Seed] Vendors & Products Seeding Completed!');
-    console.log('Vendor 1: vendor1@marketplace.com / Vendor@123 (Aura Tech Hub)');
-    console.log('Vendor 2: vendor2@marketplace.com / Vendor@123 (Urban Threads & Living)');
+    console.log('[Seed] Seeding Completed Successfully!');
+    console.log('Customer: customer@marketplace.com / Customer@123 (Priya Sharma)');
+    console.log('Vendor 1: vendor1@marketplace.com / Vendor@123 (Aura Tech Hub - Electronics)');
+    console.log('Vendor 2: vendor2@marketplace.com / Vendor@123 (Urban Threads & Living - Lifestyle)');
+    console.log('Admin:    admin@marketplace.com / Admin@123456');
+    console.log('\nTesting Multi-Vendor Checkout:');
+    console.log('1. Log in as customer@marketplace.com');
+    console.log('2. Add items from Aura Tech Hub & Urban Threads & Living to cart');
+    console.log('3. Visit /cart and proceed to /checkout');
+    console.log('4. Click Fake Pay to simulate payment and trigger multi-vendor order split');
+    console.log('5. Log in as Vendor 1 or Vendor 2 to manage their sub-orders in Vendor Studio');
     console.log('=============================================\n');
 
     await mongoose.disconnect();

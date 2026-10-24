@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
 import api from '../api/axios';
 
 export default function Navbar() {
@@ -8,6 +9,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, isAuthenticated, logout } = useAuth();
+  const { totalItems } = useCart();
 
   // Search input and suggestions state
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -47,7 +49,6 @@ export default function Navbar() {
         setIsOpen(results.length > 0);
         setSelectedIndex(-1);
       } catch (err) {
-        // Silently handle suggest errors (e.g. network/rate-limiting)
         setSuggestions([]);
         setIsOpen(false);
       } finally {
@@ -137,7 +138,7 @@ export default function Navbar() {
         <Link to="/" className="nav-brand">
           <div className="brand-icon">M</div>
           <span className="brand-name">Marketplace</span>
-          <span className="brand-tag">Phase 4</span>
+          <span className="brand-tag">Phase 5</span>
         </Link>
 
         {/* Global Navbar Autocomplete Search Bar */}
@@ -211,18 +212,29 @@ export default function Navbar() {
               </Link>
             </li>
 
-            {/* Role specific quick links */}
+            {/* Customer specific links */}
             {user?.role === 'customer' && (
-              <li>
-                <Link
-                  to="/become-seller"
-                  className={`nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`}
-                >
-                  Become a Seller
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/orders"
+                    className={`nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`}
+                  >
+                    My Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/become-seller"
+                    className={`nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`}
+                  >
+                    Become a Seller
+                  </Link>
+                </li>
+              </>
             )}
 
+            {/* Vendor specific links */}
             {user?.role === 'vendor' && (
               <li>
                 <Link
@@ -234,15 +246,26 @@ export default function Navbar() {
               </li>
             )}
 
+            {/* Admin specific links */}
             {user?.role === 'admin' && (
-              <li>
-                <Link
-                  to="/admin/vendors"
-                  className={`nav-link ${location.pathname.startsWith('/admin') ? 'active' : ''}`}
-                >
-                  Vendor Approvals
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/admin/vendors"
+                    className={`nav-link ${location.pathname.startsWith('/admin/vendors') ? 'active' : ''}`}
+                  >
+                    Vendor Approvals
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/orders"
+                    className={`nav-link ${location.pathname.startsWith('/admin/orders') ? 'active' : ''}`}
+                  >
+                    All Orders
+                  </Link>
+                </li>
+              </>
             )}
 
             <li>
@@ -257,6 +280,14 @@ export default function Navbar() {
         </nav>
 
         <div className="nav-actions">
+          {/* Shopping Cart Button */}
+          {(!user || user.role === 'customer') && (
+            <Link to="/cart" className="nav-cart-btn" title="View Cart">
+              <span className="cart-icon">🛒</span>
+              {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+            </Link>
+          )}
+
           {isAuthenticated ? (
             <div className="user-profile-menu">
               <span className="user-name">{user?.name}</span>
