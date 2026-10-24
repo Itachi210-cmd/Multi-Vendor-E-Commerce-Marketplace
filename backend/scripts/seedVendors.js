@@ -3,6 +3,7 @@ import { connectDB } from '../src/config/db.js';
 import User from '../src/models/user.model.js';
 import Vendor from '../src/models/vendor.model.js';
 import Product from '../src/models/product.model.js';
+import { rebuildIndex } from './reindex.js';
 
 const seedVendors = async () => {
   try {
@@ -230,6 +231,14 @@ const seedVendors = async () => {
       );
     }
     console.log(`[Seed] Seeded 6 products for ${vendor2.storeName}`);
+
+    // Synchronize seeded products to Elasticsearch index
+    try {
+      console.log('[Seed] Indexing seeded products into Elasticsearch...');
+      await rebuildIndex();
+    } catch (esErr) {
+      console.warn(`[Seed] Notice: Could not sync with Elasticsearch (${esErr.message}). You can run 'npm run reindex' once Elasticsearch is up.`);
+    }
 
     console.log('\n=============================================');
     console.log('[Seed] Vendors & Products Seeding Completed!');

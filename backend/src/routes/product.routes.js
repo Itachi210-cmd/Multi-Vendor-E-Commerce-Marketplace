@@ -5,14 +5,18 @@ import {
   remove,
   getById,
   listPublic,
-  listVendorOwn,
+  getSuggestions,
 } from '../controllers/product.controller.js';
 import { authenticate, authorizeRoles } from '../middleware/auth.js';
+import { suggestRateLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
-// Public: GET /api/products (paginated list of active products)
+// Public: GET /api/products (paginated list of active products with search & facets)
 router.get('/', listPublic);
+
+// Public: GET /api/products/suggest?q= (prefix suggestions with rate limiter)
+router.get('/suggest', suggestRateLimiter, getSuggestions);
 
 // Public: GET /api/products/:id (single active product)
 router.get('/:id', getById);

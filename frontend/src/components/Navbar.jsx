@@ -1,10 +1,124 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import api from '../api/axios';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, isAuthenticated, logout } = useAuth();
+
+  // Search input and suggestions state
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  const [suggestions, setSuggestions] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isLoadingSuggest, setIsLoadingSuggest] = useState(false);
+
+  const searchContainerRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  // Sync input with URL search param if changed externally
+  useEffect(() => {
+    setSearchTerm(searchParams.get('q') || '');
+  }, [searchParams]);
+
+  // Debounced autocomplete suggestions (300ms)
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    const trimmed = searchTerm.trim();
+    if (!trimmed || trimmed.length < 2) {
+      setSuggestions([]);
+      setIsOpen(false);
+      setIsLoadingSuggest(false);
+      return;
+    }
+
+    setIsLoadingSuggest(true);
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const response = await api.get(`/products/suggest?q=${encodeURIComponent(trimmed)}`);
+        const results = response.data?.suggestions || [];
+        setSuggestions(results);
+        setIsOpen(results.length > 0);
+        setSelectedIndex(-1);
+      } catch (err) {
+        // Silently handle suggest errors (e.g. network/rate-limiting)
+        setSuggestions([]);
+        setIsOpen(false);
+      } finally {
+        setIsLoadingSuggest(false);
+      }
+    }, 300);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchTerm]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  // Handle keyboard navigation (ArrowDown, ArrowUp, Enter, Escape)
+  const handleKeyDown = (e) => {
+    if (!isOpen && e.key !== 'Enter') return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        handleSelectSuggestion(suggestions[selectedIndex]);
+      } else {
+        handleSearchSubmit();
+      }
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      setSelectedIndex(-1);
+    }
+  };
+
+  const handleSelectSuggestion = (suggestionTitle) => {
+    setSearchTerm(suggestionTitle);
+    setIsOpen(false);
+    navigate(`/products?q=${encodeURIComponent(suggestionTitle)}`);
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    setIsOpen(false);
+    const query = searchTerm.trim();
+    if (query) {
+      navigate(`/products?q=${encodeURIComponent(query)}`);
+    } else {
+      navigate('/products');
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setSuggestions([]);
+    setIsOpen(false);
+  };
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
@@ -23,10 +137,65 @@ export default function Navbar() {
         <Link to="/" className="nav-brand">
           <div className="brand-icon">M</div>
           <span className="brand-name">Marketplace</span>
-          <span className="brand-tag">Phase 3</span>
+          <span className="brand-tag">Phase 4</span>
         </Link>
 
-        <nav>
+        {/* Global Navbar Autocomplete Search Bar */}
+        <div className="navbar-search-wrapper" ref={searchContainerRef}>
+          <form onSubmit={handleSearchSubmit} className="navbar-search-form" role="search">
+            <span className="search-icon" aria-hidden="true">🔍</span>
+            <input
+              type="text"
+              className="navbar-search-input"
+              placeholder="Search products, brands, categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => {
+                if (suggestions.length > 0) setIsOpen(true);
+              }}
+              onKeyDown={handleKeyDown}
+              autoComplete="off"
+              aria-label="Search catalog"
+              aria-expanded={isOpen}
+              aria-autocomplete="list"
+            />
+            {isLoadingSuggest && <span className="search-spinner-sm" aria-label="Loading suggestions"></span>}
+            {searchTerm && !isLoadingSuggest && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={clearSearch}
+                aria-label="Clear search input"
+              >
+                ✕
+              </button>
+            )}
+            <button type="submit" className="search-submit-btn">
+              Search
+            </button>
+          </form>
+
+          {/* Autocomplete Suggestions Dropdown */}
+          {isOpen && suggestions.length > 0 && (
+            <ul className="navbar-suggestions-dropdown" role="listbox">
+              {suggestions.map((item, index) => (
+                <li
+                  key={index}
+                  role="option"
+                  aria-selected={index === selectedIndex}
+                  className={`suggestion-item ${index === selectedIndex ? 'active' : ''}`}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                  onClick={() => handleSelectSuggestion(item)}
+                >
+                  <span className="suggestion-icon">⚡</span>
+                  <span className="suggestion-text">{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <nav className="navbar-nav">
           <ul className="nav-links">
             <li>
               <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>

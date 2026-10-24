@@ -6,6 +6,8 @@ import {
   getPublicProducts,
   getVendorOwnProducts,
 } from '../services/product.service.js';
+import { suggest } from '../services/search.service.js';
+import Product from '../models/product.model.js';
 
 /**
  * Create a new product (Approved vendor only)
@@ -120,18 +122,54 @@ export const getById = async (req, res, next) => {
 };
 
 /**
- * Public: List active products paginated
+ * Public: List active products paginated with search, filters, and facets
  * GET /api/products
  */
 export const listPublic = async (req, res, next) => {
   try {
-    const { page, limit } = req.query;
-    const result = await getPublicProducts({ page, limit });
+    const result = await getPublicProducts(req.query);
 
     res.status(200).json({
       success: true,
       ...result,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Public: Autocomplete search suggestions
+ * GET /api/products/suggest?q=
+ */
+export const getSuggestions = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || !q.trim()) {
+      return res.status(200).json({ success: true, suggestions: [] });
+    }
+
+    try {
+      const suggestions = await suggest(q);
+      return res.status(200).json({
+        success: true,
+        suggestions,
+      });
+    } catch (esError) {
+      // Fallback: title prefix regex in MongoDB
+      const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`^${escaped}`, 'i');
+      const products = await Product.find({ title: regex, isActive: true })
+        .select('title')
+        .limit(5)
+        .lean();
+
+      return res.status(200).json({
+        success: true,
+        suggestions: products.map((p) => p.title),
+        source: 'mongodb',
+      });
+    }
   } catch (error) {
     next(error);
   }

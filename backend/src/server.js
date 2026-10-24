@@ -2,6 +2,7 @@ import app from './app.js';
 import { env } from './config/env.js';
 import { connectDB } from './config/db.js';
 import { connectRedis } from './config/redis.js';
+import { ensureIndex } from './services/search.service.js';
 
 /**
  * Bootstrap and start Express HTTP server
@@ -11,6 +12,11 @@ const startServer = async () => {
     // Attempt connections to backing services
     await connectDB();
     await connectRedis();
+
+    // Ensure Elasticsearch index exists (non-blocking)
+    ensureIndex().catch((err) => {
+      console.warn(`[Elasticsearch] Notice: Index initialization deferred (${err.message}).`);
+    });
 
     const server = app.listen(env.port, () => {
       console.log('----------------------------------------------------');

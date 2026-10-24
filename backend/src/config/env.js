@@ -17,6 +17,7 @@ export const env = {
   mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/marketplace',
   redisUrl: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
   esNode: process.env.ES_NODE || 'http://127.0.0.1:9200',
+  esIndex: process.env.ES_INDEX || 'products',
 
   // JWT
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET || 'dev_jwt_access_secret',
