@@ -1,0 +1,71 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: marketplace-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=marketplace
+
+  redis:
+    image: redis:7-alpine
+    container_name: marketplace-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: elasticsearch:8.15.0
+    container_name: marketplace-elasticsearch
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  minio:
+    image: minio/minio:latest
+    container_name: marketplace-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_API_CORS_ALLOW_ORIGIN: "http://localhost:5173,*"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: marketplace-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO...';
+      until /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin; do
+        sleep 1;
+      done;
+      /usr/bin/mc mb --ignore-existing myminio/marketplace-images;
+      /usr/bin/mc anonymous set download myminio/marketplace-images;
+      echo 'MinIO marketplace-images bucket initialized with public read.';
+      exit 0;
+      "
+
+volumes:
+  mongo_data:
+    driver: local
+  minio_data:
+    driver: local
