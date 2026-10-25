@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import useAuth from '../hooks/useAuth';
 import useCart from '../hooks/useCart';
+import ProductReviewsSection from '../components/ProductReviewsSection';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -125,12 +126,22 @@ export default function ProductDetailPage() {
 
         {/* Product Info Section */}
         <div className="product-info-section">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             <span className="badge badge-secondary">{product.category}</span>
             <span className={`badge ${product.stock > 0 ? 'badge-connected' : 'badge-danger'}`}>
               <span className="badge-dot"></span>
               {product.stock > 0 ? `In Stock (${product.stock} units)` : 'Sold Out'}
             </span>
+            {product.ratingAvg > 0 ? (
+              <span className="product-rating-pill" style={{ marginLeft: 'auto' }}>
+                ★ {product.ratingAvg.toFixed(1)}
+                {product.ratingCount > 0 && <span className="rating-count">({product.ratingCount})</span>}
+              </span>
+            ) : (
+              <span className="product-rating-pill" style={{ marginLeft: 'auto', background: '#f1f5f9', color: '#64748b' }}>
+                ★ New (0)
+              </span>
+            )}
           </div>
 
           <h1 className="product-title-large">{product.title}</h1>
@@ -217,6 +228,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Customer Reviews & Ratings Section */}
+      <ProductReviewsSection productId={product._id} />
     </div>
   );
 }

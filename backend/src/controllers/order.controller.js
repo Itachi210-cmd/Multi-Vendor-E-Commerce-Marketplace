@@ -10,8 +10,8 @@ import {
 
 export const checkoutHandler = async (req, res, next) => {
   try {
-    const { shippingAddress } = req.body;
-    const order = await checkoutOrder(req.user._id, shippingAddress);
+    const { shippingAddress, couponCode } = req.body;
+    const order = await checkoutOrder(req.user._id, shippingAddress, couponCode);
     res.status(201).json({
       success: true,
       message: 'Order placed successfully. Complete payment to begin fulfillment.',

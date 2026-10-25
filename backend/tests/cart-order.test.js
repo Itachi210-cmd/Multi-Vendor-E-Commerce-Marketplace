@@ -7,6 +7,7 @@ import User from '../src/models/user.model.js';
 import Vendor from '../src/models/vendor.model.js';
 import Product from '../src/models/product.model.js';
 import Order from '../src/models/order.model.js';
+import Payout from '../src/models/payout.model.js';
 import { generateAccessToken } from '../src/utils/token.utils.js';
 import { markOrderPaid } from '../src/services/order.service.js';
 
@@ -143,6 +144,13 @@ describe('Phase 5: Cart, Orders, Multi-Vendor Splits & Lifecycle', () => {
 
   beforeEach(async () => {
     jest.restoreAllMocks();
+
+    // Default Payout mocks
+    jest.spyOn(Payout, 'find').mockImplementation(() => {
+      const promise = Promise.resolve([]);
+      promise.lean = jest.fn().mockResolvedValue([]);
+      return promise;
+    });
 
     // Default User.findById mocks
     jest.spyOn(User, 'findById').mockImplementation(async (id) => {

@@ -12,8 +12,12 @@ import VendorLayout from '../pages/vendor/VendorLayout';
 import VendorProductsPage from '../pages/vendor/VendorProductsPage';
 import VendorProfilePage from '../pages/vendor/VendorProfilePage';
 import VendorOrdersPage from '../pages/vendor/VendorOrdersPage';
+import VendorEarningsPage from '../pages/vendor/VendorEarningsPage';
 import VendorApprovalsPage from '../pages/admin/VendorApprovalsPage';
 import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
+import AdminPayoutsPage from '../pages/admin/AdminPayoutsPage';
+import AdminCouponsPage from '../pages/admin/AdminCouponsPage';
+import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
 import CartPage from '../pages/CartPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import MyOrdersPage from '../pages/MyOrdersPage';
@@ -91,9 +95,10 @@ export default function AppRoutes() {
           <Route path="products" element={<VendorProductsPage />} />
           <Route path="profile" element={<VendorProfilePage />} />
           <Route path="orders" element={<VendorOrdersPage />} />
+          <Route path="earnings" element={<VendorEarningsPage />} />
         </Route>
 
-        {/* Admin Approvals & Order Management */}
+        {/* Admin Approvals, Orders & Payout Management */}
         <Route
           path="/admin/vendors"
           element={
@@ -109,6 +114,34 @@ export default function AppRoutes() {
               <AdminOrdersPage />
             </RequireRole>
           }
+        />
+        <Route
+          path="/admin/payouts"
+          element={
+            <RequireRole roles={['admin']}>
+              <AdminPayoutsPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/coupons"
+          element={
+            <RequireRole roles={['admin']}>
+              <AdminCouponsPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <RequireRole roles={['admin']}>
+              <AdminAnalyticsPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin"
+          element={<Navigate to="/admin/analytics" replace />}
         />
 
         {/* Catch-all 404 */}

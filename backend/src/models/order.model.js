@@ -62,6 +62,11 @@ const subOrderSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
+  discount: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
   commission: {
     type: Number,
     required: true,
@@ -161,15 +166,29 @@ const orderSchema = new mongoose.Schema(
       min: 0,
     },
     payment: {
-      razorpayOrderId: {
+      provider: {
+        type: String,
+        default: 'mock',
+        trim: true,
+      },
+      providerOrderId: {
         type: String,
         default: '',
         trim: true,
       },
-      razorpayPaymentId: {
+      providerPaymentId: {
         type: String,
         default: '',
         trim: true,
+      },
+      method: {
+        type: String,
+        enum: ['', 'card', 'upi'],
+        default: '',
+      },
+      failureReason: {
+        type: String,
+        default: '',
       },
       status: {
         type: String,
@@ -187,6 +206,7 @@ const orderSchema = new mongoose.Schema(
 // Indexes specified in marketplace documentation
 orderSchema.index({ customerId: 1, createdAt: -1 });
 orderSchema.index({ 'subOrders.vendorId': 1 });
+orderSchema.index({ 'payment.providerOrderId': 1 });
 
 /**
  * Generate human-readable unique order number: ORD-YYYYMMDD-XXXX

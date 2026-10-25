@@ -18,7 +18,16 @@ import cartRoutes from './routes/cart.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import vendorOrderRoutes from './routes/vendor.order.routes.js';
 import adminOrderRoutes from './routes/admin.order.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
+import mockGatewayRoutes from './routes/mockGateway.routes.js';
+import vendorEarningsRoutes from './routes/vendor.earnings.routes.js';
+import adminPayoutRoutes from './routes/admin.payout.routes.js';
 import devRoutes from './routes/dev.routes.js';
+import reviewRoutes from './routes/review.routes.js';
+import couponRoutes from './routes/coupon.routes.js';
+import adminCouponRoutes from './routes/admin.coupon.routes.js';
+import adminAnalyticsRoutes from './routes/admin.analytics.routes.js';
+import { handleWebhook } from './controllers/payment.controller.js';
 
 const app = express();
 
@@ -49,6 +58,9 @@ app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 // Cookie parser (required for httpOnly refresh tokens)
 app.use(cookieParser());
 
+// Webhook endpoint mounted BEFORE express.json using express.raw for HMAC signature verification
+app.post('/api/payments/webhook', express.raw({ type: '*/*' }), handleWebhook);
+
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -69,7 +81,15 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/vendor/orders', vendorOrderRoutes);
 app.use('/api/admin/orders', adminOrderRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/mock-gateway', mockGatewayRoutes);
+app.use('/api/vendor/earnings', vendorEarningsRoutes);
+app.use('/api/admin/payouts', adminPayoutRoutes);
 app.use('/api/dev', devRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/admin/coupons', adminCouponRoutes);
+app.use('/api/admin/analytics', adminAnalyticsRoutes);
 
 // 404 & Global Error Handler
 app.use(notFoundHandler);

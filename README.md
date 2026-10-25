@@ -232,4 +232,74 @@ Open `http://localhost:5173` in your browser. The Home page includes an integrat
 - `GET   /api/vendor/products`: Logged-in vendor's own catalog (active & inactive)
 - `POST  /api/uploads/presign`: Approved vendor requests presigned PUT URL for direct browser-to-S3/MinIO upload
 
+---
+
+## Phase 5: Cart, Multi-Vendor Splits & Order Lifecycle
+
+### Features & Endpoints
+- **Redis Cart:** Session key `cart:{userId}` hash (productId -> quantity) with 7-day sliding TTL. Fresh pricing and stock hydrated on every read from MongoDB.
+- `GET    /api/cart`: Retrieve customer cart with dynamic validation flags (`outOfStock`, `inactive`, `qtyExceedsStock`)
+- `POST   /api/cart/items`: Add or increment product in cart (validates active status, stock, max 10, vendor isolation)
+- `PATCH  /api/cart/items/:productId`: Update item quantity (0 removes item)
+- `DELETE /api/cart/items/:productId`: Remove item from cart
+- `DELETE /api/cart`: Clear entire shopping cart
+- `POST   /api/orders/checkout`: Validates cart, splits into multi-vendor sub-orders, computes platform commission and vendor payout with paise precision, creates order with `payment.status: 'pending'`
+- `GET    /api/orders`: Customer lists own orders (paginated, newest first)
+- `GET    /api/orders/:id`: Detailed view of single order with multi-vendor timeline steppers
+- `PATCH  /api/orders/:id/cancel`: Customer cancels order while all sub-orders are still `placed` (refunds payment and restores stock)
+- `GET    /api/vendor/orders`: Vendor views only sub-orders belonging to their store from paid orders
+- `PATCH  /api/vendor/orders/:orderId/status`: Vendor advances strictly through `placed -> packed -> shipped -> delivered`
+- `GET    /api/admin/orders`: Admin overview of all marketplace transactions with payment and payout summaries
+
+---
+
+## Phase 6: Payments, Sandbox Gateway & Payout Splits
+
+Full architectural specifications, sequence diagrams, provider interfaces, and test card credentials are documented in **[docs/payments.md](docs/payments.md)**.
+
+### Highlights
+- **Provider Layer (`backend/src/services/payment/`):** Provider-neutral architecture adhering to `BasePaymentProvider` (`createOrder`, `verifyPayment`, `createTransfer`, `refund`, `verifyWebhook`).
+- **Sandbox Gateway ("Test Gateway"):** Simulated gateway providing realistic card processing (Luhn format check, expiry validation, CVV check, test card outcomes) and UPI scenarios (`success@mock`, `failure@mock`, invalid VPA).
+- **Asynchronous Webhooks:** Gateway sends HMAC-SHA256 signed events (`payment.captured`, `payment.failed`) to `/api/payments/webhook` mounted with raw body parsing for idempotency testing.
+- **Automated Payout Splits:** Generates per-vendor payout records upon payment verification, linking vendor accounts (`acc_mock_xxx`) and tracking platform commission retention.
+- **Earnings Studio:** Vendors monitor gross sales, commission paid, and net payouts in real time at `/vendor/earnings`.
+- **Admin Payout Operations:** Administrators can inspect all platform payouts and retry failed transfers via `/api/admin/payouts/:id/retry`.
+
+### Endpoints
+- `POST /api/payments/create-order`: Create provider order session (amount strictly read from MongoDB in paise)
+- `POST /api/payments/verify`: Timing-safe HMAC verification, atomic stock decrement, cart clearing, and payout creation
+- `POST /api/payments/webhook`: Public webhook receiver for gateway events (HMAC verified)
+- `POST /api/mock-gateway/pay`: Customer processes payment through Test Gateway sandbox
+- `GET  /api/vendor/earnings`: Logged-in vendor retrieves gross sales, commission, and net payout history
+- `GET  /api/admin/payouts`: Admin lists all platform payouts with status & vendor filters
+- `POST /api/admin/payouts/:id/retry`: Admin retries failed payout transfer
+
+---
+
+## Phase 7: Extras (Reviews, Coupons, Invoices & Admin Analytics)
+
+### Proportional Discount Distribution & Financial Rules
+- **Vendor-Funded Discounts:** Discounts reduce each sub-order subtotal first. Platform commission and vendor payout amounts (and payout rows created by `createPayouts`) are computed strictly on each **discounted sub-order subtotal**.
+- **Largest Remainder Method:** When a multi-vendor cart applies a percentage or flat coupon, the discount is distributed proportionally across sub-orders in integer paise:
+  $$\text{subDiscountPaise}_i = \left\lfloor \frac{\text{subtotalPaise}_i}{\text{grandSubtotalPaise}} \times \text{totalDiscountPaise} \right\rfloor$$
+  Any remainder paise are distributed to the sub-orders with the largest fractional remainders, guaranteeing that sub-order discounts sum exactly to `order.discount` without penny rounding discrepancies.
+- **Atomic Coupon Usage:** Coupon usage count is incremented atomically inside `markOrderPaid` guarded by `usageLimit` and per-user limits (`perUserLimit`). When a paid order is refunded or cancelled, coupon usage is restored.
+- **Verified Purchase Reviews:** Customers can only review a product if they received it in a paid order with `subOrder.status === 'delivered'`. Exactly one review per customer per product is allowed (409 on duplicate). Vendors cannot review their own products (403). After create/update/delete, product `ratingAvg` (1 decimal) and `ratingCount` are recomputed via MongoDB aggregation and synchronized to Elasticsearch via `searchService.updateRating`.
+- **PDF Invoice (`pdfkit`):** Streamed at `GET /api/orders/:id/invoice` for order owners and admins on paid orders. Displays invoice number, customer delivery details, vendor-grouped line items, discount, grand total, payment method, and provider payment ID.
+- **Admin Analytics:** Aggregates net revenue (paid orders minus refunds), platform commission (payouts excluding reversed), zero-filled daily timeseries, sub-order fulfillment status breakdown, top 5 vendors and products, and low stock inventory (stock ≤ 5 units); responses are cached in Redis for 5 minutes (`analytics:${range}`).
+
+### Phase 7 Endpoints
+- `POST   /api/products/:id/reviews`: Customer leaves verified review (requires delivered sub-order)
+- `GET    /api/products/:id/reviews`: Public paginated reviews with star breakdown summary (counts for 1–5 stars)
+- `GET    /api/products/:id/reviews/eligibility`: Checks if logged-in customer is eligible to review
+- `PUT    /api/reviews/:id`: Review owner edits their rating and comment
+- `DELETE /api/reviews/:id`: Review owner or admin deletes review
+- `POST   /api/coupons/validate`: Customer validates promo code against current cart subtotal
+- `POST   /api/admin/coupons`: Admin creates coupon (percent or flat, min order, expiry, usage limits)
+- `GET    /api/admin/coupons`: Admin lists all coupons with active/inactive filtering
+- `PATCH  /api/admin/coupons/:id`: Admin updates or soft-deactivates coupon
+- `GET    /api/orders/:id/invoice`: Streams official PDF invoice for paid order
+- `GET    /api/admin/analytics?range=7d|30d|90d`: Admin retrieves platform KPIs and timeseries (Redis cached 5m)
+
+
 

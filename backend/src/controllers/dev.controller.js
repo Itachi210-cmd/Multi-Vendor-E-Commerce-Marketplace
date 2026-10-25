@@ -19,6 +19,9 @@ export const fakePayOrderHandler = async (req, res, next) => {
     const fakeOrderId = `order_fake_${Date.now()}`;
 
     const result = await markOrderPaid(id, {
+      providerPaymentId: fakePaymentId,
+      providerOrderId: fakeOrderId,
+      method: 'card',
       razorpayPaymentId: fakePaymentId,
       razorpayOrderId: fakeOrderId,
     });

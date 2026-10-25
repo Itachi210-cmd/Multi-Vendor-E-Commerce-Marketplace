@@ -12,6 +12,7 @@ export const env = {
   port: parseInt(process.env.PORT, 10) || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  backendPublicUrl: process.env.BACKEND_PUBLIC_URL || 'http://localhost:5000',
 
   // Database and search
   mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/marketplace',
@@ -21,6 +22,12 @@ export const env = {
 
   // Dev flags
   enableFakePay: process.env.ENABLE_FAKE_PAY === 'true',
+
+  // Payment Provider & Sandbox Gateway
+  paymentProvider: process.env.PAYMENT_PROVIDER || 'mock',
+  mockGatewaySecret: process.env.MOCK_GATEWAY_SECRET || 'dev_mock_gateway_secret_key_32bytes',
+  mockWebhookSecret: process.env.MOCK_WEBHOOK_SECRET || 'dev_mock_webhook_secret_key_32bytes',
+  mockWebhookEnabled: process.env.MOCK_WEBHOOK_ENABLED === undefined ? true : process.env.MOCK_WEBHOOK_ENABLED === 'true',
 
   // JWT
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET || 'dev_jwt_access_secret',
@@ -43,7 +50,7 @@ export const env = {
     publicUrl: process.env.S3_PUBLIC_URL || '',
   },
 
-  // Razorpay
+  // Razorpay (Optional / Live Gateway)
   razorpay: {
     keyId: process.env.RAZORPAY_KEY_ID || '',
     keySecret: process.env.RAZORPAY_KEY_SECRET || '',

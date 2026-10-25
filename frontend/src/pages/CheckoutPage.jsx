@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import useCart from '../hooks/useCart';
 import useAuth from '../hooks/useAuth';
 import api from '../api/axios';
+import TestGatewayModal from '../components/TestGatewayModal';
+import CouponInput from '../components/CouponInput';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -22,10 +24,32 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
-  const [cartIssues, setCartIssues] = useState([]);
+  const [createdOrder, setCreatedOrder] = useState(null);
+  const [isGatewayOpen, setIsGatewayOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('checkout_coupon');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
-  // Group items by vendor store name for the multi-vendor summary
-  const itemsByVendor = useMemo(() => {
+  const handleApplyCoupon = (couponData) => {
+    setAppliedCoupon(couponData);
+    sessionStorage.setItem('checkout_coupon', JSON.stringify(couponData));
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    sessionStorage.removeItem('checkout_coupon');
+  };
+
+  const discountAmount = appliedCoupon ? Math.min(appliedCoupon.discount, subtotal) : 0;
+  const grandTotal = Math.max(0, subtotal - discountAmount);
+
+  // Group items by vendor store name with Largest Remainder proportional discount in integer paise
+  const vendorSplits = useMemo(() => {
     const map = {};
     items.forEach((item) => {
       const store = item.storeName || 'Vendor';
@@ -34,8 +58,52 @@ export default function CheckoutPage() {
       }
       map[store].push(item);
     });
-    return map;
-  }, [items]);
+
+    const entries = Object.entries(map).map(([storeName, vendorItems]) => {
+      const subtotalPaise = vendorItems.reduce(
+        (acc, it) => acc + Math.round(it.price * 100) * it.qty,
+        0
+      );
+      return { storeName, vendorItems, subtotalPaise };
+    });
+
+    const totalDiscountPaise = Math.round(discountAmount * 100);
+    const grandSubtotalPaise = entries.reduce((acc, e) => acc + e.subtotalPaise, 0);
+
+    let allocatedDiscounts = new Array(entries.length).fill(0);
+    if (totalDiscountPaise > 0 && grandSubtotalPaise > 0) {
+      const cappedDiscount = Math.min(totalDiscountPaise, grandSubtotalPaise);
+      const exactShares = entries.map((e, idx) => {
+        const exact = (e.subtotalPaise * cappedDiscount) / grandSubtotalPaise;
+        const floor = Math.floor(exact);
+        const remainder = exact - floor;
+        return { idx, floor, remainder };
+      });
+
+      const sumFloors = exactShares.reduce((sum, s) => sum + s.floor, 0);
+      const remainingPaise = cappedDiscount - sumFloors;
+
+      const sortedShares = [...exactShares].sort((a, b) => {
+        if (b.remainder !== a.remainder) return b.remainder - a.remainder;
+        return a.idx - b.idx;
+      });
+
+      sortedShares.forEach((share, rank) => {
+        allocatedDiscounts[share.idx] = share.floor + (rank < remainingPaise ? 1 : 0);
+      });
+    }
+
+    return entries.map((e, idx) => {
+      const discountPaise = allocatedDiscounts[idx] || 0;
+      const discountedSubtotalPaise = e.subtotalPaise - discountPaise;
+      return {
+        ...e,
+        subtotal: Number((e.subtotalPaise / 100).toFixed(2)),
+        discount: Number((discountPaise / 100).toFixed(2)),
+        discountedSubtotal: Number((discountedSubtotalPaise / 100).toFixed(2)),
+      };
+    });
+  }, [items, discountAmount]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,13 +159,14 @@ export default function CheckoutPage() {
           state: formData.state.trim(),
           pincode: formData.pincode.trim(),
         },
+        couponCode: appliedCoupon?.code || '',
       });
 
       const order = res.data?.order;
       if (order?._id) {
-        // Refresh cart in state
-        await fetchCart();
-        navigate(`/orders/${order._id}?new=true`);
+        sessionStorage.removeItem('checkout_coupon');
+        setCreatedOrder(order);
+        setIsGatewayOpen(true);
       }
     } catch (err) {
       if (err.response?.status === 409) {
@@ -262,7 +331,7 @@ export default function CheckoutPage() {
               className="btn btn-primary btn-lg place-order-submit-btn"
               style={{ width: '100%', marginTop: '1rem' }}
             >
-              {submitting ? 'Creating Order...' : `Place Order (₹${subtotal.toLocaleString()}) →`}
+              {submitting ? 'Creating Order...' : `Place Order (₹${grandTotal.toFixed(2)}) →`}
             </button>
           </form>
         </div>
@@ -272,56 +341,100 @@ export default function CheckoutPage() {
           <div className="summary-card">
             <h2 className="summary-title">2. Items &amp; Vendor Split</h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-              Your order contains items from <strong>{Object.keys(itemsByVendor).length}</strong> certified independent {Object.keys(itemsByVendor).length === 1 ? 'vendor' : 'vendors'}.
+              Your order contains items from <strong>{vendorSplits.length}</strong> certified independent {vendorSplits.length === 1 ? 'vendor' : 'vendors'}.
             </p>
 
             <div className="vendor-splits-container">
-              {Object.entries(itemsByVendor).map(([storeName, vendorItems]) => {
-                const storeSubtotal = vendorItems.reduce(
-                  (acc, it) => acc + it.price * it.qty,
-                  0
-                );
-
-                return (
-                  <div key={storeName} className="vendor-split-box">
-                    <div className="vendor-split-header">
-                      <span className="split-store-name">🏪 {storeName}</span>
-                      <span className="split-subtotal">₹{storeSubtotal.toLocaleString()}</span>
-                    </div>
-
-                    <div className="split-items-list">
-                      {vendorItems.map((it) => (
-                        <div key={it.productId} className="split-item-row">
-                          <span className="split-item-title">
-                            {it.title} <span className="split-item-qty">x{it.qty}</span>
-                          </span>
-                          <span className="split-item-price">
-                            ₹{(it.price * it.qty).toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+              {vendorSplits.map((split) => (
+                <div key={split.storeName} className="vendor-split-box">
+                  <div className="vendor-split-header">
+                    <span className="split-store-name">🏪 {split.storeName}</span>
+                    <span className="split-subtotal">₹{split.subtotal.toFixed(2)}</span>
                   </div>
-                );
-              })}
+
+                  <div className="split-items-list">
+                    {split.vendorItems.map((it) => (
+                      <div key={it.productId} className="split-item-row">
+                        <span className="split-item-title">
+                          {it.title} <span className="split-item-qty">x{it.qty}</span>
+                        </span>
+                        <span className="split-item-price">
+                          ₹{(it.price * it.qty).toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {split.discount > 0 && (
+                    <div style={{ marginTop: '0.5rem', paddingTop: '0.4rem', borderTop: '1px dashed #cbd5e1', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#16a34a', fontWeight: 600 }}>
+                        Coupon Share ({appliedCoupon?.code || 'PROMO'}):
+                      </span>
+                      <span style={{ color: '#16a34a', fontWeight: 700 }}>
+                        - ₹{split.discount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  {split.discount > 0 && (
+                    <div style={{ marginTop: '0.2rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+                      <span style={{ color: '#475569' }}>Discounted Vendor Total:</span>
+                      <span style={{ color: '#0f172a' }}>₹{split.discountedSubtotal.toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             <div className="summary-divider"></div>
 
+            <CouponInput
+              appliedCoupon={appliedCoupon}
+              onApplyCoupon={handleApplyCoupon}
+              onRemoveCoupon={handleRemoveCoupon}
+              subtotal={subtotal}
+            />
+
+            {discountAmount > 0 && (
+              <div className="summary-line" style={{ color: '#16a34a', marginBottom: '0.75rem' }}>
+                <span className="summary-label" style={{ fontWeight: 700, color: '#16a34a' }}>
+                  Discount ({appliedCoupon.code}):
+                </span>
+                <span className="summary-value" style={{ fontWeight: 800 }}>
+                  - ₹{discountAmount.toLocaleString()}
+                </span>
+              </div>
+            )}
+
             <div className="summary-total-line">
               <span>Grand Total:</span>
-              <span className="total-amount">₹{subtotal.toLocaleString()}</span>
+              <span className="total-amount">₹{grandTotal.toLocaleString()}</span>
             </div>
 
             <div className="checkout-notice-box">
-              <span>ℹ️</span>
+              <span>🔒</span>
               <p>
-                Each vendor will fulfill their respective package independently. In Phase 5, payment status will be marked via the development fake-pay tool.
+                Each vendor fulfills their respective package independently. Payments are processed in sandbox test mode via the Test Gateway.
               </p>
             </div>
           </div>
         </aside>
       </div>
+
+      {createdOrder && (
+        <TestGatewayModal
+          order={createdOrder}
+          isOpen={isGatewayOpen}
+          onClose={() => {
+            setIsGatewayOpen(false);
+            navigate(`/orders/${createdOrder._id}?new=true`);
+          }}
+          onSuccess={(paidOrder) => {
+            setIsGatewayOpen(false);
+            navigate(`/orders/${paidOrder._id}?new=true&paid=true`);
+          }}
+        />
+      )}
     </div>
   );
 }

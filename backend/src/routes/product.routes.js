@@ -9,6 +9,11 @@ import {
 } from '../controllers/product.controller.js';
 import { authenticate, authorizeRoles } from '../middleware/auth.js';
 import { suggestRateLimiter } from '../middleware/rateLimiter.js';
+import {
+  createReviewHandler,
+  getProductReviewsHandler,
+  checkEligibilityHandler,
+} from '../controllers/review.controller.js';
 
 const router = Router();
 
@@ -20,6 +25,26 @@ router.get('/suggest', suggestRateLimiter, getSuggestions);
 
 // Public: GET /api/products/:id (single active product)
 router.get('/:id', getById);
+
+// Reviews
+// Customer: GET /api/products/:id/reviews/eligibility
+router.get(
+  '/:id/reviews/eligibility',
+  authenticate,
+  authorizeRoles('customer', 'admin', 'vendor'),
+  checkEligibilityHandler
+);
+
+// Public: GET /api/products/:id/reviews (paginated with star breakdown)
+router.get('/:id/reviews', getProductReviewsHandler);
+
+// Customer: POST /api/products/:id/reviews
+router.post(
+  '/:id/reviews',
+  authenticate,
+  authorizeRoles('customer'),
+  createReviewHandler
+);
 
 // Vendor: POST /api/products (create product)
 router.post('/', authenticate, authorizeRoles('vendor'), create);

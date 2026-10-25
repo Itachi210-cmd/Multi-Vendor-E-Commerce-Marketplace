@@ -6,6 +6,7 @@ import {
   getOrderByIdHandler,
   cancelOrderHandler,
 } from '../controllers/order.controller.js';
+import { getOrderInvoiceHandler } from '../controllers/invoice.controller.js';
 
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.post('/checkout', authenticate, authorizeRoles('customer'), checkoutHandl
 
 // Customer view own orders
 router.get('/', authenticate, authorizeRoles('customer'), getCustomerOrdersHandler);
+
+// Download PDF Invoice (Order owner or Admin, paid orders only)
+router.get('/:id/invoice', authenticate, getOrderInvoiceHandler);
 
 // View single order (Customer owner, Admin, or Vendor with sub-order)
 router.get('/:id', authenticate, getOrderByIdHandler);

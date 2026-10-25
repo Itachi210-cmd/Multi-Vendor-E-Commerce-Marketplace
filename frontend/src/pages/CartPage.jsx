@@ -1,11 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCart from '../hooks/useCart';
+import CouponInput from '../components/CouponInput';
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { cart, items, subtotal, totalItems, hasIssues, loading, updateQuantity, removeItem, clearCart } =
     useCart();
+
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('checkout_coupon');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleApplyCoupon = (couponData) => {
+    setAppliedCoupon(couponData);
+    sessionStorage.setItem('checkout_coupon', JSON.stringify(couponData));
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    sessionStorage.removeItem('checkout_coupon');
+  };
+
+  const discountAmount = appliedCoupon ? Math.min(appliedCoupon.discount, subtotal) : 0;
+  const finalTotal = Math.max(0, subtotal - discountAmount);
 
   if (loading && items.length === 0) {
     return (
@@ -179,11 +202,29 @@ export default function CartPage() {
               <span className="summary-value">Included</span>
             </div>
 
+            <CouponInput
+              appliedCoupon={appliedCoupon}
+              onApplyCoupon={handleApplyCoupon}
+              onRemoveCoupon={handleRemoveCoupon}
+              subtotal={subtotal}
+            />
+
+            {discountAmount > 0 && (
+              <div className="summary-line" style={{ color: '#16a34a' }}>
+                <span className="summary-label" style={{ fontWeight: 700, color: '#16a34a' }}>
+                  Coupon Discount ({appliedCoupon.code}):
+                </span>
+                <span className="summary-value" style={{ fontWeight: 800 }}>
+                  - ₹{discountAmount.toLocaleString()}
+                </span>
+              </div>
+            )}
+
             <div className="summary-divider"></div>
 
             <div className="summary-total-line">
-              <span>Total:</span>
-              <span className="total-amount">₹{subtotal.toLocaleString()}</span>
+              <span>Grand Total:</span>
+              <span className="total-amount">₹{finalTotal.toLocaleString()}</span>
             </div>
 
             <button

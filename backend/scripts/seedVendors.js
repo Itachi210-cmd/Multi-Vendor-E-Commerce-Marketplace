@@ -3,6 +3,12 @@ import { connectDB } from '../src/config/db.js';
 import User from '../src/models/user.model.js';
 import Vendor from '../src/models/vendor.model.js';
 import Product from '../src/models/product.model.js';
+import Coupon from '../src/models/coupon.model.js';
+import Order, { generateOrderNumber } from '../src/models/order.model.js';
+import Payout from '../src/models/payout.model.js';
+import Review from '../src/models/review.model.js';
+import { recomputeProductRating } from '../src/services/review.service.js';
+import { distributeDiscountLargestRemainder } from '../src/services/coupon.service.js';
 import { rebuildIndex } from './reindex.js';
 
 const seedVendors = async () => {
@@ -232,14 +238,6 @@ const seedVendors = async () => {
     }
     console.log(`[Seed] Seeded 6 products for ${vendor2.storeName}`);
 
-    // Synchronize seeded products to Elasticsearch index
-    try {
-      console.log('[Seed] Indexing seeded products into Elasticsearch...');
-      await rebuildIndex();
-    } catch (esErr) {
-      console.warn(`[Seed] Notice: Could not sync with Elasticsearch (${esErr.message}). You can run 'npm run reindex' once Elasticsearch is up.`);
-    }
-
     // Test Customer: customer@marketplace.com / Customer@123
     const customerEmail = 'customer@marketplace.com';
     const customerPasswordHash = await User.hashPassword('Customer@123');
@@ -254,18 +252,250 @@ const seedVendors = async () => {
       console.log(`[Seed] Created test customer: ${customerEmail}`);
     }
 
+    // 1. Seed 3 Sample Coupons
+    const sampleCoupons = [
+      {
+        code: 'WELCOME10',
+        type: 'percent',
+        value: 10,
+        maxDiscount: 200,
+        minOrder: 500,
+        isActive: true,
+        perUserLimit: 1,
+      },
+      {
+        code: 'FLAT100',
+        type: 'flat',
+        value: 100,
+        minOrder: 999,
+        isActive: true,
+        perUserLimit: 1,
+      },
+      {
+        code: 'EXPIRED5',
+        type: 'percent',
+        value: 5,
+        minOrder: 0,
+        expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // Expired yesterday
+        isActive: true,
+        perUserLimit: 1,
+      },
+    ];
+
+    for (const c of sampleCoupons) {
+      await Coupon.findOneAndUpdate(
+        { code: c.code },
+        { ...c },
+        { upsert: true, new: true }
+      );
+    }
+    console.log('[Seed] Seeded 3 sample coupons (WELCOME10, FLAT100, EXPIRED5)');
+
+    // 2. Seed a Delivered Order with Payouts and Customer Reviews
+    const sampleProduct1 = await Product.findOne({ vendorId: vendor1._id });
+    const sampleProduct2 = await Product.findOne({ vendorId: vendor2._id });
+
+    if (sampleProduct1 && sampleProduct2) {
+      const orderNumber = 'ORD-20261025-SEED';
+      let deliveredOrder = await Order.findOne({ orderNumber });
+
+      const price1 = sampleProduct1.price;
+      const price2 = sampleProduct2.price;
+      const subtotal1Paise = Math.round(price1 * 100);
+      const subtotal2Paise = Math.round(price2 * 100);
+      const totalDiscountPaise = 10000; // Flat ₹100 = 10000 paise
+
+      // Largest Remainder Method in exact integer paise
+      const [disc1Paise, disc2Paise] = distributeDiscountLargestRemainder(
+        [{ subtotalPaise: subtotal1Paise }, { subtotalPaise: subtotal2Paise }],
+        totalDiscountPaise
+      );
+
+      const discSub1Paise = subtotal1Paise - disc1Paise;
+      const discSub2Paise = subtotal2Paise - disc2Paise;
+
+      const discSub1 = Number((discSub1Paise / 100).toFixed(2));
+      const discSub2 = Number((discSub2Paise / 100).toFixed(2));
+      const discount = Number((totalDiscountPaise / 100).toFixed(2));
+      const grandTotal = Number(((discSub1Paise + discSub2Paise) / 100).toFixed(2));
+
+      const comm1 = Number(((discSub1 * vendor1.commissionPct) / 100).toFixed(2));
+      const pay1 = Number((discSub1 - comm1).toFixed(2));
+      const comm2 = Number(((discSub2 * vendor2.commissionPct) / 100).toFixed(2));
+      const pay2 = Number((discSub2 - comm2).toFixed(2));
+
+      if (!deliveredOrder) {
+        deliveredOrder = await Order.create({
+          customerId: customerUser._id,
+          orderNumber,
+          shippingAddress: {
+            name: 'Priya Sharma',
+            phone: '9876543210',
+            line1: 'Flat 402, Lotus Residency, MG Road',
+            city: 'Bengaluru',
+            state: 'Karnataka',
+            pincode: '560001',
+          },
+          items: [
+            {
+              productId: sampleProduct1._id,
+              vendorId: vendor1._id,
+              title: sampleProduct1.title,
+              price: price1,
+              qty: 1,
+              image: sampleProduct1.images?.[0] || '',
+            },
+            {
+              productId: sampleProduct2._id,
+              vendorId: vendor2._id,
+              title: sampleProduct2.title,
+              price: price2,
+              qty: 1,
+              image: sampleProduct2.images?.[0] || '',
+            },
+          ],
+          subOrders: [
+            {
+              vendorId: vendor1._id,
+              items: [
+                {
+                  productId: sampleProduct1._id,
+                  vendorId: vendor1._id,
+                  title: sampleProduct1.title,
+                  price: price1,
+                  qty: 1,
+                  image: sampleProduct1.images?.[0] || '',
+                },
+              ],
+              subtotal: discSub1,
+              commission: comm1,
+              vendorPayout: pay1,
+              status: 'delivered',
+              timeline: [
+                { status: 'placed', at: new Date(Date.now() - 4 * 86400000) },
+                { status: 'packed', at: new Date(Date.now() - 3 * 86400000) },
+                { status: 'shipped', at: new Date(Date.now() - 2 * 86400000) },
+                { status: 'delivered', at: new Date(Date.now() - 1 * 86400000) },
+              ],
+            },
+            {
+              vendorId: vendor2._id,
+              items: [
+                {
+                  productId: sampleProduct2._id,
+                  vendorId: vendor2._id,
+                  title: sampleProduct2.title,
+                  price: price2,
+                  qty: 1,
+                  image: sampleProduct2.images?.[0] || '',
+                },
+              ],
+              subtotal: discSub2,
+              commission: comm2,
+              vendorPayout: pay2,
+              status: 'delivered',
+              timeline: [
+                { status: 'placed', at: new Date(Date.now() - 4 * 86400000) },
+                { status: 'packed', at: new Date(Date.now() - 3 * 86400000) },
+                { status: 'shipped', at: new Date(Date.now() - 2 * 86400000) },
+                { status: 'delivered', at: new Date(Date.now() - 1 * 86400000) },
+              ],
+            },
+          ],
+          couponCode: 'FLAT100',
+          discount,
+          total: grandTotal,
+          payment: {
+            provider: 'mock',
+            providerOrderId: 'order_mock_seed123',
+            providerPaymentId: 'pay_mock_seed456',
+            method: 'card',
+            status: 'paid',
+          },
+        });
+        console.log(`[Seed] Created delivered multi-vendor order: ${orderNumber}`);
+      }
+
+      // Seed Payouts for delivered order
+      await Payout.findOneAndUpdate(
+        { orderId: deliveredOrder._id, vendorId: vendor1._id },
+        {
+          amount: pay1,
+          commission: comm1,
+          transferId: 'tr_mock_seed_v1',
+          status: 'processed',
+        },
+        { upsert: true }
+      );
+
+      await Payout.findOneAndUpdate(
+        { orderId: deliveredOrder._id, vendorId: vendor2._id },
+        {
+          amount: pay2,
+          commission: comm2,
+          transferId: 'tr_mock_seed_v2',
+          status: 'processed',
+        },
+        { upsert: true }
+      );
+      console.log('[Seed] Created processed payouts for delivered order');
+
+      // Seed sample review for Product 1
+      await Review.findOneAndUpdate(
+        { productId: sampleProduct1._id, customerId: customerUser._id },
+        {
+          productId: sampleProduct1._id,
+          customerId: customerUser._id,
+          orderId: deliveredOrder._id,
+          rating: 5,
+          comment: 'Outstanding quality and rapid delivery! The battery life easily matches the specifications.',
+          verifiedPurchase: true,
+        },
+        { upsert: true }
+      );
+      await recomputeProductRating(sampleProduct1._id);
+
+      // Seed sample review for Product 2
+      await Review.findOneAndUpdate(
+        { productId: sampleProduct2._id, customerId: customerUser._id },
+        {
+          productId: sampleProduct2._id,
+          customerId: customerUser._id,
+          orderId: deliveredOrder._id,
+          rating: 4,
+          comment: 'Very comfortable and stylish. Premium fabric feel, highly recommended.',
+          verifiedPurchase: true,
+        },
+        { upsert: true }
+      );
+      await recomputeProductRating(sampleProduct2._id);
+
+      console.log('[Seed] Seeded verified reviews and recomputed product ratings');
+    }
+
+    // Synchronize seeded products and updated ratings to Elasticsearch index
+    try {
+      console.log('[Seed] Indexing seeded products and ratings into Elasticsearch...');
+      await rebuildIndex();
+    } catch (esErr) {
+      console.warn(`[Seed] Notice: Could not sync with Elasticsearch (${esErr.message}). You can run 'npm run reindex' once Elasticsearch is up.`);
+    }
+
     console.log('\n=============================================');
     console.log('[Seed] Seeding Completed Successfully!');
     console.log('Customer: customer@marketplace.com / Customer@123 (Priya Sharma)');
     console.log('Vendor 1: vendor1@marketplace.com / Vendor@123 (Aura Tech Hub - Electronics)');
     console.log('Vendor 2: vendor2@marketplace.com / Vendor@123 (Urban Threads & Living - Lifestyle)');
     console.log('Admin:    admin@marketplace.com / Admin@123456');
-    console.log('\nTesting Multi-Vendor Checkout:');
-    console.log('1. Log in as customer@marketplace.com');
+    console.log('\nTesting Multi-Vendor Checkout & Test Gateway Sandbox:');
+    console.log('1. Log in as customer@marketplace.com (Customer@123)');
     console.log('2. Add items from Aura Tech Hub & Urban Threads & Living to cart');
     console.log('3. Visit /cart and proceed to /checkout');
-    console.log('4. Click Fake Pay to simulate payment and trigger multi-vendor order split');
-    console.log('5. Log in as Vendor 1 or Vendor 2 to manage their sub-orders in Vendor Studio');
+    console.log('4. Fill shipping details and click "Place Order"');
+    console.log('5. Use the "Test Gateway" modal (Card: 4111 1111 1111 1111 or UPI: success@mock)');
+    console.log('6. Order is captured, stock is decremented, and payouts are automatically split');
+    console.log('7. Log in as Vendor 1 or Vendor 2 to manage sub-orders and view /vendor/earnings');
+    console.log('8. Log in as admin@marketplace.com to inspect /admin/orders and /admin/payouts');
     console.log('=============================================\n');
 
     await mongoose.disconnect();

@@ -47,6 +47,11 @@ const vendorSchema = new mongoose.Schema(
       min: [0, 'Commission cannot be negative'],
       max: [50, 'Commission cannot exceed 50%'],
     },
+    paymentAccountId: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     razorpayLinkedAccountId: {
       type: String,
       default: '',

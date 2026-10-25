@@ -135,9 +135,23 @@ export default function AdminOrdersPage() {
                     <strong>₹{order.total.toLocaleString()}</strong>
                   </td>
                   <td>
-                    <span className={`badge ${getPaymentBadge(order.payment.status)}`}>
-                      {order.payment.status.toUpperCase()}
-                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      <div>
+                        <span className={`badge ${getPaymentBadge(order.payment.status)}`}>
+                          {order.payment.status.toUpperCase()}
+                        </span>
+                        {order.payment.method && (
+                          <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginLeft: '0.4rem', textTransform: 'uppercase' }}>
+                            ({order.payment.method})
+                          </span>
+                        )}
+                      </div>
+                      {order.payoutSummary?.count > 0 && (
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                          Split: ₹{order.payoutSummary.totalVendorPayout} to vendors • ₹{order.payoutSummary.totalCommission} fee
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td>
                     <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>

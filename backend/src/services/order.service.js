@@ -1,7 +1,16 @@
 import Order, { generateOrderNumber } from '../models/order.model.js';
 import Product from '../models/product.model.js';
 import Vendor from '../models/vendor.model.js';
+import Payout from '../models/payout.model.js';
 import { getCart, clearCart } from './cart.service.js';
+import { getPaymentProvider } from './payment/index.js';
+import { reversePayouts } from './payout.service.js';
+import {
+  validateCoupon,
+  distributeDiscountLargestRemainder,
+  recordCouponUsage,
+  restoreCouponUsage,
+} from './coupon.service.js';
 
 /**
  * Validate customer shipping address format
@@ -66,9 +75,10 @@ export const validateShippingAddress = (address) => {
 /**
  * Create Checkout Order from customer's Redis Cart
  * Validates active status, stock, and calculates multi-vendor commissions.
+ * Accepts optional couponCode, validates against subtotal, and distributes discount proportionally.
  * Does NOT reduce stock or clear cart yet (happens on payment success).
  */
-export const checkoutOrder = async (userId, rawAddress) => {
+export const checkoutOrder = async (userId, rawAddress, couponCode = '') => {
   const shippingAddress = validateShippingAddress(rawAddress);
 
   // 1. Fetch current cart
@@ -125,8 +135,8 @@ export const checkoutOrder = async (userId, rawAddress) => {
   vendors.forEach((v) => vendorMap.set(v._id.toString(), v));
 
   const allOrderItems = [];
-  const subOrders = [];
-  let grandTotalPaise = 0;
+  const subOrderPrep = [];
+  let grandSubtotalPaise = 0;
 
   for (const [vId, vItems] of vendorItemMap.entries()) {
     const vendorDoc = vendorMap.get(vId);
@@ -139,23 +149,58 @@ export const checkoutOrder = async (userId, rawAddress) => {
       subtotalPaise += itemPricePaise * it.qty;
     });
 
-    // Money math in integer paise
-    const commissionPaise = Math.round((subtotalPaise * commissionPct) / 100);
-    const vendorPayoutPaise = subtotalPaise - commissionPaise;
-    grandTotalPaise += subtotalPaise;
-
-    subOrders.push({
+    grandSubtotalPaise += subtotalPaise;
+    subOrderPrep.push({
       vendorId: vId,
       items: vItems,
-      subtotal: Number((subtotalPaise / 100).toFixed(2)),
+      subtotalPaise,
+      commissionPct,
+    });
+  }
+
+  // Validate coupon if provided
+  let appliedCouponCode = '';
+  let totalDiscountPaise = 0;
+
+  if (couponCode && couponCode.trim()) {
+    const validation = await validateCoupon(couponCode, userId, grandSubtotalPaise);
+    if (!validation.valid) {
+      const err = new Error(validation.message || 'Invalid coupon');
+      err.statusCode = 400;
+      throw err;
+    }
+    appliedCouponCode = validation.code;
+    totalDiscountPaise = validation.discountPaise;
+  }
+
+  // Distribute the discount PROPORTIONALLY across subOrders (largest remainder method)
+  const distributedDiscounts = distributeDiscountLargestRemainder(
+    subOrderPrep,
+    totalDiscountPaise
+  );
+
+  const subOrders = [];
+  subOrderPrep.forEach((prep, idx) => {
+    const subDiscountPaise = distributedDiscounts[idx] || 0;
+    const discountedSubtotalPaise = prep.subtotalPaise - subDiscountPaise;
+    const commissionPaise = Math.round((discountedSubtotalPaise * prep.commissionPct) / 100);
+    const vendorPayoutPaise = discountedSubtotalPaise - commissionPaise;
+
+    subOrders.push({
+      vendorId: prep.vendorId,
+      items: prep.items,
+      subtotal: Number((discountedSubtotalPaise / 100).toFixed(2)),
+      discount: Number((subDiscountPaise / 100).toFixed(2)),
       commission: Number((commissionPaise / 100).toFixed(2)),
       vendorPayout: Number((vendorPayoutPaise / 100).toFixed(2)),
       status: 'placed',
       timeline: [{ status: 'placed', at: new Date() }],
     });
-  }
+  });
 
-  const total = Number((grandTotalPaise / 100).toFixed(2));
+  const finalTotalPaise = grandSubtotalPaise - totalDiscountPaise;
+  const total = Number((finalTotalPaise / 100).toFixed(2));
+  const discount = Number((totalDiscountPaise / 100).toFixed(2));
   const orderNumber = generateOrderNumber();
 
   // 4. Create Order in MongoDB
@@ -165,12 +210,15 @@ export const checkoutOrder = async (userId, rawAddress) => {
     shippingAddress,
     items: allOrderItems,
     subOrders,
-    couponCode: '',
-    discount: 0,
+    couponCode: appliedCouponCode,
+    discount,
     total,
     payment: {
-      razorpayOrderId: '',
-      razorpayPaymentId: '',
+      provider: 'mock',
+      providerOrderId: '',
+      providerPaymentId: '',
+      method: '',
+      failureReason: '',
       status: 'pending',
     },
   });
@@ -237,6 +285,7 @@ export const markOrderPaid = async (orderId, paymentDetails = {}) => {
     }
 
     order.payment.status = 'failed';
+    order.payment.failureReason = failureReason;
     await order.save();
 
     const err = new Error(
@@ -248,13 +297,29 @@ export const markOrderPaid = async (orderId, paymentDetails = {}) => {
 
   // Payment success
   order.payment.status = 'paid';
-  if (paymentDetails.razorpayPaymentId) {
-    order.payment.razorpayPaymentId = paymentDetails.razorpayPaymentId;
+  if (paymentDetails.providerPaymentId || paymentDetails.razorpayPaymentId) {
+    order.payment.providerPaymentId = paymentDetails.providerPaymentId || paymentDetails.razorpayPaymentId;
   }
-  if (paymentDetails.razorpayOrderId) {
-    order.payment.razorpayOrderId = paymentDetails.razorpayOrderId;
+  if (paymentDetails.providerOrderId || paymentDetails.razorpayOrderId) {
+    order.payment.providerOrderId = paymentDetails.providerOrderId || paymentDetails.razorpayOrderId;
   }
+  if (paymentDetails.method) {
+    order.payment.method = paymentDetails.method;
+  }
+  if (paymentDetails.provider) {
+    order.payment.provider = paymentDetails.provider;
+  }
+  order.payment.failureReason = '';
   await order.save();
+
+  // Atomically record coupon usage (idempotent, guarded by limits)
+  if (order.couponCode) {
+    try {
+      await recordCouponUsage(order.couponCode, order.customerId);
+    } catch (couponErr) {
+      console.warn(`[OrderService] Coupon usage recording warning:`, couponErr.message);
+    }
+  }
 
   // Clear customer's Redis cart
   await clearCart(order.customerId);
@@ -377,13 +442,46 @@ export const cancelCustomerOrder = async (orderId, customerId) => {
     s.timeline.push({ status: 'cancelled', at: now });
   });
 
-  // If paid, restore stock
+  // If paid, call provider refund, reverse payouts, and restore stock
   if (order.payment.status === 'paid') {
+    const provider = getPaymentProvider(order.payment?.provider || 'mock');
+    const refundAmountPaise = Math.round(order.total * 100);
+
+    try {
+      await provider.refund({
+        paymentId: order.payment.providerPaymentId,
+        amountPaise: refundAmountPaise,
+        reverseTransfers: true,
+        notes: {
+          orderId: order._id.toString(),
+          orderNumber: order.orderNumber,
+        },
+      });
+    } catch (refundErr) {
+      const err = new Error(`Refund failed: ${refundErr.message}`);
+      err.statusCode = 502;
+      throw err;
+    }
+
+    // Reverse any payouts generated for this order
+    await reversePayouts(order._id);
+
+    // Restore stock atomically per item
     for (const item of order.items) {
       await Product.findByIdAndUpdate(item.productId, {
         $inc: { stock: item.qty },
       });
     }
+
+    // Restore coupon usage if order used a coupon
+    if (order.couponCode) {
+      try {
+        await restoreCouponUsage(order.couponCode, order.customerId);
+      } catch (couponErr) {
+        console.warn(`[OrderService] Coupon restore warning:`, couponErr.message);
+      }
+    }
+
     order.payment.status = 'refunded';
   }
 
@@ -576,8 +674,30 @@ export const getAdminOrders = async ({
     Order.countDocuments(filter),
   ]);
 
+  const orderIds = orders.map((o) => o._id);
+  const payouts = await Payout.find({ orderId: { $in: orderIds } }).lean();
+  const payoutMap = new Map();
+  payouts.forEach((p) => {
+    const key = p.orderId.toString();
+    if (!payoutMap.has(key)) payoutMap.set(key, []);
+    payoutMap.get(key).push(p);
+  });
+
+  const ordersWithPayouts = orders.map((o) => {
+    const oObj = o.toObject();
+    const orderPayouts = payoutMap.get(o._id.toString()) || [];
+    oObj.payouts = orderPayouts;
+    oObj.payoutSummary = {
+      totalVendorPayout: Number(orderPayouts.reduce((sum, p) => sum + p.amount, 0).toFixed(2)),
+      totalCommission: Number(orderPayouts.reduce((sum, p) => sum + p.commission, 0).toFixed(2)),
+      count: orderPayouts.length,
+      allProcessed: orderPayouts.length > 0 && orderPayouts.every((p) => p.status === 'processed'),
+    };
+    return oObj;
+  });
+
   return {
-    orders,
+    orders: ordersWithPayouts,
     total,
     page: pageNum,
     pages: Math.ceil(total / limitNum) || 1,

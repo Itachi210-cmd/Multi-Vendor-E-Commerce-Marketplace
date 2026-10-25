@@ -40,7 +40,14 @@ export default function VendorLayout() {
           >
             <span className="sidebar-icon">📑</span>
             <span>Orders</span>
-            <span className="badge badge-degraded" style={{ fontSize: '0.65rem', marginLeft: 'auto' }}>Phase 5</span>
+          </NavLink>
+
+          <NavLink
+            to="/vendor/earnings"
+            className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+          >
+            <span className="sidebar-icon">💰</span>
+            <span>Earnings & Payouts</span>
           </NavLink>
         </nav>
 

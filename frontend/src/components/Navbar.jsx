@@ -251,6 +251,22 @@ export default function Navbar() {
               <>
                 <li>
                   <Link
+                    to="/admin/analytics"
+                    className={`nav-link ${location.pathname.startsWith('/admin/analytics') ? 'active' : ''}`}
+                  >
+                    Analytics
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/coupons"
+                    className={`nav-link ${location.pathname.startsWith('/admin/coupons') ? 'active' : ''}`}
+                  >
+                    Coupons
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/admin/vendors"
                     className={`nav-link ${location.pathname.startsWith('/admin/vendors') ? 'active' : ''}`}
                   >
@@ -263,6 +279,14 @@ export default function Navbar() {
                     className={`nav-link ${location.pathname.startsWith('/admin/orders') ? 'active' : ''}`}
                   >
                     All Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/payouts"
+                    className={`nav-link ${location.pathname.startsWith('/admin/payouts') ? 'active' : ''}`}
+                  >
+                    Payouts
                   </Link>
                 </li>
               </>

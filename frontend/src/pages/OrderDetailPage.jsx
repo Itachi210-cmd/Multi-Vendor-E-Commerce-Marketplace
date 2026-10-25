@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
+import TestGatewayModal from '../components/TestGatewayModal';
 
 const STATUS_STEPS = ['placed', 'packed', 'shipped', 'delivered'];
 
@@ -8,13 +9,37 @@ export default function OrderDetailPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const isNewlyPlaced = searchParams.get('new') === 'true';
+  const isJustPaid = searchParams.get('paid') === 'true';
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [fakePaying, setFakePaying] = useState(false);
+  const [isGatewayOpen, setIsGatewayOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
+
+  const handleDownloadInvoice = async () => {
+    try {
+      setDownloadingInvoice(true);
+      const res = await api.get(`/orders/${id}/invoice`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${order.orderNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to download invoice');
+    } finally {
+      setDownloadingInvoice(false);
+    }
+  };
 
   const fetchOrder = async () => {
     try {
@@ -33,22 +58,6 @@ export default function OrderDetailPage() {
     fetchOrder();
   }, [id]);
 
-  const handleFakePay = async () => {
-    try {
-      setFakePaying(true);
-      setActionMessage('');
-      const res = await api.post(`/dev/orders/${id}/fake-pay`);
-      if (res.data?.order) {
-        setOrder(res.data.order);
-      }
-      setActionMessage('Payment simulated successfully! Stock has been decremented.');
-    } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Fake pay failed');
-    } finally {
-      setFakePaying(false);
-    }
-  };
-
   const handleCancelOrder = async () => {
     if (!window.confirm('Are you sure you want to cancel this entire order?')) return;
 
@@ -59,7 +68,7 @@ export default function OrderDetailPage() {
       if (res.data?.order) {
         setOrder(res.data.order);
       }
-      setActionMessage('Order successfully cancelled.');
+      setActionMessage('Order successfully cancelled. If payment was made, full refund has been initiated.');
     } catch (err) {
       alert(err.response?.data?.message || err.message || 'Failed to cancel order');
     } finally {
@@ -171,28 +180,82 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      {/* Dev Fake-Pay Action Card */}
-      {order.payment.status === 'pending' && (
-        <div className="dev-fake-pay-card">
-          <div className="dev-banner-badge">DEV TOOL · PHASE 5</div>
-          <div className="dev-fake-pay-content">
-            <div>
-              <h3>Simulate Payment Completion</h3>
-              <p>
-                In production, Razorpay Route will collect and split payment. In this phase, test the payment completion flow by clicking Fake Pay.
-              </p>
+      {/* Payment Details & Action Card */}
+      <div className="payment-summary-card" style={{
+        backgroundColor: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
+        borderRadius: '12px',
+        padding: '1.25rem 1.5rem',
+        marginBottom: '2rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '1rem',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '10px',
+            backgroundColor: order.payment.status === 'paid' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(99, 102, 241, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.4rem'
+          }}>
+            {order.payment.status === 'paid' ? '✅' : order.payment.status === 'failed' ? '⚠️' : '💳'}
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <strong style={{ fontSize: '1rem' }}>
+                {order.payment.status === 'paid' ? 'Payment Completed' : order.payment.status === 'failed' ? 'Payment Failed' : 'Payment Awaiting Confirmation'}
+              </strong>
+              <span className={`badge ${getPaymentBadge(order.payment.status)}`}>
+                {order.payment.status.toUpperCase()}
+              </span>
             </div>
-            <button
-              type="button"
-              onClick={handleFakePay}
-              disabled={fakePaying}
-              className="btn btn-primary btn-md dev-fake-pay-btn"
-            >
-              {fakePaying ? 'Processing...' : '⚡ Fake Pay Now'}
-            </button>
+            <div style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+              {order.payment.status === 'paid' ? (
+                <>
+                  Paid ₹{order.total.toLocaleString()} via <span style={{ textTransform: 'uppercase', fontWeight: 600 }}>{order.payment.method || 'card'}</span> • ID: <code>{order.payment.providerPaymentId}</code>
+                </>
+              ) : order.payment.status === 'failed' ? (
+                <span style={{ color: 'var(--color-danger)' }}>
+                  Reason: {order.payment.failureReason || 'Declined by gateway'}. You can retry safely.
+                </span>
+              ) : (
+                <>Order created in MongoDB. Complete simulated checkout via the Test Gateway.</>
+              )}
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Download Invoice Button for Paid orders */}
+        {order.payment.status === 'paid' && (
+          <button
+            type="button"
+            className="btn btn-secondary btn-md"
+            onClick={handleDownloadInvoice}
+            disabled={downloadingInvoice}
+            style={{ padding: '0.65rem 1.4rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            {downloadingInvoice ? 'Generating PDF...' : '📄 Download Invoice'}
+          </button>
+        )}
+
+        {/* Retry / Pay Now Button for Pending or Failed orders */}
+        {(order.payment.status === 'pending' || order.payment.status === 'failed') && (
+          <button
+            type="button"
+            className="btn btn-primary btn-md"
+            onClick={() => setIsGatewayOpen(true)}
+            style={{ padding: '0.65rem 1.4rem', fontWeight: 600 }}
+          >
+            {order.payment.status === 'failed' ? '🔄 Retry Payment' : '💳 Pay Now (Sandbox)'}
+          </button>
+        )}
+      </div>
 
       {/* Main Order Content */}
       <div className="order-details-layout">
@@ -302,6 +365,39 @@ export default function OrderDetailPage() {
 
         {/* Right: Shipping Address & Actions */}
         <aside className="order-info-sidebar">
+          {/* Order Financial Summary */}
+          <div className="summary-card" style={{ marginBottom: '1.5rem' }}>
+            <h3 className="sidebar-card-title">Order Total</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+              <span>Items Subtotal:</span>
+              <span>₹{((order.total || 0) + (order.discount || 0)).toLocaleString()}</span>
+            </div>
+
+            {order.discount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#16a34a', fontWeight: 600 }}>
+                <span>Coupon Discount ({order.couponCode || 'PROMO'}):</span>
+                <span>- ₹{order.discount.toLocaleString()}</span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem', marginTop: '0.75rem', fontSize: '1.15rem', fontWeight: 800 }}>
+              <span>Total Paid:</span>
+              <span style={{ color: 'var(--color-primary)' }}>₹{order.total.toLocaleString()}</span>
+            </div>
+
+            {order.payment.status === 'paid' && (
+              <button
+                type="button"
+                onClick={handleDownloadInvoice}
+                disabled={downloadingInvoice}
+                className="btn btn-secondary btn-sm"
+                style={{ width: '100%', marginTop: '1rem', fontWeight: 700 }}
+              >
+                {downloadingInvoice ? 'Downloading...' : '📄 Download PDF Invoice'}
+              </button>
+            )}
+          </div>
+
           {/* Shipping Address */}
           <div className="summary-card" style={{ marginBottom: '1.5rem' }}>
             <h3 className="sidebar-card-title">Delivery Address</h3>
@@ -339,6 +435,19 @@ export default function OrderDetailPage() {
           )}
         </aside>
       </div>
+
+      {order && (
+        <TestGatewayModal
+          order={order}
+          isOpen={isGatewayOpen}
+          onClose={() => setIsGatewayOpen(false)}
+          onSuccess={(paidOrder) => {
+            setOrder(paidOrder);
+            setIsGatewayOpen(false);
+            setActionMessage('Payment captured successfully via Test Gateway!');
+          }}
+        />
+      )}
     </div>
   );
 }
