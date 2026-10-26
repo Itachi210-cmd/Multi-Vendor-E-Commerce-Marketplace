@@ -3,23 +3,8 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios';
 
 export default function HomePage() {
-  const [healthData, setHealthData] = useState(null);
-  const [loadingHealth, setLoadingHealth] = useState(false);
-  const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
-
-  const fetchHealth = async () => {
-    setLoadingHealth(true);
-    try {
-      const response = await api.get('/health');
-      setHealthData(response.data);
-    } catch (err) {
-      if (err.data) setHealthData(err.data);
-    } finally {
-      setLoadingHealth(false);
-    }
-  };
 
   const fetchFeaturedProducts = async () => {
     try {
@@ -34,23 +19,8 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetchHealth();
     fetchFeaturedProducts();
   }, []);
-
-  const getStatusBadge = (status) => {
-    const norm = (status || '').toLowerCase();
-    let badgeClass = 'badge-disconnected';
-    if (norm === 'connected' || norm === 'ok') badgeClass = 'badge-connected';
-    else if (norm === 'degraded' || norm === 'connecting') badgeClass = 'badge-degraded';
-
-    return (
-      <span className={`badge ${badgeClass}`}>
-        <span className="badge-dot"></span>
-        {status || 'Operational'}
-      </span>
-    );
-  };
 
   return (
     <div className="home-page">
@@ -257,77 +227,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Discreet Real Storefront System Status Pill */}
-        <section style={{ margin: '2rem 0', textAlign: 'center' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-full)',
-              padding: '0.5rem 1.25rem',
-              boxShadow: 'var(--shadow-sm)',
-              fontSize: '0.85rem',
-            }}
-          >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#16a34a', fontWeight: 700 }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a' }}></span>
-              All Systems Operational
-            </span>
-            <span style={{ color: 'var(--color-border)' }}>|</span>
-            <button
-              type="button"
-              onClick={() => setShowDiagnostics((prev) => !prev)}
-              style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.825rem', cursor: 'pointer', background: 'none' }}
-            >
-              {showDiagnostics ? 'Hide System Diagnostics ▲' : 'View System Diagnostics ▼'}
-            </button>
-          </div>
-
-          {showDiagnostics && (
-            <div style={{ marginTop: '1.25rem', textAlign: 'left' }}>
-              <div className="card" style={{ padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Service Diagnostic Status</h3>
-                  <button onClick={fetchHealth} disabled={loadingHealth} className="btn btn-secondary btn-sm">
-                    {loadingHealth ? 'Pinging...' : '↻ Refresh Diagnostics'}
-                  </button>
-                </div>
-                <div className="services-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-                  <div className="service-card" style={{ padding: '1rem' }}>
-                    <div className="service-card-header">
-                      <strong>MongoDB</strong>
-                      {getStatusBadge(healthData?.services?.mongodb?.status)}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                      Latency: {healthData?.services?.mongodb?.latencyMs ?? 1} ms
-                    </div>
-                  </div>
-                  <div className="service-card" style={{ padding: '1rem' }}>
-                    <div className="service-card-header">
-                      <strong>Redis</strong>
-                      {getStatusBadge(healthData?.services?.redis?.status)}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                      Latency: {healthData?.services?.redis?.latencyMs ?? 1} ms
-                    </div>
-                  </div>
-                  <div className="service-card" style={{ padding: '1rem' }}>
-                    <div className="service-card-header">
-                      <strong>Elasticsearch</strong>
-                      {getStatusBadge(healthData?.services?.elasticsearch?.status)}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                      Cluster: {healthData?.services?.elasticsearch?.clusterStatus || 'green'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
       </div>
     </div>
   );
