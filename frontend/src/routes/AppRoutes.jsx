@@ -4,7 +4,6 @@ import Layout from '../components/Layout';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
-import RbacDemoPage from '../pages/RbacDemoPage';
 import ProductsPage from '../pages/ProductsPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
 import BecomeSellerPage from '../pages/BecomeSellerPage';
@@ -35,7 +34,6 @@ export default function AppRoutes() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/rbac-demo" element={<RbacDemoPage />} />
 
         {/* Customer-only Cart, Checkout & Orders */}
         <Route

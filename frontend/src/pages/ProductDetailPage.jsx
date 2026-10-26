@@ -83,12 +83,12 @@ export default function ProductDetailPage() {
 
   const images = product.images && product.images.length > 0
     ? product.images
-    : ['https://via.placeholder.com/600x500?text=No+Product+Image'];
+    : ['/placeholder.svg'];
 
   const currentCover = selectedImage || images[0];
 
   return (
-    <div className="content-container" style={{ padding: '3rem 1.5rem' }}>
+    <div className="content-container" style={{ padding: '2rem 1.5rem 4rem' }}>
       <div style={{ marginBottom: '1.5rem' }}>
         <Link to="/products" style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>
           ← Back to Catalog
@@ -104,7 +104,8 @@ export default function ProductDetailPage() {
               alt={product.title}
               className="product-main-image"
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/600x500?text=Image+Unavailable';
+                e.target.onerror = null;
+                e.target.src = '/placeholder.svg';
               }}
             />
           </div>

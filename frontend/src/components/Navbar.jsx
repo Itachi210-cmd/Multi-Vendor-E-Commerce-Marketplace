@@ -11,15 +11,22 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
 
-  // Search input and suggestions state
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [suggestions, setSuggestions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoadingSuggest, setIsLoadingSuggest] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const searchContainerRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const debounceTimerRef = useRef(null);
+
+  // Close mobile drawer on route navigation
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setIsOpen(false);
+  }, [location.pathname]);
 
   // Sync input with URL search param if changed externally
   useEffect(() => {
@@ -146,17 +153,16 @@ export default function Navbar() {
         <Link to="/" className="nav-brand">
           <div className="brand-icon">M</div>
           <span className="brand-name">Marketplace</span>
-          <span className="brand-tag">Phase 7</span>
         </Link>
 
         {/* Global Navbar Autocomplete Search Bar */}
-        <div className="navbar-search-wrapper" ref={searchContainerRef}>
+        <div className="navbar-search-wrapper desktop-only-search" ref={searchContainerRef}>
           <form onSubmit={handleSearchSubmit} className="navbar-search-form" role="search">
             <span className="search-icon" aria-hidden="true">🔍</span>
             <input
               type="text"
               className="navbar-search-input"
-              placeholder="Search products, brands, categories..."
+              placeholder="Search products, categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => {
@@ -204,13 +210,8 @@ export default function Navbar() {
           )}
         </div>
 
-        <nav className="navbar-nav">
+        <nav className="navbar-nav desktop-only-nav">
           <ul className="nav-links">
-            <li>
-              <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-                Home
-              </Link>
-            </li>
             <li>
               <Link
                 to="/products"
@@ -223,14 +224,6 @@ export default function Navbar() {
             {/* Customer-only Links */}
             {user?.role === 'customer' && (
               <>
-                <li>
-                  <Link
-                    to="/cart"
-                    className={`nav-link ${location.pathname === '/cart' ? 'active' : ''}`}
-                  >
-                    Cart
-                  </Link>
-                </li>
                 <li>
                   <Link
                     to="/orders"
@@ -248,6 +241,18 @@ export default function Navbar() {
                   </Link>
                 </li>
               </>
+            )}
+
+            {/* Guest Links */}
+            {!user && (
+              <li>
+                <Link
+                  to="/become-seller"
+                  className={`nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`}
+                >
+                  Become a Seller
+                </Link>
+              </li>
             )}
 
             {/* Vendor-only Links */}
@@ -307,15 +312,6 @@ export default function Navbar() {
                 </li>
               </>
             )}
-
-            <li>
-              <Link
-                to="/rbac-demo"
-                className={`nav-link ${location.pathname === '/rbac-demo' ? 'active' : ''}`}
-              >
-                RBAC Sandbox
-              </Link>
-            </li>
           </ul>
         </nav>
 
@@ -328,33 +324,172 @@ export default function Navbar() {
             </Link>
           )}
 
-          {isAuthenticated ? (
-            <div className="user-profile-menu">
-              <span className="user-name">{user?.name}</span>
-              <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
-                <span className="badge-dot"></span>
-                {user?.role}
-              </span>
-              <button
-                onClick={handleSignOut}
-                className="btn btn-secondary btn-sm"
-                title="Log out of session"
-              >
-                Sign Out
-              </button>
-            </div>
-          ) : (
-            <div className="auth-buttons-group">
-              <Link to="/login" className="btn btn-secondary btn-sm">
-                Sign In
-              </Link>
-              <Link to="/register" className="btn btn-primary btn-sm">
-                Register
-              </Link>
-            </div>
-          )}
+          <div className="desktop-auth-container">
+            {isAuthenticated ? (
+              <div className="user-profile-menu">
+                <span className="user-name">{user?.name}</span>
+                <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
+                  <span className="badge-dot"></span>
+                  {user?.role}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="btn btn-secondary btn-sm"
+                  title="Log out of session"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="auth-buttons-group">
+                <Link to="/login" className="btn btn-secondary btn-sm">
+                  Sign In
+                </Link>
+                <Link to="/register" className="btn btn-primary btn-sm">
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile hamburger menu toggle */}
+          <button
+            type="button"
+            className="nav-mobile-toggle"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Navigation (<860px) */}
+      {mobileMenuOpen && (
+        <div className="navbar-mobile-drawer" ref={mobileMenuRef}>
+          {/* Mobile Search */}
+          <div className="mobile-search-box">
+            <form onSubmit={(e) => { handleSearchSubmit(e); setMobileMenuOpen(false); }} className="navbar-search-form" role="search">
+              <span className="search-icon" aria-hidden="true">🔍</span>
+              <input
+                type="text"
+                className="navbar-search-input"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                autoComplete="off"
+              />
+              {searchTerm && (
+                <button type="button" className="search-clear-btn" onClick={clearSearch}>✕</button>
+              )}
+              <button type="submit" className="search-submit-btn">Search</button>
+            </form>
+          </div>
+
+          <ul className="mobile-nav-links">
+            <li>
+              <Link to="/" className={`mobile-nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                🏠 Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/products" className={`mobile-nav-link ${location.pathname.startsWith('/products') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                🛍️ All Products
+              </Link>
+            </li>
+
+            {user?.role === 'customer' && (
+              <>
+                <li>
+                  <Link to="/cart" className={`mobile-nav-link ${location.pathname === '/cart' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                    🛒 Cart {totalItems > 0 && `(${totalItems})`}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders" className={`mobile-nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                    📦 My Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/become-seller" className={`mobile-nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                    ✨ Become a Seller
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {user?.role === 'vendor' && (
+              <>
+                <li className="mobile-section-heading">Vendor Studio</li>
+                <li>
+                  <Link to="/vendor/products" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📦 Products</Link>
+                </li>
+                <li>
+                  <Link to="/vendor/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📋 Orders</Link>
+                </li>
+                <li>
+                  <Link to="/vendor/earnings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>💰 Earnings</Link>
+                </li>
+                <li>
+                  <Link to="/vendor/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🏪 Profile</Link>
+                </li>
+              </>
+            )}
+
+            {user?.role === 'admin' && (
+              <>
+                <li className="mobile-section-heading">Admin Management</li>
+                <li>
+                  <Link to="/admin/analytics" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📊 Analytics</Link>
+                </li>
+                <li>
+                  <Link to="/admin/coupons" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🎟️ Coupons</Link>
+                </li>
+                <li>
+                  <Link to="/admin/vendors" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🛡️ Vendor Approvals</Link>
+                </li>
+                <li>
+                  <Link to="/admin/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📋 All Orders</Link>
+                </li>
+                <li>
+                  <Link to="/admin/payouts" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>💳 Payouts</Link>
+                </li>
+              </>
+            )}
+          </ul>
+
+          <div className="mobile-drawer-auth">
+            {isAuthenticated ? (
+              <div className="mobile-user-info">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <span style={{ fontWeight: 700 }}>{user?.name}</span>
+                  <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
+                    <span className="badge-dot"></span>
+                    {user?.role}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setMobileMenuOpen(false); handleSignOut(); }}
+                  className="btn btn-secondary btn-full btn-sm"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <Link to="/login" className="btn btn-secondary btn-sm" onClick={() => setMobileMenuOpen(false)}>
+                  Sign In
+                </Link>
+                <Link to="/register" className="btn btn-primary btn-sm" onClick={() => setMobileMenuOpen(false)}>
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

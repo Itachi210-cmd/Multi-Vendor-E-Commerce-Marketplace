@@ -455,7 +455,7 @@ export default function ProductsPage() {
                   const coverImg =
                     product.images && product.images.length > 0
                       ? product.images[0]
-                      : product.image || 'https://via.placeholder.com/400x300?text=No+Image';
+                      : product.image || '/placeholder.svg';
 
                   return (
                     <Link
@@ -470,7 +470,8 @@ export default function ProductsPage() {
                           className="product-card-img"
                           loading="lazy"
                           onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/400x300?text=Image+Unavailable';
+                            e.target.onerror = null;
+                            e.target.src = '/placeholder.svg';
                           }}
                         />
                         <span className="product-category-tag">{product.category}</span>
@@ -479,7 +480,7 @@ export default function ProductsPage() {
                       <div className="product-card-body">
                         <div className="product-card-meta-top">
                           <span className="product-vendor-badge">
-                            🏪 {product.storeName || product.vendorId?.storeName || 'Certified Vendor'}
+                            🏪 {product.storeName || product.vendorId?.storeName || 'Community Vendor'}
                           </span>
                           {product.ratingAvg > 0 && (
                             <span className="product-rating-pill">

@@ -147,7 +147,10 @@ export default function VendorProfilePage() {
                   src={logoUrl}
                   alt={storeName}
                   className="store-logo-preview"
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/100?text=Logo'; }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/placeholder.svg';
+                  }}
                 />
               ) : (
                 <div className="store-logo-placeholder">No Logo</div>

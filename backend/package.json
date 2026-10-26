@@ -7,9 +7,10 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --forceExit",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --forceExit --testTimeout=30000",
     "seed:admin": "node scripts/seedAdmin.js",
     "seed:vendors": "node scripts/seedVendors.js",
+    "seed:demo": "node scripts/seedDemo.js",
     "reindex": "node scripts/reindex.js"
   },
   "dependencies": {

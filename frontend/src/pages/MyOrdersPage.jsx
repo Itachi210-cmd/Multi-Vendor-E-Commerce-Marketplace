@@ -96,7 +96,7 @@ export default function MyOrdersPage() {
           <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>📦</div>
           <h2>No Orders Placed Yet</h2>
           <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.5rem' }}>
-            You haven't ordered any items yet. Discover certified products across independent stores in our catalog.
+            You haven't ordered any items yet. Discover products across independent stores in our catalog.
           </p>
           <Link to="/products" className="btn btn-primary btn-sm">
             Browse Products

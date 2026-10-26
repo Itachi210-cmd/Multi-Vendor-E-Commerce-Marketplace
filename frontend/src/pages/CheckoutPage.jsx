@@ -352,7 +352,7 @@ export default function CheckoutPage() {
           <div className="summary-card">
             <h2 className="summary-title">2. Items &amp; Vendor Split</h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-              Your order contains items from <strong>{vendorSplits.length}</strong> certified independent {vendorSplits.length === 1 ? 'vendor' : 'vendors'}.
+              Your order contains items from <strong>{vendorSplits.length}</strong> independent {vendorSplits.length === 1 ? 'vendor' : 'vendors'}.
             </p>
 
             <div className="vendor-splits-container">
@@ -422,14 +422,30 @@ export default function CheckoutPage() {
               <span className="total-amount">₹{grandTotal.toLocaleString()}</span>
             </div>
 
-            <div className="checkout-notice-box">
-              <span>🔒</span>
-              <p>
-                Each vendor fulfills their respective package independently. Payments are processed in sandbox test mode via the Test Gateway.
+            <div className="checkout-notice-box" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '0.85rem', marginTop: '1.25rem', display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+              <span style={{ fontSize: '1.1rem' }}>ℹ️</span>
+              <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--color-primary-dark)', lineHeight: 1.45 }}>
+                <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
               </p>
             </div>
           </div>
         </aside>
+      </div>
+
+      {/* Sticky Mobile Checkout Bar */}
+      <div className="checkout-mobile-sticky-bar">
+        <div className="mobile-total-info">
+          <span className="mobile-total-label">Grand Total</span>
+          <span className="mobile-total-price">₹{grandTotal.toLocaleString()}</span>
+        </div>
+        <button
+          type="button"
+          onClick={handlePlaceOrder}
+          disabled={submitting || hasIssues}
+          className="btn btn-primary btn-sm mobile-place-order-btn"
+        >
+          {submitting ? 'Placing...' : 'Place Order →'}
+        </button>
       </div>
     </div>
   );

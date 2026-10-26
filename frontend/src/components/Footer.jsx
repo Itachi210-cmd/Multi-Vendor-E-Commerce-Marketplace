@@ -16,19 +16,21 @@ export default function Footer() {
           </div>
 
           <div className="stack-pills">
-            <span className="stack-pill">React SPA</span>
+            <span className="stack-pill">React</span>
             <span className="stack-pill">Node.js / Express</span>
             <span className="stack-pill">MongoDB</span>
             <span className="stack-pill">Redis</span>
             <span className="stack-pill">Elasticsearch</span>
-            <span className="stack-pill">AWS S3</span>
-            <span className="stack-pill">Razorpay Route</span>
+            <span className="stack-pill">Supabase Storage (S3-compatible)</span>
+            <span className="stack-pill">Test payment gateway (sandbox)</span>
           </div>
         </div>
 
-        <div className="footer-bottom">
-          <span>&copy; {new Date().getFullYear()} Multi-Vendor Marketplace Platform. Phase 1 Setup.</span>
-          <span>Designed with Vanilla CSS &amp; Pure JavaScript</span>
+        <div className="footer-bottom" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'center' }}>
+          <span>&copy; {new Date().getFullYear()} Multi-Vendor Marketplace Demo Platform.</span>
+          <span style={{ color: 'var(--color-primary-dark)', fontWeight: 600 }}>
+            Demo project: payments are simulated in a test gateway, no real money is charged.
+          </span>
         </div>
       </div>
     </footer>

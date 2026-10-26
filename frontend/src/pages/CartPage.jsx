@@ -46,7 +46,7 @@ export default function CartPage() {
           <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🛒</div>
           <h2>Your Cart is Empty</h2>
           <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.75rem', lineHeight: '1.6' }}>
-            Looks like you haven't added anything to your cart yet. Explore certified vendor items across our multi-vendor marketplace!
+            Looks like you haven't added anything to your cart yet. Explore items across our multi-vendor marketplace!
           </p>
           <Link to="/products" className="btn btn-primary btn-md">
             Explore Products
@@ -102,7 +102,8 @@ export default function CartPage() {
                       alt={item.title}
                       className="cart-item-img"
                       onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+                        e.target.onerror = null;
+                        e.target.src = '/placeholder.svg';
                       }}
                     />
                   ) : (

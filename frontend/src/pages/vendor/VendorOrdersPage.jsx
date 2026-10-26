@@ -189,7 +189,8 @@ export default function VendorOrdersPage() {
                               alt={it.title}
                               className="vendor-item-compact-thumb"
                               onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/50?text=No+Img';
+                                e.target.onerror = null;
+                                e.target.src = '/placeholder.svg';
                               }}
                             />
                           )}

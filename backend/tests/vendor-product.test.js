@@ -231,36 +231,108 @@ describe('Phase 3: Vendor & Product APIs and S3 Uploads', () => {
       expect(res.body.product.title).toBe('Gaming Headset');
     });
 
-    it('should validate price >= 0 and stock is positive integer (400 Bad Request)', async () => {
+    it('should validate price between 1 and 1,000,000 INR, stock 0-100,000, title 3-120 chars, and desc max 2000 chars (400 Bad Request)', async () => {
       const vendorToken = generateAccessToken(mockVendor1User);
       jest.spyOn(User, 'findById').mockResolvedValue(mockVendor1User);
       jest.spyOn(Vendor, 'findOne').mockResolvedValue(mockVendorDoc1);
 
-      // Negative price
-      const res1 = await request(app)
+      // Price < 1
+      const resPriceLow = await request(app)
         .post('/api/products')
         .set('Authorization', `Bearer ${vendorToken}`)
         .send({
           title: 'Bad Price',
-          description: 'Desc',
-          price: -50,
+          description: 'Valid Description',
+          price: 0,
           stock: 10,
           category: 'Electronics',
         });
-      expect(res1.status).toBe(400);
+      expect(resPriceLow.status).toBe(400);
+      expect(resPriceLow.body.message).toContain('Price must be between 1 and 1,000,000 INR');
+
+      // Price > 1,000,000
+      const resPriceHigh = await request(app)
+        .post('/api/products')
+        .set('Authorization', `Bearer ${vendorToken}`)
+        .send({
+          title: 'Too Expensive',
+          description: 'Valid Description',
+          price: 1500000,
+          stock: 10,
+          category: 'Electronics',
+        });
+      expect(resPriceHigh.status).toBe(400);
+      expect(resPriceHigh.body.message).toContain('Price must be between 1 and 1,000,000 INR');
 
       // Non-integer stock
-      const res2 = await request(app)
+      const resStockFloat = await request(app)
         .post('/api/products')
         .set('Authorization', `Bearer ${vendorToken}`)
         .send({
           title: 'Bad Stock',
-          description: 'Desc',
+          description: 'Valid Description',
           price: 100,
           stock: 12.5,
           category: 'Electronics',
         });
-      expect(res2.status).toBe(400);
+      expect(resStockFloat.status).toBe(400);
+      expect(resStockFloat.body.message).toContain('Stock must be an integer between 0 and 100,000');
+
+      // Stock > 100,000
+      const resStockHigh = await request(app)
+        .post('/api/products')
+        .set('Authorization', `Bearer ${vendorToken}`)
+        .send({
+          title: 'Too Much Stock',
+          description: 'Valid Description',
+          price: 100,
+          stock: 150000,
+          category: 'Electronics',
+        });
+      expect(resStockHigh.status).toBe(400);
+      expect(resStockHigh.body.message).toContain('Stock must be an integer between 0 and 100,000');
+
+      // Title < 3 chars
+      const resTitleShort = await request(app)
+        .post('/api/products')
+        .set('Authorization', `Bearer ${vendorToken}`)
+        .send({
+          title: 'AB',
+          description: 'Valid Description',
+          price: 100,
+          stock: 10,
+          category: 'Electronics',
+        });
+      expect(resTitleShort.status).toBe(400);
+      expect(resTitleShort.body.message).toContain('Title must be between 3 and 120 characters');
+
+      // Title > 120 chars
+      const resTitleLong = await request(app)
+        .post('/api/products')
+        .set('Authorization', `Bearer ${vendorToken}`)
+        .send({
+          title: 'A'.repeat(125),
+          description: 'Valid Description',
+          price: 100,
+          stock: 10,
+          category: 'Electronics',
+        });
+      expect(resTitleLong.status).toBe(400);
+      expect(resTitleLong.body.message).toContain('Title must be between 3 and 120 characters');
+
+      // Description > 2000 chars
+      const resDescLong = await request(app)
+        .post('/api/products')
+        .set('Authorization', `Bearer ${vendorToken}`)
+        .send({
+          title: 'Valid Title',
+          description: 'D'.repeat(2005),
+          price: 100,
+          stock: 10,
+          category: 'Electronics',
+        });
+      expect(resDescLong.status).toBe(400);
+      expect(resDescLong.body.message).toContain('Description cannot exceed 2000 characters');
     });
 
     it('owning vendor should update product (200 OK)', async () => {

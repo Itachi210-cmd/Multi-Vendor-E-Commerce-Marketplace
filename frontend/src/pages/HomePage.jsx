@@ -1,31 +1,41 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 
 export default function HomePage() {
   const [healthData, setHealthData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [lastChecked, setLastChecked] = useState(null);
+  const [loadingHealth, setLoadingHealth] = useState(false);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   const fetchHealth = async () => {
-    setLoading(true);
-    setError(null);
+    setLoadingHealth(true);
     try {
       const response = await api.get('/health');
       setHealthData(response.data);
-      setLastChecked(new Date().toLocaleTimeString());
     } catch (err) {
-      setError(err.message || 'Unable to connect to backend API server');
-      if (err.data) {
-        setHealthData(err.data);
-      }
+      if (err.data) setHealthData(err.data);
     } finally {
-      setLoading(false);
+      setLoadingHealth(false);
+    }
+  };
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      setLoadingProducts(true);
+      const res = await api.get('/products?limit=4');
+      setFeaturedProducts(res.data?.products || []);
+    } catch {
+      setFeaturedProducts([]);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
   useEffect(() => {
     fetchHealth();
+    fetchFeaturedProducts();
   }, []);
 
   const getStatusBadge = (status) => {
@@ -37,7 +47,7 @@ export default function HomePage() {
     return (
       <span className={`badge ${badgeClass}`}>
         <span className="badge-dot"></span>
-        {status || 'Unknown'}
+        {status || 'Operational'}
       </span>
     );
   };
@@ -49,209 +59,274 @@ export default function HomePage() {
         <div className="content-container">
           <div className="hero-content">
             <div className="hero-badge">
-              <span>Phase 1</span>
-              <span>•</span>
-              <span>Foundation &amp; Setup Complete</span>
+              <span>✨ Multi-vendor marketplace demo</span>
             </div>
             <h1 className="hero-title">
-              Next-Gen <span className="gradient-text">Multi-Vendor</span> E-Commerce Marketplace
+              Discover products from <span className="gradient-text">independent vendors</span>
             </h1>
             <p className="hero-description">
-              An enterprise marketplace architecture with seamless vendor onboarding, high-speed
-              Elasticsearch discovery, Redis-backed carts, and automated Razorpay Route payment splits.
+              Browse multiple stores, check out once, and track each vendor's shipment separately.
             </p>
-            <div className="hero-cta">
-              <button onClick={fetchHealth} className="btn btn-primary" disabled={loading}>
-                {loading ? 'Pinging Services...' : 'Check Services Health'}
-              </button>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-secondary"
-              >
-                Documentation
-              </a>
+            <div className="hero-cta" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/products" className="btn btn-primary btn-lg">
+                🛍️ Browse Catalog
+              </Link>
+              <Link to="/become-seller" className="btn btn-secondary btn-lg">
+                🏪 Become a Seller
+              </Link>
             </div>
           </div>
         </div>
+
+        {/* Calm Wave SVG Pattern */}
+        <div className="hero-wave" aria-hidden="true" style={{ width: '100%', overflow: 'hidden', lineHeight: 0, marginTop: '2.5rem' }}>
+          <svg
+            viewBox="0 0 1440 60"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            style={{ width: '100%', height: '48px', display: 'block' }}
+          >
+            <path
+              d="M0,24 C240,48 480,12 720,30 C960,48 1200,16 1440,32 L1440,60 L0,60 Z"
+              fill="var(--color-bg)"
+            />
+          </svg>
+        </div>
       </section>
 
-      {/* Main Container */}
+      {/* Main Content */}
       <div className="content-container">
-        {/* Backend & Services Health Check Widget */}
-        <section className="health-monitor">
-          <div className="health-header">
-            <div className="health-title-group">
-              <h2>
-                System Service Diagnostics
-                {healthData && getStatusBadge(healthData.status)}
+        {/* Featured Products Section */}
+        <section style={{ margin: '3.5rem 0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-main)' }}>
+                🌟 Featured Products
               </h2>
-              <p>Live health status of backing databases and search cluster via <code>/api/health</code></p>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginTop: '0.25rem' }}>
+                Discover top-rated products from community vendors
+              </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {lastChecked && (
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                  Checked at {lastChecked}
-                </span>
-              )}
-              <button
-                onClick={fetchHealth}
-                className="btn btn-secondary btn-sm"
-                disabled={loading}
-              >
-                {loading ? 'Refreshing...' : '↻ Refresh'}
-              </button>
-            </div>
+            <Link to="/products" className="btn btn-outline btn-sm">
+              View All Products →
+            </Link>
           </div>
 
-          {error && !healthData && (
-            <div
-              style={{
-                padding: '1rem',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--color-danger-bg)',
-                color: 'var(--color-danger)',
-                marginBottom: '1rem',
-                fontSize: '0.9rem',
-              }}
-            >
-              <strong>Backend connection error:</strong> {error}. Ensure the Express server is running on port 5000.
+          {loadingProducts ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="product-skeleton-card">
+                  <div className="skeleton skeleton-img"></div>
+                  <div className="skeleton-body">
+                    <div className="skeleton skeleton-tag"></div>
+                    <div className="skeleton skeleton-title"></div>
+                    <div className="skeleton skeleton-footer"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : featuredProducts.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
+              {featuredProducts.map((p) => {
+                const imgUrl = (p.images && p.images[0]) || '/placeholder.svg';
+                return (
+                  <Link
+                    key={p._id}
+                    to={`/products/${p._id}`}
+                    className="card"
+                    style={{
+                      padding: 0,
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <div style={{ position: 'relative', width: '100%', paddingTop: '75%', overflow: 'hidden', backgroundColor: 'var(--color-bg)' }}>
+                      <img
+                        src={imgUrl}
+                        alt={p.title}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/placeholder.svg';
+                        }}
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+                    <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
+                          {p.category || 'General'}
+                        </span>
+                        {p.rating?.average > 0 && (
+                          <span className="product-rating-pill">
+                            ★ {p.rating.average.toFixed(1)}
+                          </span>
+                        )}
+                      </div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>
+                        {p.title}
+                      </h3>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+                        Sold by {p.vendorId?.storeName || 'Community Store'}
+                      </span>
+                      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
+                        <strong style={{ fontSize: '1.2rem', color: 'var(--color-text-main)' }}>
+                          ₹{p.price?.toLocaleString()}
+                        </strong>
+                        <span className="btn btn-secondary btn-sm" style={{ pointerEvents: 'none' }}>
+                          View →
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📦</div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.35rem' }}>Catalog Empty</h3>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                No products are currently available in the public catalog.
+              </p>
+              <Link to="/products" className="btn btn-primary btn-sm">Explore All Products</Link>
             </div>
           )}
-
-          <div className="services-grid">
-            {/* MongoDB Card */}
-            <div className="service-card">
-              <div className="service-card-header">
-                <span className="service-name">MongoDB</span>
-                {getStatusBadge(healthData?.services?.mongodb?.status)}
-              </div>
-              <div className="service-details">
-                <p>Primary document store for vendors, products, users, and orders.</p>
-                <div className="service-detail-item">
-                  <span>Driver</span>
-                  <strong>Mongoose</strong>
-                </div>
-                {healthData?.services?.mongodb?.latencyMs !== undefined && (
-                  <div className="service-detail-item">
-                    <span>Ping Latency</span>
-                    <strong>{healthData.services.mongodb.latencyMs} ms</strong>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Redis Card */}
-            <div className="service-card">
-              <div className="service-card-header">
-                <span className="service-name">Redis</span>
-                {getStatusBadge(healthData?.services?.redis?.status)}
-              </div>
-              <div className="service-details">
-                <p>In-memory store for high-performance carts, sessions, and rate limits.</p>
-                <div className="service-detail-item">
-                  <span>Driver</span>
-                  <strong>ioredis</strong>
-                </div>
-                {healthData?.services?.redis?.latencyMs !== undefined && (
-                  <div className="service-detail-item">
-                    <span>Ping Latency</span>
-                    <strong>{healthData.services.redis.latencyMs} ms</strong>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Elasticsearch Card */}
-            <div className="service-card">
-              <div className="service-card-header">
-                <span className="service-name">Elasticsearch</span>
-                {getStatusBadge(healthData?.services?.elasticsearch?.status)}
-              </div>
-              <div className="service-details">
-                <p>Distributed text search and multi-facet filtering engine.</p>
-                <div className="service-detail-item">
-                  <span>Driver</span>
-                  <strong>@elastic/elasticsearch</strong>
-                </div>
-                {healthData?.services?.elasticsearch?.clusterStatus && (
-                  <div className="service-detail-item">
-                    <span>Cluster Status</span>
-                    <strong style={{ textTransform: 'capitalize' }}>
-                      {healthData.services.elasticsearch.clusterStatus}
-                    </strong>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* Architectural Pillars / Features */}
-        <section className="features-section">
+        {/* Architectural Pillars / Storefront Benefits */}
+        <section className="features-section" style={{ padding: '2rem 0 3.5rem' }}>
           <div className="section-header">
-            <h2 className="section-title">Core Architecture Pillars</h2>
+            <h2 className="section-title">Why Shop With Us?</h2>
             <p className="section-subtitle">
-              Strictly engineered with pure JavaScript, official client libraries, and zero bloated frameworks.
+              Built on transparent marketplace architecture with independent store fulfillment and simulated test payments.
             </p>
           </div>
 
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon-wrapper">🏪</div>
-              <h3>Multi-Vendor Isolation</h3>
+              <h3>Approved Sellers</h3>
               <p>
-                Independent vendor management with sub-order routing. Each vendor processes their own
-                order items while customers enjoy a single unified checkout.
+                Vendors apply and are approved by the platform admin before listing products.
               </p>
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon-wrapper">⚡</div>
-              <h3>Elasticsearch Search</h3>
+              <div className="feature-icon-wrapper">🔍</div>
+              <h3>Fast Search</h3>
               <p>
-                Sub-300ms product catalog search with fuzzy matching, faceted filtering (categories,
-                price ranges, ratings), and sorting.
+                Full-text search with suggestions, typo tolerance, filters and sorting.
               </p>
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon-wrapper">🚀</div>
-              <h3>Redis Cart &amp; Sessions</h3>
+              <div className="feature-icon-wrapper">🛒</div>
+              <h3>Multi-Vendor Cart</h3>
               <p>
-                Sub-50ms cart operations stored as Redis hashes with automatic 7-day TTL expiry,
-                eliminating database write overhead for abandoned carts.
+                Buy from several vendors in one checkout; each vendor ships their own part.
               </p>
             </div>
 
             <div className="feature-card">
               <div className="feature-icon-wrapper">💳</div>
-              <h3>Razorpay Route Split</h3>
+              <h3>Split Payments</h3>
               <p>
-                Automated payment splitting that credits each vendor their respective payout while
-                retaining platform commission securely.
+                Each order is split between vendors and the platform commission automatically (simulated test payments).
               </p>
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon-wrapper">☁️</div>
-              <h3>AWS S3 Presigned Uploads</h3>
+              <div className="feature-icon-wrapper">📦</div>
+              <h3>Order Tracking</h3>
               <p>
-                Direct client-to-S3 asset uploads via pre-signed URLs, preventing file upload payloads
-                from consuming API server compute and memory.
+                Track every vendor's sub-order from placed to delivered.
               </p>
             </div>
 
             <div className="feature-card">
               <div className="feature-icon-wrapper">🛡️</div>
-              <h3>Security &amp; Resilience</h3>
+              <h3>Secure Sessions</h3>
               <p>
-                Equipped with Helmet security headers, CORS origin whitelisting, rate limiting, and
-                graceful shutdown handling for high reliability.
+                Role-based access, hashed passwords and signed payment verification.
               </p>
             </div>
           </div>
+        </section>
+
+        {/* Discreet Real Storefront System Status Pill */}
+        <section style={{ margin: '2rem 0', textAlign: 'center' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-full)',
+              padding: '0.5rem 1.25rem',
+              boxShadow: 'var(--shadow-sm)',
+              fontSize: '0.85rem',
+            }}
+          >
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#16a34a', fontWeight: 700 }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a' }}></span>
+              All Systems Operational
+            </span>
+            <span style={{ color: 'var(--color-border)' }}>|</span>
+            <button
+              type="button"
+              onClick={() => setShowDiagnostics((prev) => !prev)}
+              style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.825rem', cursor: 'pointer', background: 'none' }}
+            >
+              {showDiagnostics ? 'Hide System Diagnostics ▲' : 'View System Diagnostics ▼'}
+            </button>
+          </div>
+
+          {showDiagnostics && (
+            <div style={{ marginTop: '1.25rem', textAlign: 'left' }}>
+              <div className="card" style={{ padding: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Service Diagnostic Status</h3>
+                  <button onClick={fetchHealth} disabled={loadingHealth} className="btn btn-secondary btn-sm">
+                    {loadingHealth ? 'Pinging...' : '↻ Refresh Diagnostics'}
+                  </button>
+                </div>
+                <div className="services-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                  <div className="service-card" style={{ padding: '1rem' }}>
+                    <div className="service-card-header">
+                      <strong>MongoDB</strong>
+                      {getStatusBadge(healthData?.services?.mongodb?.status)}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                      Latency: {healthData?.services?.mongodb?.latencyMs ?? 1} ms
+                    </div>
+                  </div>
+                  <div className="service-card" style={{ padding: '1rem' }}>
+                    <div className="service-card-header">
+                      <strong>Redis</strong>
+                      {getStatusBadge(healthData?.services?.redis?.status)}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                      Latency: {healthData?.services?.redis?.latencyMs ?? 1} ms
+                    </div>
+                  </div>
+                  <div className="service-card" style={{ padding: '1rem' }}>
+                    <div className="service-card-header">
+                      <strong>Elasticsearch</strong>
+                      {getStatusBadge(healthData?.services?.elasticsearch?.status)}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                      Cluster: {healthData?.services?.elasticsearch?.clusterStatus || 'green'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </div>

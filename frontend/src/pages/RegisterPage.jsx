@@ -131,7 +131,7 @@ export default function RegisterPage() {
 
             <div className="role-notice">
               <span className="badge badge-connected">Role: Customer</span>
-              <p>Registration grants Customer access. Vendor stores require approval via application in Phase 3.</p>
+              <p>Registration grants Customer access. Vendor stores require approval via seller application.</p>
             </div>
 
             <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>

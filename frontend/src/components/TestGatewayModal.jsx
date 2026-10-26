@@ -265,6 +265,27 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
         {/* Modal Body */}
         <div className="modal-body" style={{ padding: '1.5rem' }}>
+          {/* Demo Notice Banner */}
+          <div
+            style={{
+              background: 'var(--color-bg)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '8px',
+              padding: '0.65rem 0.9rem',
+              marginBottom: '1.25rem',
+              fontSize: '0.82rem',
+              color: 'var(--color-primary-dark)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>ℹ️</span>
+            <span>
+              <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
+            </span>
+          </div>
+
           {/* Amount Badge Banner */}
           <div
             style={{
@@ -447,8 +468,8 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     borderRadius: '8px',
                     border: '1px solid',
                     borderColor: activeTab === 'card' ? 'var(--color-primary)' : 'var(--color-border)',
-                    backgroundColor: activeTab === 'card' ? 'rgba(99, 102, 241, 0.1)' : 'var(--color-surface)',
-                    color: activeTab === 'card' ? 'var(--color-primary)' : 'var(--color-text)',
+                    backgroundColor: activeTab === 'card' ? 'var(--color-bg-soft)' : 'var(--color-surface)',
+                    color: activeTab === 'card' ? 'var(--color-primary-dark)' : 'var(--color-text)',
                     cursor: 'pointer',
                     fontWeight: 600,
                     fontSize: '0.9rem',
@@ -471,8 +492,8 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     borderRadius: '8px',
                     border: '1px solid',
                     borderColor: activeTab === 'upi' ? 'var(--color-primary)' : 'var(--color-border)',
-                    backgroundColor: activeTab === 'upi' ? 'rgba(99, 102, 241, 0.1)' : 'var(--color-surface)',
-                    color: activeTab === 'upi' ? 'var(--color-primary)' : 'var(--color-text)',
+                    backgroundColor: activeTab === 'upi' ? 'var(--color-bg-soft)' : 'var(--color-surface)',
+                    color: activeTab === 'upi' ? 'var(--color-primary-dark)' : 'var(--color-text)',
                     cursor: 'pointer',
                     fontWeight: 600,
                     fontSize: '0.9rem',
@@ -537,7 +558,7 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.5rem' }}>
                       ⚡ Click a test scenario to prefill:
                     </span>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.45rem' }}>
+                    <div className="test-cards-grid">
                       {TEST_CARDS.map((tc, idx) => (
                         <button
                           key={idx}

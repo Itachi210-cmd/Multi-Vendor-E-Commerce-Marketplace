@@ -157,7 +157,10 @@ export default function VendorApprovalsPage() {
                           src={vendor.logoUrl}
                           alt={vendor.storeName}
                           className="table-img-thumb"
-                          onError={(e) => { e.target.src = 'https://via.placeholder.com/40?text=Logo'; }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/placeholder.svg';
+                          }}
                         />
                       ) : (
                         <div className="table-img-placeholder" style={{ width: '40px', height: '40px' }}>🏪</div>

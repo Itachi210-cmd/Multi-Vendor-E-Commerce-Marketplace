@@ -53,6 +53,6 @@ export const isRouteAllowedForRole = (pathname, role) => {
     return role === 'admin';
   }
 
-  // Public routes (/, /products, /products/:id, /rbac-demo) allowed for all
+  // Public routes (/, /products, /products/:id, /become-seller) allowed for all
   return true;
 };

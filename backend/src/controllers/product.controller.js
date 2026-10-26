@@ -24,25 +24,47 @@ export const create = async (req, res, next) => {
       });
     }
 
-    if (Number(price) < 0) {
+    const trimmedTitle = String(title).trim();
+    if (trimmedTitle.length < 3 || trimmedTitle.length > 120) {
       return res.status(400).json({
         success: false,
-        message: 'Price must be greater than or equal to 0',
+        message: 'Title must be between 3 and 120 characters',
+        field: 'title',
       });
     }
 
-    if (!Number.isInteger(Number(stock)) || Number(stock) < 0) {
+    const trimmedDesc = String(description).trim();
+    if (trimmedDesc.length > 2000) {
       return res.status(400).json({
         success: false,
-        message: 'Stock must be an integer greater than or equal to 0',
+        message: 'Description cannot exceed 2000 characters',
+        field: 'description',
+      });
+    }
+
+    const numPrice = Number(price);
+    if (isNaN(numPrice) || numPrice < 1 || numPrice > 1000000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Price must be between 1 and 1,000,000 INR',
+        field: 'price',
+      });
+    }
+
+    const numStock = Number(stock);
+    if (!Number.isInteger(numStock) || numStock < 0 || numStock > 100000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Stock must be an integer between 0 and 100,000',
+        field: 'stock',
       });
     }
 
     const product = await createProduct(req.user._id, {
-      title,
-      description,
-      price,
-      stock,
+      title: trimmedTitle,
+      description: trimmedDesc,
+      price: numPrice,
+      stock: numStock,
       category,
       tags,
       images,
@@ -64,20 +86,50 @@ export const create = async (req, res, next) => {
  */
 export const update = async (req, res, next) => {
   try {
-    const { price, stock } = req.body;
+    const { title, description, price, stock } = req.body;
 
-    if (price !== undefined && Number(price) < 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Price must be greater than or equal to 0',
-      });
+    if (title !== undefined) {
+      const trimmedTitle = String(title).trim();
+      if (trimmedTitle.length < 3 || trimmedTitle.length > 120) {
+        return res.status(400).json({
+          success: false,
+          message: 'Title must be between 3 and 120 characters',
+          field: 'title',
+        });
+      }
     }
 
-    if (stock !== undefined && (!Number.isInteger(Number(stock)) || Number(stock) < 0)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Stock must be an integer greater than or equal to 0',
-      });
+    if (description !== undefined) {
+      const trimmedDesc = String(description).trim();
+      if (trimmedDesc.length > 2000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Description cannot exceed 2000 characters',
+          field: 'description',
+        });
+      }
+    }
+
+    if (price !== undefined) {
+      const numPrice = Number(price);
+      if (isNaN(numPrice) || numPrice < 1 || numPrice > 1000000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Price must be between 1 and 1,000,000 INR',
+          field: 'price',
+        });
+      }
+    }
+
+    if (stock !== undefined) {
+      const numStock = Number(stock);
+      if (!Number.isInteger(numStock) || numStock < 0 || numStock > 100000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Stock must be an integer between 0 and 100,000',
+          field: 'stock',
+        });
+      }
     }
 
     const product = await updateProduct(req.user._id, req.params.id, req.body);

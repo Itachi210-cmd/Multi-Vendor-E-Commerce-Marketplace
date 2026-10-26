@@ -138,13 +138,25 @@ export default function VendorProductsPage() {
       return;
     }
 
-    if (Number(price) < 0) {
-      setFormError('Price must be greater than or equal to 0.');
+    if (title.trim().length < 3 || title.trim().length > 120) {
+      setFormError('Product title must be between 3 and 120 characters.');
       return;
     }
 
-    if (parseInt(stock, 10) < 0 || !Number.isInteger(Number(stock))) {
-      setFormError('Stock must be a valid integer >= 0.');
+    if (description.trim().length > 2000) {
+      setFormError('Description cannot exceed 2000 characters.');
+      return;
+    }
+
+    const numPrice = Number(price);
+    if (isNaN(numPrice) || numPrice < 1 || numPrice > 1000000) {
+      setFormError('Price must be between ₹1 and ₹1,000,000 INR.');
+      return;
+    }
+
+    const numStock = Number(stock);
+    if (!Number.isInteger(numStock) || numStock < 0 || numStock > 100000) {
+      setFormError('Stock must be an integer between 0 and 100,000.');
       return;
     }
 
@@ -244,7 +256,8 @@ export default function VendorProductsPage() {
                         alt={product.title}
                         className="table-img-thumb"
                         onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/60?text=No+Img';
+                          e.target.onerror = null;
+                          e.target.src = '/placeholder.svg';
                         }}
                       />
                     ) : (
@@ -313,13 +326,15 @@ export default function VendorProductsPage() {
 
             <form onSubmit={handleSubmit} className="auth-form">
               <div className="form-group">
-                <label className="form-label">Product Title *</label>
+                <label className="form-label">Product Title * (3-120 chars)</label>
                 <input
                   type="text"
                   className="form-input"
                   placeholder="e.g. Wireless Ergonomic Keyboard"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  minLength={3}
+                  maxLength={120}
                   required
                 />
               </div>
@@ -344,10 +359,11 @@ export default function VendorProductsPage() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Price (₹) *</label>
+                  <label className="form-label">Price (₹) * (1 - 10,00,000)</label>
                   <input
                     type="number"
-                    min="0"
+                    min="1"
+                    max="1000000"
                     step="1"
                     className="form-input"
                     placeholder="1999"
@@ -360,10 +376,11 @@ export default function VendorProductsPage() {
 
               <div className="form-row-2">
                 <div className="form-group">
-                  <label className="form-label">Stock Quantity *</label>
+                  <label className="form-label">Stock Quantity * (0 - 100,000)</label>
                   <input
                     type="number"
                     min="0"
+                    max="100000"
                     step="1"
                     className="form-input"
                     placeholder="50"
@@ -386,13 +403,14 @@ export default function VendorProductsPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Description *</label>
+                <label className="form-label">Description * (Max 2000 chars)</label>
                 <textarea
                   className="form-input"
                   rows={4}
                   placeholder="Provide comprehensive product specifications and details..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  maxLength={2000}
                   required
                 />
               </div>

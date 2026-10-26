@@ -347,7 +347,7 @@ export default function ProductReviewsSection({ productId }) {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#e0e7ff', color: '#4338ca', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--color-bg-soft)', color: 'var(--color-primary-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem' }}>
                         {rev.customerName ? rev.customerName.charAt(0).toUpperCase() : 'C'}
                       </div>
                       <div>

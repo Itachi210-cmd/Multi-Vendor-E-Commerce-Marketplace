@@ -247,7 +247,7 @@ export default function OrderDetailPage() {
             width: '46px',
             height: '46px',
             borderRadius: '10px',
-            backgroundColor: order.payment.status === 'paid' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(99, 102, 241, 0.1)',
+            backgroundColor: order.payment.status === 'paid' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(2, 132, 199, 0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -321,7 +321,7 @@ export default function OrderDetailPage() {
                 <div className="suborder-header">
                   <div>
                     <span className="suborder-store-name">
-                      🏪 {subOrder.vendorId?.storeName || 'Certified Vendor'}
+                      🏪 {subOrder.vendorId?.storeName || 'Community Vendor'}
                     </span>
                     <span className="suborder-items-count">
                       ({subOrder.items.length} {subOrder.items.length === 1 ? 'item' : 'items'})
@@ -379,7 +379,8 @@ export default function OrderDetailPage() {
                             alt={it.title}
                             className="suborder-item-thumb"
                             onError={(e) => {
-                              e.target.src = 'https://via.placeholder.com/60?text=No+Img';
+                              e.target.onerror = null;
+                              e.target.src = '/placeholder.svg';
                             }}
                           />
                         )}

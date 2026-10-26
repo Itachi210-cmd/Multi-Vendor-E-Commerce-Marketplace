@@ -6,8 +6,8 @@ import { env } from './env.js';
  */
 export const esClient = new Client({
   node: env.esNode,
-  maxRetries: 2,
-  requestTimeout: 3000,
+  maxRetries: 3,
+  requestTimeout: 10000,
 });
 
 /**

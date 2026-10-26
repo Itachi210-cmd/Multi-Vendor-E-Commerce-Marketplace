@@ -204,7 +204,7 @@ export default function AdminAnalyticsPage() {
               <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
                 Platform Commission
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#4f46e5', margin: '0.35rem 0' }}>
+              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0284C7', margin: '0.35rem 0' }}>
                 ₹{totals.commission.toLocaleString()}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
@@ -260,7 +260,7 @@ export default function AdminAnalyticsPage() {
                 {totals.activeVendors}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Certified active storefronts
+                Approved active storefronts
               </div>
             </div>
           </div>
@@ -269,8 +269,8 @@ export default function AdminAnalyticsPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
-              gap: '2rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+              gap: '1.5rem',
               marginBottom: '2.5rem',
             }}
           >
@@ -299,12 +299,12 @@ export default function AdminAnalyticsPage() {
                 >
                   <defs>
                     <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#0284C7" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
-                  {/* Horizontal Grid lines */}
+                  {/* Horizontal Grid lines (Light Blue) */}
                   {[0, 0.25, 0.5, 0.75, 1].map((pct) => {
                     const y = padding.top + graphHeight * (1 - pct);
                     const val = Math.round(maxRevenue * pct);
@@ -315,7 +315,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#e2e8f0"
+                          stroke="#BAE6FD"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -323,7 +323,7 @@ export default function AdminAnalyticsPage() {
                           y={y + 4}
                           textAnchor="end"
                           fontSize="9"
-                          fill="#94a3b8"
+                          fill="#64748b"
                         >
                           ₹{val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
                         </text>
@@ -341,7 +341,7 @@ export default function AdminAnalyticsPage() {
                     <path
                       d={revenuePathD}
                       fill="none"
-                      stroke="#4f46e5"
+                      stroke="#0284C7"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -356,7 +356,7 @@ export default function AdminAnalyticsPage() {
                         cy={p.y}
                         r="3.5"
                         fill="#ffffff"
-                        stroke="#4f46e5"
+                        stroke="#0284C7"
                         strokeWidth="2"
                         onMouseEnter={() =>
                           setHoveredPoint({ ...p, type: 'revenue' })
@@ -385,7 +385,7 @@ export default function AdminAnalyticsPage() {
                   {hoveredPoint && hoveredPoint.type === 'revenue' && (
                     <g>
                       <rect
-                        x={Math.min(hoveredPoint.x - 45, chartWidth - 100)}
+                        x={Math.max(10, Math.min(hoveredPoint.x - 45, chartWidth - 100))}
                         y={Math.max(hoveredPoint.y - 35, 5)}
                         width="90"
                         height="26"
@@ -394,7 +394,7 @@ export default function AdminAnalyticsPage() {
                         opacity="0.9"
                       />
                       <text
-                        x={Math.min(hoveredPoint.x, chartWidth - 55)}
+                        x={Math.max(55, Math.min(hoveredPoint.x, chartWidth - 55))}
                         y={Math.max(hoveredPoint.y - 18, 22)}
                         textAnchor="middle"
                         fontSize="9.5"
@@ -443,7 +443,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#e2e8f0"
+                          stroke="#BAE6FD"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -483,7 +483,7 @@ export default function AdminAnalyticsPage() {
                           width={barWidth}
                           height={barHeight}
                           rx="3"
-                          fill="#10b981"
+                          fill="#06B6D4"
                           opacity="0.85"
                           onMouseEnter={() =>
                             setHoveredPoint({ x: x + barWidth / 2, y, val: d.orders, date: d.date, type: 'orders' })
@@ -514,7 +514,7 @@ export default function AdminAnalyticsPage() {
                   {hoveredPoint && hoveredPoint.type === 'orders' && (
                     <g>
                       <rect
-                        x={Math.min(hoveredPoint.x - 35, chartWidth - 80)}
+                        x={Math.max(10, Math.min(hoveredPoint.x - 35, chartWidth - 80))}
                         y={Math.max(hoveredPoint.y - 32, 5)}
                         width="70"
                         height="24"
@@ -523,7 +523,7 @@ export default function AdminAnalyticsPage() {
                         opacity="0.9"
                       />
                       <text
-                        x={Math.min(hoveredPoint.x, chartWidth - 45)}
+                        x={Math.max(45, Math.min(hoveredPoint.x, chartWidth - 45))}
                         y={Math.max(hoveredPoint.y - 16, 20)}
                         textAnchor="middle"
                         fontSize="9"
@@ -569,8 +569,8 @@ export default function AdminAnalyticsPage() {
             >
               {[
                 { key: 'placed', label: 'Placed', color: '#64748b' },
-                { key: 'packed', label: 'Packed', color: '#3b82f6' },
-                { key: 'shipped', label: 'Shipped', color: '#8b5cf6' },
+                { key: 'packed', label: 'Packed', color: '#0284c7' },
+                { key: 'shipped', label: 'Shipped', color: '#06b6d4' },
                 { key: 'delivered', label: 'Delivered', color: '#10b981' },
                 { key: 'cancelled', label: 'Cancelled', color: '#ef4444' },
               ].map((st) => {
@@ -595,8 +595,8 @@ export default function AdminAnalyticsPage() {
             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               {[
                 { key: 'placed', label: 'Placed', color: '#64748b' },
-                { key: 'packed', label: 'Packed', color: '#3b82f6' },
-                { key: 'shipped', label: 'Shipped', color: '#8b5cf6' },
+                { key: 'packed', label: 'Packed', color: '#0284c7' },
+                { key: 'shipped', label: 'Shipped', color: '#06b6d4' },
                 { key: 'delivered', label: 'Delivered', color: '#10b981' },
                 { key: 'cancelled', label: 'Cancelled', color: '#ef4444' },
               ].map((st) => (
@@ -613,61 +613,64 @@ export default function AdminAnalyticsPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-              gap: '2rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+              gap: '1.5rem',
               marginBottom: '2.5rem',
             }}
           >
             {/* Top 5 Vendors */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
+            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem', minWidth: 0 }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>
                 Top 5 Vendors by Revenue
               </h3>
               {topVendors.length === 0 ? (
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>No vendor sales recorded in this range.</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
-                      <th style={{ padding: '0.5rem 0' }}>#</th>
-                      <th style={{ padding: '0.5rem 0.5rem' }}>Store Name</th>
-                      <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Revenue</th>
-                      <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Orders</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {topVendors.map((v, i) => (
-                      <tr key={v.vendorId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '0.65rem 0', fontWeight: 700, color: '#94a3b8' }}>{i + 1}</td>
-                        <td style={{ padding: '0.65rem 0.5rem', fontWeight: 700, color: '#1e293b' }}>
-                          🏪 {v.storeName}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
-                          ₹{v.revenue.toLocaleString()}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', color: '#64748b' }}>
-                          {v.orderCount}
-                        </td>
+                <div style={{ overflowX: 'auto', width: '100%' }}>
+                  <table style={{ width: '100%', minWidth: '320px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
+                        <th style={{ padding: '0.5rem 0' }}>#</th>
+                        <th style={{ padding: '0.5rem 0.5rem' }}>Store Name</th>
+                        <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Revenue</th>
+                        <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Orders</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {topVendors.map((v, i) => (
+                        <tr key={v.vendorId} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '0.65rem 0', fontWeight: 700, color: '#94a3b8' }}>{i + 1}</td>
+                          <td style={{ padding: '0.65rem 0.5rem', fontWeight: 700, color: '#1e293b' }}>
+                            🏪 {v.storeName}
+                          </td>
+                          <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
+                            ₹{v.revenue.toLocaleString()}
+                          </td>
+                          <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', color: '#64748b' }}>
+                            {v.orderCount}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
 
             {/* Top 5 Products */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem' }}>
+            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem', minWidth: 0 }}>
               <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>
                 Top 5 Products by Units Sold
               </h3>
               {topProducts.length === 0 ? (
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>No product sales recorded in this range.</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
-                      <th style={{ padding: '0.5rem 0' }}>#</th>
-                      <th style={{ padding: '0.5rem 0.5rem' }}>Product Title</th>
+                <div style={{ overflowX: 'auto', width: '100%' }}>
+                  <table style={{ width: '100%', minWidth: '320px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
+                        <th style={{ padding: '0.5rem 0' }}>#</th>
+                        <th style={{ padding: '0.5rem 0.5rem' }}>Product Title</th>
                       <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Units Sold</th>
                       <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Gross Total</th>
                     </tr>
@@ -679,7 +682,7 @@ export default function AdminAnalyticsPage() {
                         <td style={{ padding: '0.65rem 0.5rem', fontWeight: 700, color: '#1e293b', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {p.title}
                         </td>
-                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#4f46e5' }}>
+                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#0284C7' }}>
                           {p.unitsSold}
                         </td>
                         <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', color: '#0f172a' }}>
@@ -689,7 +692,8 @@ export default function AdminAnalyticsPage() {
                     ))}
                   </tbody>
                 </table>
-              )}
+              </div>
+            )}
             </div>
           </div>
 
