@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 const STATUS_FILTERS = [
   { id: 'all', label: 'All Payouts' },
@@ -10,6 +11,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function AdminPayoutsPage() {
+  const { user } = useAuth();
   const [payouts, setPayouts] = useState([]);
   const [total, setTotal] = useState(0);
   const [pages, setPages] = useState(1);
@@ -19,6 +21,11 @@ export default function AdminPayoutsPage() {
   const [error, setError] = useState('');
   const [retryingId, setRetryingId] = useState(null);
   const [actionSuccess, setActionSuccess] = useState('');
+
+  useEffect(() => {
+    setPayouts([]);
+    setTotal(0);
+  }, [user?._id]);
 
   const fetchPayouts = async (targetPage = 1, filter = statusFilter) => {
     try {
@@ -34,15 +41,19 @@ export default function AdminPayoutsPage() {
       setPages(res.data?.pages || 1);
       setPage(targetPage);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to load payouts');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || err.message || 'Failed to load payouts');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPayouts(1, statusFilter);
-  }, [statusFilter]);
+    if (user?.role === 'admin') {
+      fetchPayouts(1, statusFilter);
+    }
+  }, [statusFilter, user?._id, user?.role]);
 
   const handleRetryPayout = async (payoutId) => {
     try {

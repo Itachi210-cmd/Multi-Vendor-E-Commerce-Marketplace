@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth';
 import useCart from '../hooks/useCart';
 
 export default function ProductsPage() {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { addToCart } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -508,7 +508,7 @@ export default function ProductsPage() {
                             >
                               {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                             </span>
-                            {product.stock > 0 && (
+                            {product.stock > 0 && (!user || user.role === 'customer') && (
                               <button
                                 type="button"
                                 className="card-quick-cart-btn"

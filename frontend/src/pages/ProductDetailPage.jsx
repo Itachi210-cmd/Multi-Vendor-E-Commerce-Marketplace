@@ -183,48 +183,72 @@ export default function ProductDetailPage() {
 
           {/* Purchase Action Box */}
           <div className="product-purchase-box">
-            {product.stock > 0 && !isOwner && (
-              <div className="quantity-selector-row">
-                <label htmlFor="qty-select" className="qty-label">Quantity:</label>
-                <div className="qty-controls">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={quantity <= 1}
-                    className="qty-btn"
-                  >
-                    -
-                  </button>
-                  <span className="qty-val">{quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(maxSelectable, q + 1))}
-                    disabled={quantity >= maxSelectable}
-                    className="qty-btn"
-                  >
-                    +
-                  </button>
-                </div>
-                <span className="stock-hint">(Max {maxSelectable})</span>
+            {user?.role === 'vendor' ? (
+              <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', padding: '1.25rem', borderRadius: '10px', textAlign: 'center' }}>
+                <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.35rem' }}>🏪</span>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#334155' }}>
+                  Vendor Account Active
+                </p>
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                  Purchasing and shopping cart are available to customer accounts only.
+                </span>
               </div>
-            )}
+            ) : user?.role === 'admin' ? (
+              <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', padding: '1.25rem', borderRadius: '10px', textAlign: 'center' }}>
+                <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.35rem' }}>🛡️</span>
+                <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem', color: '#334155' }}>
+                  Administrator Mode
+                </p>
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                  Purchasing and shopping cart are available to customer accounts only.
+                </span>
+              </div>
+            ) : (
+              <>
+                {product.stock > 0 && !isOwner && (
+                  <div className="quantity-selector-row">
+                    <label htmlFor="qty-select" className="qty-label">Quantity:</label>
+                    <div className="qty-controls">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                        className="qty-btn"
+                      >
+                        -
+                      </button>
+                      <span className="qty-val">{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.min(maxSelectable, q + 1))}
+                        disabled={quantity >= maxSelectable}
+                        className="qty-btn"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="stock-hint">(Max {maxSelectable})</span>
+                  </div>
+                )}
 
-            <button
-              onClick={handleAddToCart}
-              className="btn btn-primary btn-lg"
-              style={{ width: '100%' }}
-              disabled={product.stock <= 0 || isOwner || isAdding}
-            >
-              {isAdding ? (
-                'Adding to Cart...'
-              ) : isOwner ? (
-                'You own this store product'
-              ) : product.stock <= 0 ? (
-                'Out of Stock'
-              ) : (
-                '🛒 Add to Cart'
-              )}
-            </button>
+                <button
+                  onClick={handleAddToCart}
+                  className="btn btn-primary btn-lg"
+                  style={{ width: '100%' }}
+                  disabled={product.stock <= 0 || isOwner || isAdding}
+                >
+                  {isAdding ? (
+                    'Adding to Cart...'
+                  ) : isOwner ? (
+                    'You own this store product'
+                  ) : product.stock <= 0 ? (
+                    'Out of Stock'
+                  ) : (
+                    '🛒 Add to Cart'
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

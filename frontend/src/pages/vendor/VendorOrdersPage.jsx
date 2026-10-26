@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 const STATUS_FILTERS = [
   { label: 'All Orders', value: 'all' },
@@ -10,6 +11,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function VendorOrdersPage() {
+  const { user } = useAuth();
   const [subOrders, setSubOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
   const [page, setPage] = useState(1);
@@ -18,6 +20,11 @@ export default function VendorOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingId, setUpdatingId] = useState(null);
+
+  useEffect(() => {
+    setSubOrders([]);
+    setTotal(0);
+  }, [user?._id]);
 
   const fetchVendorOrders = async () => {
     try {
@@ -29,15 +36,19 @@ export default function VendorOrdersPage() {
       setTotal(res.data?.total || 0);
       setPages(res.data?.pages || 1);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to fetch vendor orders');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || err.message || 'Failed to fetch vendor orders');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVendorOrders();
-  }, [activeFilter, page]);
+    if (user?.role === 'vendor') {
+      fetchVendorOrders();
+    }
+  }, [activeFilter, page, user?._id, user?.role]);
 
   const handleAdvanceStatus = async (orderId, currentStatus) => {
     const nextStatusMap = {

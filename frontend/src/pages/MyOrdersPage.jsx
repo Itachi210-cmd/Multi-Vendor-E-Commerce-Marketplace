@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
+import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
+import TestGatewayModal from '../components/TestGatewayModal';
 
 export default function MyOrdersPage() {
+  const { user } = useAuth();
+  const { showToast } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
@@ -11,6 +16,14 @@ export default function MyOrdersPage() {
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activePaymentOrder, setActivePaymentOrder] = useState(null);
+  const [isGatewayOpen, setIsGatewayOpen] = useState(false);
+
+  useEffect(() => {
+    // Reset state on user change
+    setOrders([]);
+    setTotal(0);
+  }, [user?._id]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,15 +35,19 @@ export default function MyOrdersPage() {
         setTotal(res.data?.total || 0);
         setPages(res.data?.pages || 1);
       } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Failed to fetch orders');
+        if (!err?.isCanceled) {
+          setError(err.response?.data?.message || err.message || 'Failed to fetch orders');
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrders();
+    if (user?.role === 'customer') {
+      fetchOrders();
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentPage]);
+  }, [currentPage, user?._id, user?.role]);
 
   const goToPage = (p) => {
     setSearchParams({ page: p });
@@ -101,8 +118,21 @@ export default function MyOrdersPage() {
                     </span>
                   </div>
 
-                  <div className="order-summary-right">
+                  <div className="order-summary-right" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                     <span className="order-price-val">₹{order.total.toLocaleString()}</span>
+                    {(order.payment?.status === 'pending' || order.payment?.status === 'failed') && (
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          setActivePaymentOrder(order);
+                          setIsGatewayOpen(true);
+                        }}
+                        style={{ fontWeight: 600 }}
+                      >
+                        {order.payment?.status === 'failed' ? '🔄 Retry Payment' : '💳 Pay Now'}
+                      </button>
+                    )}
                     <Link to={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
                       View Details →
                     </Link>
@@ -152,6 +182,29 @@ export default function MyOrdersPage() {
             </div>
           )}
         </div>
+      )}
+
+      {activePaymentOrder && (
+        <TestGatewayModal
+          order={activePaymentOrder}
+          isOpen={isGatewayOpen}
+          onClose={() => {
+            setIsGatewayOpen(false);
+            setActivePaymentOrder(null);
+          }}
+          onError={(errMsg) => {
+            console.error('[Payment Flow] Payment failed on MyOrdersPage:', errMsg);
+            showToast(errMsg, 'error');
+          }}
+          onSuccess={(paidOrder) => {
+            setOrders((prev) =>
+              prev.map((o) => (o._id === paidOrder._id ? paidOrder : o))
+            );
+            setIsGatewayOpen(false);
+            setActivePaymentOrder(null);
+            showToast('Payment captured successfully!', 'success');
+          }}
+        />
       )}
     </div>
   );

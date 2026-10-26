@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function VendorEarningsPage() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setData(null);
+  }, [user?._id]);
 
   const fetchEarnings = async (targetPage = 1) => {
     try {
@@ -15,15 +21,19 @@ export default function VendorEarningsPage() {
       setData(res.data);
       setPage(targetPage);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to load earnings');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || err.message || 'Failed to load earnings');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchEarnings(page);
-  }, []);
+    if (user?.role === 'vendor') {
+      fetchEarnings(page);
+    }
+  }, [page, user?._id, user?.role]);
 
   const getStatusBadge = (status) => {
     switch (status) {

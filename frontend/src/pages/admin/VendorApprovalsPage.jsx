@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function VendorApprovalsPage() {
+  const { user } = useAuth();
   const [vendors, setVendors] = useState([]);
   const [activeTab, setActiveTab] = useState('pending'); // 'pending' | 'approved' | 'rejected' | 'all'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionSuccess, setActionSuccess] = useState('');
   const [commissionInputs, setCommissionInputs] = useState({});
+
+  useEffect(() => {
+    setVendors([]);
+    setCommissionInputs({});
+  }, [user?._id]);
 
   const fetchVendors = async (status = activeTab) => {
     setLoading(true);
@@ -25,15 +32,19 @@ export default function VendorApprovalsPage() {
       });
       setCommissionInputs(initialCommissions);
     } catch (err) {
-      setError(err.message || 'Failed to load vendors');
+      if (!err?.isCanceled) {
+        setError(err.message || 'Failed to load vendors');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVendors(activeTab);
-  }, [activeTab]);
+    if (user?.role === 'admin') {
+      fetchVendors(activeTab);
+    }
+  }, [activeTab, user?._id, user?.role]);
 
   const handleApprove = async (vendorId) => {
     if (!window.confirm('Approve this vendor application and grant the user vendor store access?')) return;

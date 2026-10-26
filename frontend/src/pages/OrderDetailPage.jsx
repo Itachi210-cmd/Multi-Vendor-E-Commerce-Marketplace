@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useLocation } from 'react-router-dom';
 import api from '../api/axios';
+import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
 import TestGatewayModal from '../components/TestGatewayModal';
 
 const STATUS_STEPS = ['placed', 'packed', 'shipped', 'delivered'];
 
 export default function OrderDetailPage() {
+  const { user } = useAuth();
+  const { showToast } = useCart();
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const isNewlyPlaced = searchParams.get('new') === 'true';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const isNewlyPlaced = searchParams.get('new') === 'true' || location.state?.newlyPlaced;
   const isJustPaid = searchParams.get('paid') === 'true';
+  const shouldAutoPay = searchParams.get('pay') === '1' || location.state?.autoPay === true;
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,6 +64,43 @@ export default function OrderDetailPage() {
     fetchOrder();
   }, [id]);
 
+  // Auto-open Test Gateway modal if directed to pay immediately
+  useEffect(() => {
+    if (
+      order &&
+      shouldAutoPay &&
+      (order.payment?.status === 'pending' || order.payment?.status === 'failed')
+    ) {
+      setIsGatewayOpen(true);
+    }
+  }, [order, shouldAutoPay]);
+
+  const handleCloseGateway = () => {
+    setIsGatewayOpen(false);
+    if (searchParams.get('pay')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('pay');
+      setSearchParams(nextParams, { replace: true });
+    }
+  };
+
+  const handlePaymentSuccess = (paidOrder) => {
+    setOrder(paidOrder);
+    setIsGatewayOpen(false);
+    if (searchParams.get('pay')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('pay');
+      setSearchParams(nextParams, { replace: true });
+    }
+    showToast('Payment captured successfully!', 'success');
+    setActionMessage('Payment captured successfully via Test Gateway!');
+  };
+
+  const handlePaymentError = (errMsg) => {
+    console.error('[Payment Flow] Payment error displayed on OrderDetailPage:', errMsg);
+    showToast(errMsg, 'error');
+  };
+
   const handleCancelOrder = async () => {
     if (!window.confirm('Are you sure you want to cancel this entire order?')) return;
 
@@ -92,8 +135,11 @@ export default function OrderDetailPage() {
         <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.5rem' }}>
           {error || 'Unable to locate this order.'}
         </p>
-        <Link to="/orders" className="btn btn-primary btn-sm">
-          View My Orders
+        <Link
+          to={user?.role === 'admin' ? '/admin/orders' : '/orders'}
+          className="btn btn-primary btn-sm"
+        >
+          {user?.role === 'admin' ? 'Back to All Orders' : 'View My Orders'}
         </Link>
       </div>
     );
@@ -134,8 +180,11 @@ export default function OrderDetailPage() {
   return (
     <div className="content-container" style={{ padding: '3rem 1.5rem 5rem' }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <Link to="/orders" style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>
-          ← Back to Orders
+        <Link
+          to={user?.role === 'admin' ? '/admin/orders' : '/orders'}
+          style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600 }}
+        >
+          ← Back to {user?.role === 'admin' ? 'All Orders' : 'Orders'}
         </Link>
       </div>
 
@@ -440,12 +489,9 @@ export default function OrderDetailPage() {
         <TestGatewayModal
           order={order}
           isOpen={isGatewayOpen}
-          onClose={() => setIsGatewayOpen(false)}
-          onSuccess={(paidOrder) => {
-            setOrder(paidOrder);
-            setIsGatewayOpen(false);
-            setActionMessage('Payment captured successfully via Test Gateway!');
-          }}
+          onClose={handleCloseGateway}
+          onError={handlePaymentError}
+          onSuccess={handlePaymentSuccess}
         />
       )}
     </div>

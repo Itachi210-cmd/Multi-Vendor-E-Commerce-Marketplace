@@ -1,30 +1,69 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
+import api, { registerLogoutListener } from '../api/axios';
 import useAuth from '../hooks/useAuth';
 
 const CartContext = createContext(null);
 
+const INITIAL_CART_STATE = {
+  items: [],
+  subtotal: 0,
+  totalItems: 0,
+  hasIssues: false,
+};
+
 export const CartProvider = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
-  const [cart, setCart] = useState({
-    items: [],
-    subtotal: 0,
-    totalItems: 0,
-    hasIssues: false,
-  });
+  const [cart, setCart] = useState(INITIAL_CART_STATE);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null); // { message, type: 'success' | 'error' }
 
+  const toastTimeoutRef = useRef(null);
+  const prevUserIdRef = useRef(user?._id);
+
   const showToast = useCallback((message, type = 'success') => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
     setToast({ message, type });
-    setTimeout(() => {
+    toastTimeoutRef.current = setTimeout(() => {
       setToast(null);
     }, 3500);
   }, []);
 
+  const clearToast = useCallback(() => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+    setToast(null);
+  }, []);
+
+  const resetCartState = useCallback(() => {
+    setCart(INITIAL_CART_STATE);
+    clearToast();
+    setLoading(false);
+  }, [clearToast]);
+
+  // Reset cart immediately on logout
+  useEffect(() => {
+    const unregister = registerLogoutListener(() => {
+      resetCartState();
+    });
+    return () => {
+      unregister();
+    };
+  }, [resetCartState]);
+
   const fetchCart = useCallback(async () => {
+    // Only customer accounts fetch cart. Vendors and admins make zero cart calls.
     if (!isAuthenticated || user?.role !== 'customer') {
-      setCart({ items: [], subtotal: 0, totalItems: 0, hasIssues: false });
+      setCart(INITIAL_CART_STATE);
       return;
     }
 
@@ -35,16 +74,27 @@ export const CartProvider = ({ children }) => {
         setCart(res.data.cart);
       }
     } catch (err) {
-      // Don't show toast for silent initial fetch
-      console.warn('[Cart] Fetch failed:', err.message);
+      if (!err?.isCanceled) {
+        console.warn('[Cart] Fetch failed:', err.message);
+      }
     } finally {
       setLoading(false);
     }
   }, [isAuthenticated, user?.role]);
 
+  // When the logged-in user id changes without a page reload, reset and refetch
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    if (prevUserIdRef.current !== user?._id) {
+      prevUserIdRef.current = user?._id;
+      resetCartState();
+    }
+
+    if (isAuthenticated && user?.role === 'customer') {
+      fetchCart();
+    } else {
+      setCart(INITIAL_CART_STATE);
+    }
+  }, [user?._id, user?.role, isAuthenticated, resetCartState, fetchCart]);
 
   const addToCart = async (productId, qty = 1) => {
     if (!isAuthenticated) {
@@ -66,6 +116,7 @@ export const CartProvider = ({ children }) => {
       showToast('Added to cart!', 'success');
       return { success: true };
     } catch (err) {
+      if (err?.isCanceled) return { success: false };
       const errMsg = err.response?.data?.message || err.message || 'Failed to add item to cart';
       showToast(errMsg, 'error');
       return { success: false, error: errMsg };
@@ -75,6 +126,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = async (productId, qty) => {
+    if (!isAuthenticated || user?.role !== 'customer') return { success: false };
     try {
       setLoading(true);
       const res = await api.patch(`/cart/items/${productId}`, { qty });
@@ -86,6 +138,7 @@ export const CartProvider = ({ children }) => {
       }
       return { success: true };
     } catch (err) {
+      if (err?.isCanceled) return { success: false };
       const errMsg = err.response?.data?.message || err.message || 'Failed to update quantity';
       showToast(errMsg, 'error');
       return { success: false, error: errMsg };
@@ -95,6 +148,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeItem = async (productId) => {
+    if (!isAuthenticated || user?.role !== 'customer') return { success: false };
     try {
       setLoading(true);
       const res = await api.delete(`/cart/items/${productId}`);
@@ -104,6 +158,7 @@ export const CartProvider = ({ children }) => {
       showToast('Item removed', 'success');
       return { success: true };
     } catch (err) {
+      if (err?.isCanceled) return { success: false };
       const errMsg = err.response?.data?.message || err.message || 'Failed to remove item';
       showToast(errMsg, 'error');
       return { success: false, error: errMsg };
@@ -113,6 +168,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = async () => {
+    if (!isAuthenticated || user?.role !== 'customer') return { success: false };
     try {
       setLoading(true);
       const res = await api.delete('/cart');
@@ -122,6 +178,7 @@ export const CartProvider = ({ children }) => {
       showToast('Cart cleared', 'success');
       return { success: true };
     } catch (err) {
+      if (err?.isCanceled) return { success: false };
       const errMsg = err.response?.data?.message || err.message || 'Failed to clear cart';
       showToast(errMsg, 'error');
       return { success: false, error: errMsg };
@@ -141,6 +198,8 @@ export const CartProvider = ({ children }) => {
         loading,
         toast,
         showToast,
+        clearToast,
+        resetCartState,
         fetchCart,
         addToCart,
         updateQuantity,

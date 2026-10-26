@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import useAuth from '../hooks/useAuth';
 
@@ -6,6 +6,10 @@ export default function RbacDemoPage() {
   const { user, isAuthenticated } = useAuth();
   const [testResult, setTestResult] = useState(null);
   const [loadingRoute, setLoadingRoute] = useState('');
+
+  useEffect(() => {
+    setTestResult(null);
+  }, [user?._id]);
 
   const runTest = async (endpoint) => {
     setLoadingRoute(endpoint);

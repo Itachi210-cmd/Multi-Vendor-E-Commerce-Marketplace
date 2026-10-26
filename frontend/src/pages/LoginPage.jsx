@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import { getRoleHome, isRouteAllowedForRole } from '../utils/roleUtils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,8 +12,6 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const redirectPath = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,8 +24,28 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      await login(email, password);
-      navigate(redirectPath, { replace: true });
+      const data = await login(email, password);
+      const userRole = data?.user?.role;
+
+      // Extract candidate redirect from location.state or sessionStorage
+      const candidatePath =
+        location.state?.from?.pathname ||
+        sessionStorage.getItem('post_login_redirect') ||
+        null;
+
+      // Clear the stored redirect immediately after reading
+      sessionStorage.removeItem('post_login_redirect');
+
+      // Determine destination: candidate is used ONLY if permitted for the logged-in role
+      let destination;
+      if (candidatePath && isRouteAllowedForRole(candidatePath, userRole)) {
+        destination = candidatePath;
+      } else {
+        destination = getRoleHome(userRole);
+      }
+
+      // Navigate and wipe history state to prevent redirect leakage
+      navigate(destination, { replace: true, state: {} });
     } catch (err) {
       setError(err.message || 'Invalid email or password');
     } finally {
@@ -99,21 +118,28 @@ export default function LoginPage() {
 
           {/* Demo helper buttons */}
           <div className="demo-credentials-box">
-            <span className="demo-title">Quick Demo Login:</span>
-            <div className="demo-buttons">
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={() => handleFillDemo('admin@marketplace.com', 'Admin@123456')}
-              >
-                Admin Credentials
-              </button>
+            <span className="demo-title">Quick Demo Logins:</span>
+            <div className="demo-buttons" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 className="btn btn-secondary btn-sm"
                 onClick={() => handleFillDemo('customer@example.com', 'Password@123')}
               >
-                Customer Credentials
+                Customer
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => handleFillDemo('vendor@audio.com', 'Password@123')}
+              >
+                Vendor
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => handleFillDemo('admin@marketplace.com', 'Admin@123456')}
+              >
+                Admin
               </button>
             </div>
           </div>

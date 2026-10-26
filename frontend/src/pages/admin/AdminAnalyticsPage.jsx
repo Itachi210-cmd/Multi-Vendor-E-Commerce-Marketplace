@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function AdminAnalyticsPage() {
+  const { user } = useAuth();
   const [range, setRange] = useState('7d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [hoveredPoint, setHoveredPoint] = useState(null);
+
+  useEffect(() => {
+    setData(null);
+  }, [user?._id]);
 
   const fetchAnalytics = useCallback(async (selectedRange) => {
     setLoading(true);
@@ -15,15 +21,19 @@ export default function AdminAnalyticsPage() {
       const res = await api.get(`/admin/analytics?range=${selectedRange}`);
       setData(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch analytics');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || 'Failed to fetch analytics');
+      }
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchAnalytics(range);
-  }, [range, fetchAnalytics]);
+    if (user?.role === 'admin') {
+      fetchAnalytics(range);
+    }
+  }, [range, fetchAnalytics, user?._id, user?.role]);
 
   const totals = data?.totals || {
     revenue: 0,

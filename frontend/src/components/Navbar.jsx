@@ -49,8 +49,10 @@ export default function Navbar() {
         setIsOpen(results.length > 0);
         setSelectedIndex(-1);
       } catch (err) {
-        setSuggestions([]);
-        setIsOpen(false);
+        if (!err?.isCanceled) {
+          setSuggestions([]);
+          setIsOpen(false);
+        }
       } finally {
         setIsLoadingSuggest(false);
       }
@@ -121,6 +123,12 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
+  const handleSignOut = async () => {
+    clearSearch();
+    await logout();
+    navigate('/login', { replace: true, state: {} });
+  };
+
   const getRoleBadgeClass = (role) => {
     switch (role) {
       case 'admin':
@@ -138,7 +146,7 @@ export default function Navbar() {
         <Link to="/" className="nav-brand">
           <div className="brand-icon">M</div>
           <span className="brand-name">Marketplace</span>
-          <span className="brand-tag">Phase 5</span>
+          <span className="brand-tag">Phase 7</span>
         </Link>
 
         {/* Global Navbar Autocomplete Search Bar */}
@@ -212,9 +220,17 @@ export default function Navbar() {
               </Link>
             </li>
 
-            {/* Customer specific links */}
+            {/* Customer-only Links */}
             {user?.role === 'customer' && (
               <>
+                <li>
+                  <Link
+                    to="/cart"
+                    className={`nav-link ${location.pathname === '/cart' ? 'active' : ''}`}
+                  >
+                    Cart
+                  </Link>
+                </li>
                 <li>
                   <Link
                     to="/orders"
@@ -234,7 +250,7 @@ export default function Navbar() {
               </>
             )}
 
-            {/* Vendor specific links */}
+            {/* Vendor-only Links */}
             {user?.role === 'vendor' && (
               <li>
                 <Link
@@ -246,7 +262,7 @@ export default function Navbar() {
               </li>
             )}
 
-            {/* Admin specific links */}
+            {/* Admin-only Links */}
             {user?.role === 'admin' && (
               <>
                 <li>
@@ -304,7 +320,7 @@ export default function Navbar() {
         </nav>
 
         <div className="nav-actions">
-          {/* Shopping Cart Button */}
+          {/* Shopping Cart Button - ONLY visible to Customers and Guests, strictly hidden for Vendors and Admins */}
           {(!user || user.role === 'customer') && (
             <Link to="/cart" className="nav-cart-btn" title="View Cart">
               <span className="cart-icon">🛒</span>
@@ -319,7 +335,11 @@ export default function Navbar() {
                 <span className="badge-dot"></span>
                 {user?.role}
               </span>
-              <button onClick={logout} className="btn btn-secondary btn-sm" title="Log out of session">
+              <button
+                onClick={handleSignOut}
+                className="btn btn-secondary btn-sm"
+                title="Log out of session"
+              >
                 Sign Out
               </button>
             </div>

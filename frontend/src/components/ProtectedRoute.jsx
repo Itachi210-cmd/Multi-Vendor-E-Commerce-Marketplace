@@ -16,6 +16,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
+    sessionStorage.setItem('post_login_redirect', location.pathname + location.search);
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

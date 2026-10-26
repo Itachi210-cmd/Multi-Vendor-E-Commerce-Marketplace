@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function VendorProductsPage() {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,21 +25,29 @@ export default function VendorProductsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
+  useEffect(() => {
+    setProducts([]);
+  }, [user?._id]);
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await api.get('/vendor/products');
       setProducts(response.data?.products || []);
     } catch (err) {
-      setError(err.message || 'Failed to fetch your products');
+      if (!err?.isCanceled) {
+        setError(err.message || 'Failed to fetch your products');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (user?.role === 'vendor') {
+      fetchProducts();
+    }
+  }, [user?._id, user?.role]);
 
   const openCreateModal = () => {
     setEditingProduct(null);

@@ -17,6 +17,20 @@ const api = axios.create({
 let inMemoryAccessToken = null;
 let logoutCallback = null;
 
+// Registry of active AbortControllers to cancel in-flight requests on logout/switch
+const activeAbortControllers = new Set();
+
+export const abortAllRequests = () => {
+  for (const controller of activeAbortControllers) {
+    try {
+      controller.abort();
+    } catch (e) {
+      // Ignore abort errors
+    }
+  }
+  activeAbortControllers.clear();
+};
+
 export const setAccessTokenInMemory = (token) => {
   inMemoryAccessToken = token;
 };
@@ -44,9 +58,48 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-// Request interceptor: attach in-memory access token
+// Registry of callbacks triggered when auth session is cleared / user logged out
+const logoutListeners = new Set();
+
+export const registerLogoutListener = (callback) => {
+  logoutListeners.add(callback);
+  return () => {
+    logoutListeners.delete(callback);
+  };
+};
+
+export const notifyLogoutListeners = () => {
+  logoutListeners.forEach((listener) => {
+    try {
+      listener();
+    } catch (err) {
+      console.error('Error in logout listener:', err);
+    }
+  });
+};
+
+/**
+ * Reset API auth state, purge queue, and cancel any in-flight requests
+ */
+export const clearApiAuthState = () => {
+  inMemoryAccessToken = null;
+  isRefreshing = false;
+  processQueue({ isCanceled: true, message: 'Auth session reset' }, null);
+  abortAllRequests();
+  notifyLogoutListeners();
+};
+
+// Request interceptor: attach in-memory access token & AbortController tracking
 api.interceptors.request.use(
   (config) => {
+    // Attach AbortController if not already provided
+    if (!config.signal) {
+      const controller = new AbortController();
+      config.signal = controller.signal;
+      config._abortController = controller;
+      activeAbortControllers.add(controller);
+    }
+
     if (inMemoryAccessToken && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${inMemoryAccessToken}`;
     }
@@ -60,10 +113,22 @@ api.interceptors.request.use(
 // Response interceptor: handle 401 and refresh token once
 api.interceptors.response.use(
   (response) => {
+    if (response.config?._abortController) {
+      activeAbortControllers.delete(response.config._abortController);
+    }
     return response;
   },
   async (error) => {
     const originalRequest = error.config;
+
+    if (originalRequest?._abortController) {
+      activeAbortControllers.delete(originalRequest._abortController);
+    }
+
+    // If request was canceled/aborted, reject silently
+    if (axios.isCancel(error) || error?.name === 'CanceledError' || error?.code === 'ERR_CANCELED') {
+      return Promise.reject({ isCanceled: true, message: 'Request aborted' });
+    }
 
     // Do not attempt refresh on login, register, or refresh endpoints themselves
     const isAuthRoute =
@@ -111,6 +176,7 @@ api.interceptors.response.use(
       message: error.response?.data?.message || error.message || 'Network error occurred',
       status: error.response?.status,
       data: error.response?.data,
+      response: error.response,
     };
     return Promise.reject(customError);
   }

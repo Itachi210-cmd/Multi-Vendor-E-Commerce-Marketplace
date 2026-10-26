@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../api/axios';
 import useCart from '../hooks/useCart';
 
@@ -15,7 +16,7 @@ const TEST_UPIS = [
   { label: 'Invalid VPA', vpa: 'customer@unknownvpa', desc: 'Non-existent VPA error' },
 ];
 
-export default function TestGatewayModal({ order, isOpen, onClose, onSuccess }) {
+export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, onError }) {
   const { fetchCart } = useCart();
   const [activeTab, setActiveTab] = useState('card'); // 'card' | 'upi'
   const [step, setStep] = useState('ready'); // 'init' | 'ready' | 'processing' | 'success' | 'failure'
@@ -36,37 +37,67 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess }) 
   const [errorCode, setErrorCode] = useState('');
   const [paymentResult, setPaymentResult] = useState(null);
 
-  // Initialize or fetch provider order
+  // Sync amount when order changes
   useEffect(() => {
-    if (!isOpen || !order?._id) return;
+    if (order?.total) {
+      setAmountPaise(Math.round(order.total * 100));
+    }
+  }, [order?.total]);
 
-    let isMounted = true;
-    const initProviderOrder = async () => {
-      try {
-        setStep('init');
-        setErrorMessage('');
-        const res = await api.post('/payments/create-order', { orderId: order._id });
-        if (isMounted) {
-          setProviderOrderId(res.data.providerOrderId);
-          setAmountPaise(res.data.amount);
-          setStep('ready');
-        }
-      } catch (err) {
-        if (isMounted) {
-          setErrorMessage(
-            err.response?.data?.error || err.message || 'Failed to initialize payment session.'
-          );
-          setStep('failure');
-        }
+  // Lock body scroll and listen for Escape key while modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && step !== 'processing') {
+        onClose?.();
       }
     };
-
-    initProviderOrder();
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      isMounted = false;
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, order?._id]);
+  }, [isOpen, step, onClose]);
+
+  const initProviderOrder = useCallback(async () => {
+    if (!order?._id) return;
+    try {
+      setStep('init');
+      setErrorMessage('');
+      const res = await api.post('/payments/create-order', { orderId: order._id });
+      setProviderOrderId(res.data.providerOrderId);
+      setAmountPaise(res.data.amount);
+      setStep('ready');
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to initialize payment session.';
+      console.error('[Payment Flow] /payments/create-order failed for order ' + order._id + ':', {
+        orderId: order._id,
+        status: err.response?.status || err.status,
+        error: errorMsg,
+      });
+      setErrorMessage(errorMsg);
+      setStep('failure');
+      if (onError) {
+        onError(errorMsg);
+      }
+    }
+  }, [order?._id, onError]);
+
+  // Initialize or fetch provider order on modal open
+  useEffect(() => {
+    if (!isOpen || !order?._id) return;
+    initProviderOrder();
+  }, [isOpen, order?._id, initProviderOrder]);
 
   if (!isOpen) return null;
 
@@ -147,24 +178,68 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess }) 
         onSuccess(verifyRes.data.order);
       }
     } catch (err) {
-      const resp = err.response?.data;
-      setErrorCode(resp?.code || 'GATEWAY_ERROR');
-      setErrorMessage(
-        resp?.reason || resp?.error || err.message || 'Payment processing failed.'
-      );
+      const resp = err.response?.data || err.data;
+      const code = resp?.code || 'GATEWAY_ERROR';
+      const reason =
+        resp?.reason || resp?.error || resp?.message || err.message || 'Payment processing failed.';
+      console.error('[Payment Flow] Payment processing or verification failed for order ' + order?._id + ':', {
+        orderId: order?._id,
+        providerOrderId,
+        method: activeTab,
+        code,
+        reason,
+        status: err.response?.status || err.status,
+      });
+      setErrorCode(code);
+      setErrorMessage(reason);
       setStep('failure');
+      if (onError) {
+        onError(reason);
+      }
     }
   };
 
   const handleRetry = () => {
-    setStep('ready');
-    setErrorMessage('');
-    setErrorCode('');
+    if (!providerOrderId) {
+      initProviderOrder();
+    } else {
+      setStep('ready');
+      setErrorMessage('');
+      setErrorCode('');
+    }
   };
 
-  return (
-    <div className="modal-overlay" style={{ zIndex: 9999 }}>
-      <div className="modal-container test-gateway-modal" style={{ maxWidth: '580px', width: '92%' }}>
+  const modalContent = (
+    <div
+      className="modal-overlay"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 99999,
+        backgroundColor: 'rgba(15, 23, 42, 0.7)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget && step !== 'processing') {
+          onClose?.();
+        }
+      }}
+    >
+      <div
+        className="modal-container test-gateway-modal"
+        style={{
+          maxWidth: '580px',
+          width: '92%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          position: 'relative',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="modal-header" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -565,4 +640,6 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess }) 
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : modalContent;
 }

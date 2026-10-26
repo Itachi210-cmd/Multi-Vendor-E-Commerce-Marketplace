@@ -1,10 +1,26 @@
-import React from 'react';
-import { Navigate, useLocation, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import useCart from '../hooks/useCart';
+import { getRoleHome } from '../utils/roleUtils';
 
 export default function RequireRole({ roles = [], children }) {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { showToast } = useCart();
   const location = useLocation();
+
+  const isRoleAllowed = !roles.length || (user && roles.includes(user.role));
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && !isRoleAllowed) {
+      const msg = roles.includes('customer')
+        ? 'That page is for customers only'
+        : roles.includes('vendor')
+        ? 'That page is for vendors only'
+        : 'That page is for administrators only';
+      showToast(msg, 'error');
+    }
+  }, [isLoading, isAuthenticated, isRoleAllowed, roles, showToast]);
 
   if (isLoading) {
     return (
@@ -15,30 +31,17 @@ export default function RequireRole({ roles = [], children }) {
     );
   }
 
+  // If not logged in, remember location and send to login
   if (!isAuthenticated) {
+    // Save to sessionStorage for persistence across redirects
+    sessionStorage.setItem('post_login_redirect', location.pathname + location.search);
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (roles.length > 0 && !roles.includes(user?.role)) {
-    return (
-      <div className="content-container" style={{ padding: '5rem 1.5rem', textAlign: 'center' }}>
-        <div className="auth-card" style={{ maxWidth: '520px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', color: 'var(--color-danger)' }}>
-            403 - Access Denied
-          </h2>
-          <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem', lineHeight: '1.6' }}>
-            Your account role is <strong>{user?.role}</strong>, but access to this section requires one of the
-            following roles: <strong>{roles.join(', ')}</strong>.
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-            <Link to="/" className="btn btn-primary btn-sm">
-              Return Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+  // If role is not allowed, redirect to their role home with toast
+  if (!isRoleAllowed) {
+    const roleHome = getRoleHome(user?.role);
+    return <Navigate to={roleHome} replace />;
   }
 
   return children;

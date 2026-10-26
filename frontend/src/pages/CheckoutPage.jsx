@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import useCart from '../hooks/useCart';
 import useAuth from '../hooks/useAuth';
 import api from '../api/axios';
-import TestGatewayModal from '../components/TestGatewayModal';
 import CouponInput from '../components/CouponInput';
 
 export default function CheckoutPage() {
@@ -24,8 +23,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
-  const [createdOrder, setCreatedOrder] = useState(null);
-  const [isGatewayOpen, setIsGatewayOpen] = useState(false);
+  const [cartIssues, setCartIssues] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(() => {
     try {
       const saved = sessionStorage.getItem('checkout_coupon');
@@ -165,15 +163,28 @@ export default function CheckoutPage() {
       const order = res.data?.order;
       if (order?._id) {
         sessionStorage.removeItem('checkout_coupon');
-        setCreatedOrder(order);
-        setIsGatewayOpen(true);
+        try {
+          await fetchCart();
+        } catch {
+          // ignore
+        }
+        navigate(`/orders/${order._id}?pay=1`, {
+          replace: true,
+          state: { autoPay: true, newlyPlaced: true },
+        });
       }
     } catch (err) {
-      if (err.response?.status === 409) {
+      console.error('[Payment Flow] Checkout order creation failed:', {
+        status: err.response?.status || err.status,
+        message: err.response?.data?.message || err.data?.message || err.message,
+      });
+      if (err.response?.status === 409 || err.status === 409) {
         setServerError('Some items in your cart became unavailable:');
-        setCartIssues(err.response?.data?.issues || []);
+        setCartIssues(err.response?.data?.issues || err.data?.issues || []);
       } else {
-        setServerError(err.response?.data?.message || err.message || 'Failed to place order');
+        setServerError(
+          err.response?.data?.message || err.data?.message || err.message || 'Failed to place order'
+        );
       }
     } finally {
       setSubmitting(false);
@@ -420,21 +431,6 @@ export default function CheckoutPage() {
           </div>
         </aside>
       </div>
-
-      {createdOrder && (
-        <TestGatewayModal
-          order={createdOrder}
-          isOpen={isGatewayOpen}
-          onClose={() => {
-            setIsGatewayOpen(false);
-            navigate(`/orders/${createdOrder._id}?new=true`);
-          }}
-          onSuccess={(paidOrder) => {
-            setIsGatewayOpen(false);
-            navigate(`/orders/${paidOrder._id}?new=true&paid=true`);
-          }}
-        />
-      )}
     </div>
   );
 }

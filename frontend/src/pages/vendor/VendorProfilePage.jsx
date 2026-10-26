@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function VendorProfilePage() {
+  const { user } = useAuth();
   const [storeName, setStoreName] = useState('');
   const [description, setDescription] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
@@ -12,6 +14,14 @@ export default function VendorProfilePage() {
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setStoreName('');
+    setDescription('');
+    setLogoUrl('');
+    setMessage('');
+    setError('');
+  }, [user?._id]);
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -25,15 +35,19 @@ export default function VendorProfilePage() {
         setCommissionPct(vendor.commissionPct || 10);
       }
     } catch (err) {
-      setError(err.message || 'Failed to load profile');
+      if (!err?.isCanceled) {
+        setError(err.message || 'Failed to load profile');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (user?.role === 'vendor') {
+      fetchProfile();
+    }
+  }, [user?._id, user?.role]);
 
   const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];

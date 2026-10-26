@@ -1,7 +1,16 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api, { setAccessTokenInMemory, setLogoutCallback } from '../api/axios';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import api, {
+  setAccessTokenInMemory,
+  setLogoutCallback,
+  clearApiAuthState,
+  abortAllRequests,
+  registerLogoutListener,
+  notifyLogoutListeners,
+} from '../api/axios';
 
 const AuthContext = createContext(null);
+
+export { registerLogoutListener };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -18,7 +27,9 @@ export const AuthProvider = ({ children }) => {
   const clearAuthSession = useCallback(() => {
     setUser(null);
     setAccessToken(null);
-    setAccessTokenInMemory(null);
+    clearApiAuthState();
+    sessionStorage.removeItem('post_login_redirect');
+    notifyLogoutListeners();
   }, []);
 
   // Silent session restore on application startup
@@ -62,6 +73,8 @@ export const AuthProvider = ({ children }) => {
    * Log in user with email & password
    */
   const login = async (email, password) => {
+    // Reset any lingering in-flight requests or refresh queues before logging in
+    clearApiAuthState();
     const response = await api.post('/auth/login', { email, password });
     const { user: loggedInUser, accessToken: token } = response.data;
     setAuthSession(loggedInUser, token);
@@ -72,6 +85,7 @@ export const AuthProvider = ({ children }) => {
    * Register new customer account
    */
   const register = async (name, email, password) => {
+    clearApiAuthState();
     const response = await api.post('/auth/register', { name, email, password });
     const { user: registeredUser, accessToken: token } = response.data;
     setAuthSession(registeredUser, token);
@@ -79,9 +93,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   /**
-   * Log out user
+   * Log out user and clean up all state
    */
   const logout = async () => {
+    // Abort pending requests immediately so they don't resolve after logout
+    abortAllRequests();
     try {
       await api.post('/auth/logout');
     } catch (err) {

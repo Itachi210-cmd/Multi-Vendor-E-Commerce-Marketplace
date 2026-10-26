@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function AdminCouponsPage() {
+  const { user } = useAuth();
   const [coupons, setCoupons] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -30,6 +32,11 @@ export default function AdminCouponsPage() {
     isActive: true,
   });
 
+  useEffect(() => {
+    setCoupons([]);
+    setTotal(0);
+  }, [user?._id]);
+
   const fetchCoupons = useCallback(async (targetPage = 1) => {
     setLoading(true);
     setError('');
@@ -41,15 +48,19 @@ export default function AdminCouponsPage() {
       setPage(res.data?.page || 1);
       setPages(res.data?.pages || 1);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch coupons');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || 'Failed to fetch coupons');
+      }
     } finally {
       setLoading(false);
     }
   }, [filterActive]);
 
   useEffect(() => {
-    fetchCoupons(1);
-  }, [fetchCoupons]);
+    if (user?.role === 'admin') {
+      fetchCoupons(1);
+    }
+  }, [fetchCoupons, user?._id, user?.role]);
 
   const handleOpenCreateModal = () => {
     setIsEditing(false);

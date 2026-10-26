@@ -8,11 +8,25 @@ const __dirname = path.dirname(__filename);
 // Load .env file from backend root directory
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
+// Fail-fast validation for required environment variables
+const requiredEnvVars = [
+  'PAYMENT_PROVIDER',
+  'MOCK_GATEWAY_SECRET',
+  'MOCK_WEBHOOK_SECRET',
+  'BACKEND_PUBLIC_URL',
+];
+
+const missingEnvVars = requiredEnvVars.filter((varName) => !process.env[varName] || !process.env[varName].trim());
+
+if (missingEnvVars.length > 0) {
+  throw new Error(`[Config Error] Missing required environment variable(s): ${missingEnvVars.join(', ')}. Please check your .env file.`);
+}
+
 export const env = {
   port: parseInt(process.env.PORT, 10) || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
-  backendPublicUrl: process.env.BACKEND_PUBLIC_URL || 'http://localhost:5000',
+  backendPublicUrl: process.env.BACKEND_PUBLIC_URL,
 
   // Database and search
   mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/marketplace',
@@ -24,9 +38,9 @@ export const env = {
   enableFakePay: process.env.ENABLE_FAKE_PAY === 'true',
 
   // Payment Provider & Sandbox Gateway
-  paymentProvider: process.env.PAYMENT_PROVIDER || 'mock',
-  mockGatewaySecret: process.env.MOCK_GATEWAY_SECRET || 'dev_mock_gateway_secret_key_32bytes',
-  mockWebhookSecret: process.env.MOCK_WEBHOOK_SECRET || 'dev_mock_webhook_secret_key_32bytes',
+  paymentProvider: process.env.PAYMENT_PROVIDER,
+  mockGatewaySecret: process.env.MOCK_GATEWAY_SECRET,
+  mockWebhookSecret: process.env.MOCK_WEBHOOK_SECRET,
   mockWebhookEnabled: process.env.MOCK_WEBHOOK_ENABLED === undefined ? true : process.env.MOCK_WEBHOOK_ENABLED === 'true',
 
   // JWT

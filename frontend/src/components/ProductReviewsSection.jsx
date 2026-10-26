@@ -55,19 +55,38 @@ export default function ProductReviewsSection({ productId }) {
       setEligibility({ canReview: false, reason: 'Log in as a customer to review this product' });
       return;
     }
+    if (user?.role !== 'customer') {
+      setEligibility({
+        canReview: false,
+        reason:
+          user?.role === 'vendor'
+            ? 'Vendor accounts cannot review products.'
+            : 'Administrator accounts cannot review products.',
+      });
+      return;
+    }
     setLoadingEligibility(true);
     try {
       const res = await api.get(`/products/${productId}/reviews/eligibility`);
       setEligibility(res.data);
     } catch (err) {
-      setEligibility({
-        canReview: false,
-        reason: err.response?.data?.message || 'Unable to check review eligibility',
-      });
+      if (!err?.isCanceled) {
+        setEligibility({
+          canReview: false,
+          reason: err.response?.data?.message || 'Unable to check review eligibility',
+        });
+      }
     } finally {
       setLoadingEligibility(false);
     }
-  }, [productId, isAuthenticated]);
+  }, [productId, isAuthenticated, user?.role, user?._id]);
+
+  useEffect(() => {
+    setEditingId(null);
+    setComment('');
+    setFormError('');
+    setFormSuccess('');
+  }, [user?._id]);
 
   useEffect(() => {
     fetchReviews(1);

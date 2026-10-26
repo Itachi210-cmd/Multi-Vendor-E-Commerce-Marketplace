@@ -35,11 +35,16 @@ const app = express();
 app.use(helmet());
 
 // Cross-Origin Resource Sharing with credentials
+const allowedOrigins = (env.clientUrl || '')
+  .split(',')
+  .map((url) => url.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server) or matched clientUrl
-      if (!origin || origin === env.clientUrl) {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server) or matched origins
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error(`Origin ${origin} not allowed by CORS`));

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
 
 export default function AdminOrdersPage() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -10,6 +12,11 @@ export default function AdminOrdersPage() {
   const [paymentStatus, setPaymentStatus] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setOrders([]);
+    setTotal(0);
+  }, [user?._id]);
 
   const fetchOrders = async () => {
     try {
@@ -21,15 +28,19 @@ export default function AdminOrdersPage() {
       setTotal(res.data?.total || 0);
       setPages(res.data?.pages || 1);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to fetch platform orders');
+      if (!err?.isCanceled) {
+        setError(err.response?.data?.message || err.message || 'Failed to fetch platform orders');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, paymentStatus]);
+    if (user?.role === 'admin') {
+      fetchOrders();
+    }
+  }, [page, paymentStatus, user?._id, user?.role]);
 
   const getPaymentBadge = (status) => {
     switch (status) {

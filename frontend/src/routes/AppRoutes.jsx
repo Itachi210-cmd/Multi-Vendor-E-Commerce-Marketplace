@@ -23,7 +23,6 @@ import CheckoutPage from '../pages/CheckoutPage';
 import MyOrdersPage from '../pages/MyOrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import NotFoundPage from '../pages/NotFoundPage';
-import ProtectedRoute from '../components/ProtectedRoute';
 import RequireRole from '../components/RequireRole';
 
 export default function AppRoutes() {
@@ -38,47 +37,47 @@ export default function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/rbac-demo" element={<RbacDemoPage />} />
 
-        {/* Customer Cart, Checkout & Orders */}
+        {/* Customer-only Cart, Checkout & Orders */}
         <Route
           path="/cart"
           element={
-            <ProtectedRoute>
+            <RequireRole roles={['customer']}>
               <CartPage />
-            </ProtectedRoute>
+            </RequireRole>
           }
         />
         <Route
           path="/checkout"
           element={
-            <ProtectedRoute>
+            <RequireRole roles={['customer']}>
               <CheckoutPage />
-            </ProtectedRoute>
+            </RequireRole>
           }
         />
         <Route
           path="/orders"
           element={
-            <ProtectedRoute>
+            <RequireRole roles={['customer']}>
               <MyOrdersPage />
-            </ProtectedRoute>
+            </RequireRole>
           }
         />
         <Route
           path="/orders/:id"
           element={
-            <ProtectedRoute>
+            <RequireRole roles={['customer', 'admin']}>
               <OrderDetailPage />
-            </ProtectedRoute>
+            </RequireRole>
           }
         />
 
-        {/* Customer Onboarding */}
+        {/* Customer-only Onboarding */}
         <Route
           path="/become-seller"
           element={
-            <ProtectedRoute>
+            <RequireRole roles={['customer']}>
               <BecomeSellerPage />
-            </ProtectedRoute>
+            </RequireRole>
           }
         />
 
