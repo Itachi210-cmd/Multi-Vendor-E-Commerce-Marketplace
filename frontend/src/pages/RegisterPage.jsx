@@ -46,29 +46,40 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <div className="auth-card">
-          <div className="auth-header">
-            <div className="brand-icon" style={{ margin: '0 auto 1rem' }}>M</div>
-            <h1 className="auth-title">Create an Account</h1>
-            <p className="auth-subtitle">Join the marketplace as a verified customer</p>
+        <div className="stitch-auth-card">
+          <div className="stitch-auth-header">
+            <div className="stitch-brand-logo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <line x1="19" y1="8" x2="19" y2="14" />
+                <line x1="22" y1="11" x2="16" y2="11" />
+              </svg>
+            </div>
+            <h1 className="stitch-auth-title">Create an Account</h1>
+            <p className="stitch-auth-subtitle">Join the multi-vendor marketplace as a customer</p>
           </div>
 
           {error && (
-            <div className="alert-box alert-error" role="alert">
-              <span className="alert-icon">⚠️</span>
+            <div className="stitch-checkout-error-alert" role="alert" style={{ marginBottom: '1.5rem' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="auth-form" noValidate>
-            <div className="form-group">
-              <label htmlFor="register-name" className="form-label">
+          <form onSubmit={handleSubmit} className="stitch-auth-form" noValidate>
+            <div className="stitch-form-group">
+              <label htmlFor="register-name" className="stitch-form-label">
                 Full Name
               </label>
               <input
                 id="register-name"
                 type="text"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="Jane Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -78,14 +89,14 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="register-email" className="form-label">
+            <div className="stitch-form-group">
+              <label htmlFor="register-email" className="stitch-form-label">
                 Email Address
               </label>
               <input
                 id="register-email"
                 type="email"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -95,14 +106,14 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="register-password" className="form-label">
+            <div className="stitch-form-group">
+              <label htmlFor="register-password" className="stitch-form-label">
                 Password (min. 8 characters)
               </label>
               <input
                 id="register-password"
                 type="password"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -112,14 +123,14 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="register-confirm-password" className="form-label">
+            <div className="stitch-form-group">
+              <label htmlFor="register-confirm-password" className="stitch-form-label">
                 Confirm Password
               </label>
               <input
                 id="register-confirm-password"
                 type="password"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -129,20 +140,22 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="role-notice">
-              <span className="badge badge-connected">Role: Customer</span>
-              <p>Registration grants Customer access. Vendor stores require approval via seller application.</p>
+            <div className="stitch-role-notice-card">
+              <div className="stitch-role-badge-row">
+                <span className="stitch-status-badge paid">Role: Customer</span>
+              </div>
+              <p>Registration grants Customer shopping access. Vendor stores require a separate seller application.</p>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating Account...' : 'Register'}
+            <button type="submit" className="stitch-auth-submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating Account...' : 'Register as Customer'}
             </button>
           </form>
 
-          <div className="auth-footer">
+          <div className="stitch-auth-footer">
             <p>
               Already have an account?{' '}
-              <Link to="/login" className="auth-link">
+              <Link to="/login" className="stitch-auth-link">
                 Sign In
               </Link>
             </p>

@@ -151,18 +151,29 @@ export default function Navbar() {
     <header className="navbar">
       <div className="navbar-container">
         <Link to="/" className="nav-brand">
-          <div className="brand-icon">M</div>
+          <div className="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+          </div>
           <span className="brand-name">Marketplace</span>
         </Link>
 
         {/* Global Navbar Autocomplete Search Bar */}
         <div className="navbar-search-wrapper desktop-only-search" ref={searchContainerRef}>
           <form onSubmit={handleSearchSubmit} className="navbar-search-form" role="search">
-            <span className="search-icon" aria-hidden="true">🔍</span>
+            <span className="search-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
             <input
               type="text"
               className="navbar-search-input"
-              placeholder="Search products, categories..."
+              placeholder="Search products, brands, or vendors..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => {
@@ -185,9 +196,6 @@ export default function Navbar() {
                 ✕
               </button>
             )}
-            <button type="submit" className="search-submit-btn">
-              Search
-            </button>
           </form>
 
           {/* Autocomplete Suggestions Dropdown */}
@@ -202,7 +210,11 @@ export default function Navbar() {
                   onMouseEnter={() => setSelectedIndex(index)}
                   onClick={() => handleSelectSuggestion(item)}
                 >
-                  <span className="suggestion-icon">⚡</span>
+                  <span className="suggestion-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                  </span>
                   <span className="suggestion-text">{item}</span>
                 </li>
               ))}
@@ -214,10 +226,18 @@ export default function Navbar() {
           <ul className="nav-links">
             <li>
               <Link
+                to="/"
+                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/products"
                 className={`nav-link ${location.pathname.startsWith('/products') ? 'active' : ''}`}
               >
-                Products
+                Explore
               </Link>
             </li>
 
@@ -257,14 +277,32 @@ export default function Navbar() {
 
             {/* Vendor-only Links */}
             {user?.role === 'vendor' && (
-              <li>
-                <Link
-                  to="/vendor/products"
-                  className={`nav-link ${location.pathname.startsWith('/vendor') ? 'active' : ''}`}
-                >
-                  Vendor Studio
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/vendor/products"
+                    className={`nav-link ${location.pathname.startsWith('/vendor/products') ? 'active' : ''}`}
+                  >
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/vendor/orders"
+                    className={`nav-link ${location.pathname.startsWith('/vendor/orders') ? 'active' : ''}`}
+                  >
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/vendor/earnings"
+                    className={`nav-link ${location.pathname.startsWith('/vendor/earnings') ? 'active' : ''}`}
+                  >
+                    Earnings
+                  </Link>
+                </li>
+              </>
             )}
 
             {/* Admin-only Links */}
@@ -280,18 +318,10 @@ export default function Navbar() {
                 </li>
                 <li>
                   <Link
-                    to="/admin/coupons"
-                    className={`nav-link ${location.pathname.startsWith('/admin/coupons') ? 'active' : ''}`}
-                  >
-                    Coupons
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     to="/admin/vendors"
                     className={`nav-link ${location.pathname.startsWith('/admin/vendors') ? 'active' : ''}`}
                   >
-                    Vendor Approvals
+                    Approvals
                   </Link>
                 </li>
                 <li>
@@ -299,7 +329,15 @@ export default function Navbar() {
                     to="/admin/orders"
                     className={`nav-link ${location.pathname.startsWith('/admin/orders') ? 'active' : ''}`}
                   >
-                    All Orders
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/coupons"
+                    className={`nav-link ${location.pathname.startsWith('/admin/coupons') ? 'active' : ''}`}
+                  >
+                    Coupons
                   </Link>
                 </li>
                 <li>
@@ -318,8 +356,12 @@ export default function Navbar() {
         <div className="nav-actions">
           {/* Shopping Cart Button - ONLY visible to Customers and Guests, strictly hidden for Vendors and Admins */}
           {(!user || user.role === 'customer') && (
-            <Link to="/cart" className="nav-cart-btn" title="View Cart">
-              <span className="cart-icon">🛒</span>
+            <Link to="/cart" className="nav-cart-btn" title="View Cart" aria-label="Cart">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </Link>
           )}
@@ -327,6 +369,12 @@ export default function Navbar() {
           <div className="desktop-auth-container">
             {isAuthenticated ? (
               <div className="user-profile-menu">
+                <div className="user-avatar-pill">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
                 <span className="user-name">{user?.name}</span>
                 <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
                   <span className="badge-dot"></span>
@@ -352,7 +400,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile hamburger menu toggle */}
+          {/* Mobile hamburger menu toggle (<1100px) */}
           <button
             type="button"
             className="nav-mobile-toggle"
@@ -360,22 +408,38 @@ export default function Navbar() {
             aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? '✕' : '☰'}
+            {mobileMenuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation (<860px) */}
+      {/* Mobile Drawer Navigation (<1100px) */}
       {mobileMenuOpen && (
         <div className="navbar-mobile-drawer" ref={mobileMenuRef}>
           {/* Mobile Search */}
           <div className="mobile-search-box">
             <form onSubmit={(e) => { handleSearchSubmit(e); setMobileMenuOpen(false); }} className="navbar-search-form" role="search">
-              <span className="search-icon" aria-hidden="true">🔍</span>
+              <span className="search-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
               <input
                 type="text"
                 className="navbar-search-input"
-                placeholder="Search products..."
+                placeholder="Search products, brands, or vendors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 autoComplete="off"
@@ -383,19 +447,18 @@ export default function Navbar() {
               {searchTerm && (
                 <button type="button" className="search-clear-btn" onClick={clearSearch}>✕</button>
               )}
-              <button type="submit" className="search-submit-btn">Search</button>
             </form>
           </div>
 
           <ul className="mobile-nav-links">
             <li>
               <Link to="/" className={`mobile-nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                🏠 Home
+                Home
               </Link>
             </li>
             <li>
               <Link to="/products" className={`mobile-nav-link ${location.pathname.startsWith('/products') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                🛍️ All Products
+                Explore Products
               </Link>
             </li>
 
@@ -403,36 +466,44 @@ export default function Navbar() {
               <>
                 <li>
                   <Link to="/cart" className={`mobile-nav-link ${location.pathname === '/cart' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                    🛒 Cart {totalItems > 0 && `(${totalItems})`}
+                    Cart {totalItems > 0 && `(${totalItems})`}
                   </Link>
                 </li>
                 <li>
                   <Link to="/orders" className={`mobile-nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                    📦 My Orders
+                    My Orders
                   </Link>
                 </li>
                 <li>
                   <Link to="/become-seller" className={`mobile-nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                    ✨ Become a Seller
+                    Become a Seller
                   </Link>
                 </li>
               </>
+            )}
+
+            {!user && (
+              <li>
+                <Link to="/become-seller" className={`mobile-nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                  Become a Seller
+                </Link>
+              </li>
             )}
 
             {user?.role === 'vendor' && (
               <>
                 <li className="mobile-section-heading">Vendor Studio</li>
                 <li>
-                  <Link to="/vendor/products" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📦 Products</Link>
+                  <Link to="/vendor/products" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Products</Link>
                 </li>
                 <li>
-                  <Link to="/vendor/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📋 Orders</Link>
+                  <Link to="/vendor/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Orders</Link>
                 </li>
                 <li>
-                  <Link to="/vendor/earnings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>💰 Earnings</Link>
+                  <Link to="/vendor/earnings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Earnings</Link>
                 </li>
                 <li>
-                  <Link to="/vendor/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🏪 Profile</Link>
+                  <Link to="/vendor/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
                 </li>
               </>
             )}
@@ -441,19 +512,19 @@ export default function Navbar() {
               <>
                 <li className="mobile-section-heading">Admin Management</li>
                 <li>
-                  <Link to="/admin/analytics" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📊 Analytics</Link>
+                  <Link to="/admin/analytics" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Analytics</Link>
                 </li>
                 <li>
-                  <Link to="/admin/coupons" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🎟️ Coupons</Link>
+                  <Link to="/admin/vendors" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Vendor Approvals</Link>
                 </li>
                 <li>
-                  <Link to="/admin/vendors" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>🛡️ Vendor Approvals</Link>
+                  <Link to="/admin/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>All Orders</Link>
                 </li>
                 <li>
-                  <Link to="/admin/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>📋 All Orders</Link>
+                  <Link to="/admin/coupons" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Coupons</Link>
                 </li>
                 <li>
-                  <Link to="/admin/payouts" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>💳 Payouts</Link>
+                  <Link to="/admin/payouts" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Payouts</Link>
                 </li>
               </>
             )}

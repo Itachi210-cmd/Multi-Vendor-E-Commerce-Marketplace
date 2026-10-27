@@ -24,210 +24,350 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      {/* Hero Section */}
-      <section className="hero-section">
+      {/* Hero Section: Left Text + Right 2x2 Grid */}
+      <section className="stitch-hero-section">
+        <div className="hero-decor-blob-1" aria-hidden="true" />
+        <div className="hero-decor-blob-2" aria-hidden="true" />
+
         <div className="content-container">
-          <div className="hero-content">
-            <div className="hero-badge">
-              <span>✨ Multi-vendor marketplace demo</span>
+          <div className="stitch-hero-grid">
+            {/* Left Column: Heading, Subtitle, CTA buttons, feature micro-checks */}
+            <div className="stitch-hero-left">
+              <div className="stitch-hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                <span>Multi-vendor marketplace demo</span>
+              </div>
+
+              <h1 className="stitch-hero-title">
+                Discover products from <span className="stitch-gradient-text">independent vendors</span>
+              </h1>
+
+              <p className="stitch-hero-desc">
+                Browse multiple stores, check out once, and track each vendor's shipment separately. Experience seamless multi-vendor commerce.
+              </p>
+
+              <div className="stitch-hero-actions">
+                <Link to="/products" className="btn btn-primary btn-lg">
+                  Browse products
+                </Link>
+                <Link to="/become-seller" className="btn btn-secondary btn-lg">
+                  Become a seller
+                </Link>
+              </div>
+
+              <div className="stitch-hero-trust-row">
+                <div className="stitch-trust-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Many stores, one cart</span>
+                </div>
+                <div className="stitch-trust-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
+                  <span>Track every shipment</span>
+                </div>
+                <div className="stitch-trust-item">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                  <span>Simple checkout</span>
+                </div>
+              </div>
             </div>
-            <h1 className="hero-title">
-              Discover products from <span className="gradient-text">independent vendors</span>
-            </h1>
-            <p className="hero-description">
-              Browse multiple stores, check out once, and track each vendor's shipment separately.
-            </p>
-            <div className="hero-cta" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/products" className="btn btn-primary btn-lg">
-                🛍️ Browse Catalog
-              </Link>
-              <Link to="/become-seller" className="btn btn-secondary btn-lg">
-                🏪 Become a Seller
-              </Link>
+
+            {/* Right Column: 2x2 Product Cards from API */}
+            <div className="stitch-hero-right">
+              {loadingProducts ? (
+                <div className="stitch-hero-products-grid">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="stitch-hero-skeleton-card">
+                      <div className="skeleton stitch-skeleton-img" />
+                      <div className="stitch-skeleton-content">
+                        <div className="skeleton stitch-skeleton-line short" />
+                        <div className="skeleton stitch-skeleton-line" />
+                        <div className="skeleton stitch-skeleton-line price" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : featuredProducts.length > 0 ? (
+                <div className="stitch-hero-products-grid">
+                  {featuredProducts.slice(0, 4).map((p) => {
+                    const imgUrl = (p.images && p.images[0]) || '/placeholder.svg';
+                    return (
+                      <Link
+                        key={p._id}
+                        to={`/products/${p._id}`}
+                        className="stitch-product-card"
+                      >
+                        <div className="stitch-card-img-wrap">
+                          <img
+                            src={imgUrl}
+                            alt={p.title}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/placeholder.svg';
+                            }}
+                            className="stitch-card-img"
+                          />
+                          <span className="stitch-card-category">
+                            {p.category || 'General'}
+                          </span>
+                        </div>
+                        <div className="stitch-card-body">
+                          <span className="stitch-card-vendor">
+                            {p.vendorId?.storeName || 'Community Store'}
+                          </span>
+                          <h3 className="stitch-card-title" title={p.title}>
+                            {p.title}
+                          </h3>
+                          <div className="stitch-card-footer">
+                            <span className="stitch-card-price">
+                              ₹{p.price?.toLocaleString()}
+                            </span>
+                            <span className="stitch-card-action-btn" aria-hidden="true">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="9" cy="21" r="1" />
+                                <circle cx="20" cy="21" r="1" />
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="stitch-product-empty-card">
+                  <div className="stitch-empty-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                      <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                  </div>
+                  <h3>Catalog Ready</h3>
+                  <p>Discover products once community stores list items.</p>
+                  <Link to="/products" className="btn btn-primary btn-sm">
+                    Explore Catalog
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-
-        {/* Calm Wave SVG Pattern */}
-        <div className="hero-wave" aria-hidden="true" style={{ width: '100%', overflow: 'hidden', lineHeight: 0, marginTop: '2.5rem' }}>
-          <svg
-            viewBox="0 0 1440 60"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            style={{ width: '100%', height: '48px', display: 'block' }}
-          >
-            <path
-              d="M0,24 C240,48 480,12 720,30 C960,48 1200,16 1440,32 L1440,60 L0,60 Z"
-              fill="var(--color-bg)"
-            />
-          </svg>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="content-container">
-        {/* Featured Products Section */}
-        <section style={{ margin: '3.5rem 0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text-main)' }}>
-                🌟 Featured Products
-              </h2>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginTop: '0.25rem' }}>
-                Discover top-rated products from community vendors
-              </p>
-            </div>
-            <Link to="/products" className="btn btn-outline btn-sm">
-              View All Products →
-            </Link>
-          </div>
-
-          {loadingProducts ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
-              {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="product-skeleton-card">
-                  <div className="skeleton skeleton-img"></div>
-                  <div className="skeleton-body">
-                    <div className="skeleton skeleton-tag"></div>
-                    <div className="skeleton skeleton-title"></div>
-                    <div className="skeleton skeleton-footer"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : featuredProducts.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
-              {featuredProducts.map((p) => {
-                const imgUrl = (p.images && p.images[0]) || '/placeholder.svg';
-                return (
-                  <Link
-                    key={p._id}
-                    to={`/products/${p._id}`}
-                    className="card"
-                    style={{
-                      padding: 0,
-                      overflow: 'hidden',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      textDecoration: 'none',
-                      color: 'inherit',
-                    }}
-                  >
-                    <div style={{ position: 'relative', width: '100%', paddingTop: '75%', overflow: 'hidden', backgroundColor: 'var(--color-bg)' }}>
-                      <img
-                        src={imgUrl}
-                        alt={p.title}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = '/placeholder.svg';
-                        }}
-                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' }}>
-                          {p.category || 'General'}
-                        </span>
-                        {p.rating?.average > 0 && (
-                          <span className="product-rating-pill">
-                            ★ {p.rating.average.toFixed(1)}
-                          </span>
-                        )}
-                      </div>
-                      <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>
-                        {p.title}
-                      </h3>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-                        Sold by {p.vendorId?.storeName || 'Community Store'}
-                      </span>
-                      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
-                        <strong style={{ fontSize: '1.2rem', color: 'var(--color-text-main)' }}>
-                          ₹{p.price?.toLocaleString()}
-                        </strong>
-                        <span className="btn btn-secondary btn-sm" style={{ pointerEvents: 'none' }}>
-                          View →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📦</div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.35rem' }}>Catalog Empty</h3>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-                No products are currently available in the public catalog.
-              </p>
-              <Link to="/products" className="btn btn-primary btn-sm">Explore All Products</Link>
-            </div>
-          )}
-        </section>
-
-        {/* Architectural Pillars / Storefront Benefits */}
-        <section className="features-section" style={{ padding: '2rem 0 3.5rem' }}>
-          <div className="section-header">
-            <h2 className="section-title">Why Shop With Us?</h2>
-            <p className="section-subtitle">
-              Built on transparent marketplace architecture with independent store fulfillment and simulated test payments.
+      {/* Benefits and Revenue Split Section */}
+      <section className="stitch-benefits-section">
+        <div className="content-container">
+          <div className="stitch-section-heading">
+            <span className="stitch-section-eyebrow">Ecosystem Overview</span>
+            <h2 className="stitch-section-title">
+              Built for customers, vendors and the platform
+            </h2>
+            <p className="stitch-section-subtitle">
+              Everyone gets a clear share and optimized workflows designed for scale.
             </p>
           </div>
 
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">🏪</div>
-              <h3>Approved Sellers</h3>
-              <p>
-                Vendors apply and are approved by the platform admin before listing products.
-              </p>
+          {/* 3 Ecosystem Pillar Cards */}
+          <div className="stitch-pillars-grid">
+            {/* Customer Card */}
+            <div className="stitch-pillar-card">
+              <div>
+                <div className="stitch-pillar-icon-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
+                  </svg>
+                </div>
+                <h3 className="stitch-pillar-title">For Customers</h3>
+                <ul className="stitch-pillar-list">
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Buy from many stores in one checkout</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Search with filters, sorting & suggestions</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Track each vendor's shipment separately</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Coupons and downloadable PDF invoices</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">🔍</div>
-              <h3>Fast Search</h3>
-              <p>
-                Full-text search with suggestions, typo tolerance, filters and sorting.
-              </p>
+            {/* Vendor Card */}
+            <div className="stitch-pillar-card">
+              <div>
+                <div className="stitch-pillar-icon-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                </div>
+                <h3 className="stitch-pillar-title">For Vendors</h3>
+                <ul className="stitch-pillar-list">
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Open your own store after quick approval</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>List products with multiple direct image uploads</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Manage orders from placed to delivered</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Keep default 90% of every sale (10% platform fee; admin can set custom commission per vendor)</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">🛒</div>
-              <h3>Multi-Vendor Cart</h3>
-              <p>
-                Buy from several vendors in one checkout; each vendor ships their own part.
-              </p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">💳</div>
-              <h3>Split Payments</h3>
-              <p>
-                Each order is split between vendors and the platform commission automatically (simulated test payments).
-              </p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">📦</div>
-              <h3>Order Tracking</h3>
-              <p>
-                Track every vendor's sub-order from placed to delivered.
-              </p>
-            </div>
-
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">🛡️</div>
-              <h3>Secure Sessions</h3>
-              <p>
-                Role-based access, hashed passwords and signed payment verification.
-              </p>
+            {/* Platform Card */}
+            <div className="stitch-pillar-card">
+              <div>
+                <div className="stitch-pillar-icon-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="9" />
+                    <rect x="14" y="3" width="7" height="5" />
+                    <rect x="14" y="12" width="7" height="9" />
+                    <rect x="3" y="16" width="7" height="5" />
+                  </svg>
+                </div>
+                <h3 className="stitch-pillar-title">For the Platform</h3>
+                <ul className="stitch-pillar-list">
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Retains platform commission on each vendor sale (default 10%, configurable per vendor)</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Approves vendors and manages platform coupons</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Real-time revenue, commission, and order analytics</span>
+                  </li>
+                  <li>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Automated simulated vendor transfers (modeled on Razorpay Route)</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </section>
 
-      </div>
+          {/* Revenue Split Graphic Box */}
+          <div className="stitch-split-box">
+            <div className="stitch-split-header">
+              <h4 className="stitch-split-title">How a ₹1,000 sale is split</h4>
+              <p className="stitch-split-sub">
+                Transparent automated disbursement per transaction (default 10% platform commission, configurable per vendor by admin)
+              </p>
+            </div>
+
+            {/* Stacked Percentage Bar Graphic */}
+            <div className="stitch-split-bar-wrap">
+              <div className="stitch-split-bar">
+                <div className="stitch-bar-vendor" style={{ width: '90%' }}>
+                  <span>Vendor receives ₹900 (90%)</span>
+                </div>
+                <div className="stitch-bar-platform" style={{ width: '10%' }}>
+                  <span>₹100 (10%)</span>
+                </div>
+              </div>
+              <div className="stitch-split-legend">
+                <span className="stitch-legend-item">
+                  <span className="stitch-legend-color vendor-color" />
+                  Vendor Payout (Default 90%)
+                </span>
+                <span className="stitch-legend-item">
+                  <span className="stitch-legend-color platform-color" />
+                  Platform Commission (Default 10%, adjustable per vendor)
+                </span>
+              </div>
+            </div>
+
+            {/* Multi-Vendor Cart Split Example */}
+            <div className="stitch-multivendor-cart-example">
+              <span className="stitch-cart-example-title">
+                Cart with two vendors (₹600 + ₹400 = ₹1,000 Total Checkout)
+              </span>
+              <div className="stitch-cart-vendors-grid">
+                <div className="stitch-vendor-split-card">
+                  <div className="stitch-vendor-split-top">
+                    <span className="stitch-vendor-name">Store A: Aura Tech Hub</span>
+                    <span className="stitch-vendor-amount">₹600</span>
+                  </div>
+                  <div className="stitch-mini-bar">
+                    <div className="stitch-mini-vendor" style={{ width: '90%' }} />
+                    <div className="stitch-mini-platform" style={{ width: '10%' }} />
+                  </div>
+                  <span className="stitch-vendor-breakdown">Vendor gets ₹540 | Platform gets ₹60</span>
+                </div>
+
+                <div className="stitch-vendor-split-card">
+                  <div className="stitch-vendor-split-top">
+                    <span className="stitch-vendor-name">Store B: Urban Threads</span>
+                    <span className="stitch-vendor-amount">₹400</span>
+                  </div>
+                  <div className="stitch-mini-bar">
+                    <div className="stitch-mini-vendor" style={{ width: '90%' }} />
+                    <div className="stitch-mini-platform" style={{ width: '10%' }} />
+                  </div>
+                  <span className="stitch-vendor-breakdown">Vendor gets ₹360 | Platform gets ₹40</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

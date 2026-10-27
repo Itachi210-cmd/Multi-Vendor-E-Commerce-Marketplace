@@ -62,29 +62,39 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <div className="auth-card">
-          <div className="auth-header">
-            <div className="brand-icon" style={{ margin: '0 auto 1rem' }}>M</div>
-            <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to your Multi-Vendor Marketplace account</p>
+        <div className="stitch-auth-card">
+          <div className="stitch-auth-header">
+            <div className="stitch-brand-logo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+            </div>
+            <h1 className="stitch-auth-title">Welcome Back</h1>
+            <p className="stitch-auth-subtitle">Sign in to your Multi-Vendor Marketplace account</p>
           </div>
 
           {error && (
-            <div className="alert-box alert-error" role="alert">
-              <span className="alert-icon">⚠️</span>
+            <div className="stitch-checkout-error-alert" role="alert" style={{ marginBottom: '1.5rem' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="auth-form" noValidate>
-            <div className="form-group">
-              <label htmlFor="login-email" className="form-label">
+          <form onSubmit={handleSubmit} className="stitch-auth-form" noValidate>
+            <div className="stitch-form-group">
+              <label htmlFor="login-email" className="stitch-form-label">
                 Email Address
               </label>
               <input
                 id="login-email"
                 type="email"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -94,14 +104,14 @@ export default function LoginPage() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="login-password" className="form-label">
+            <div className="stitch-form-group">
+              <label htmlFor="login-password" className="stitch-form-label">
                 Password
               </label>
               <input
                 id="login-password"
                 type="password"
-                className="form-input"
+                className="stitch-form-input"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -111,43 +121,48 @@ export default function LoginPage() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
+            <button type="submit" className="stitch-auth-submit-btn" disabled={isSubmitting}>
               {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          {/* Demo helper buttons */}
-          <div className="demo-credentials-box">
-            <span className="demo-title">Quick Demo Logins:</span>
-            <div className="demo-buttons" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={() => handleFillDemo('customer@example.com', 'Password@123')}
-              >
-                Customer
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={() => handleFillDemo('vendor@audio.com', 'Password@123')}
-              >
-                Vendor
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={() => handleFillDemo('admin@marketplace.com', 'Admin@123456')}
-              >
-                Admin
-              </button>
+          {/* Demo helper buttons - ONLY in dev per AGENTS.md */}
+          {import.meta.env.DEV && (
+            <div className="stitch-demo-logins-box">
+              <span className="stitch-demo-title">⚡ Quick Demo Logins:</span>
+              <div className="stitch-demo-buttons-grid">
+                <button
+                  type="button"
+                  className="stitch-demo-btn"
+                  onClick={() => handleFillDemo('customer@example.com', 'Password@123')}
+                >
+                  <span className="stitch-demo-role">Customer</span>
+                  <span className="stitch-demo-user">customer@example.com</span>
+                </button>
+                <button
+                  type="button"
+                  className="stitch-demo-btn"
+                  onClick={() => handleFillDemo('vendor@audio.com', 'Password@123')}
+                >
+                  <span className="stitch-demo-role">Vendor</span>
+                  <span className="stitch-demo-user">vendor@audio.com</span>
+                </button>
+                <button
+                  type="button"
+                  className="stitch-demo-btn"
+                  onClick={() => handleFillDemo('admin@marketplace.com', 'Admin@123456')}
+                >
+                  <span className="stitch-demo-role">Admin</span>
+                  <span className="stitch-demo-user">admin@marketplace.com</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="auth-footer">
+          <div className="stitch-auth-footer">
             <p>
               Don't have an account?{' '}
-              <Link to="/register" className="auth-link">
+              <Link to="/register" className="stitch-auth-link">
                 Register as Customer
               </Link>
             </p>

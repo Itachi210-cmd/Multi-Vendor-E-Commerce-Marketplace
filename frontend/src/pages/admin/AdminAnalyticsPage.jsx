@@ -102,60 +102,35 @@ export default function AdminAnalyticsPage() {
   );
 
   return (
-    <div className="content-container" style={{ padding: '3rem 1.5rem 5rem' }}>
+    <div className="stitch-admin-analytics-container">
       {/* Header & Controls */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '2rem',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
+      <div className="stitch-admin-header">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <h1 className="section-title" style={{ margin: 0 }}>
-              Platform Analytics &amp; KPIs
-            </h1>
+          <span className="stitch-admin-control-badge">Marketplace Control Tower</span>
+          <div className="stitch-admin-title-row">
+            <h1 className="stitch-admin-title">Admin Analytics &amp; KPIs</h1>
             {data?.cached && (
-              <span
-                style={{
-                  background: '#fef3c7',
-                  color: '#92400e',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  padding: '0.2rem 0.6rem',
-                  borderRadius: '999px',
-                  border: '1px solid #fde68a',
-                }}
-              >
+              <span className="badge badge-warning" style={{ fontSize: '0.75rem', fontWeight: 700 }}>
                 ⚡ Redis Cached (5m)
               </span>
             )}
           </div>
-          <p className="section-subtitle" style={{ marginTop: '0.35rem' }}>
+          <p className="stitch-admin-subtitle">
             Aggregated revenue (minus refunds), platform commissions (excluding reversed payouts), timeseries, and product metrics.
           </p>
         </div>
 
         {/* Range Buttons */}
-        <div style={{ display: 'flex', gap: '0.4rem', background: '#f1f5f9', padding: '0.25rem', borderRadius: '8px' }}>
+        <div className="stitch-range-selector-pill">
           {[
-            { key: '7d', label: 'Last 7 Days' },
-            { key: '30d', label: 'Last 30 Days' },
-            { key: '90d', label: 'Last 90 Days' },
+            { key: '7d', label: '7 Days' },
+            { key: '30d', label: '30 Days' },
+            { key: '90d', label: '90 Days' },
           ].map((r) => (
             <button
               key={r.key}
               onClick={() => setRange(r.key)}
-              className={`btn btn-sm ${range === r.key ? 'btn-primary' : 'btn-secondary'}`}
-              style={{
-                fontWeight: 700,
-                border: 'none',
-                background: range === r.key ? 'var(--color-primary)' : 'transparent',
-              }}
+              className={`stitch-range-btn ${range === r.key ? 'active' : ''}`}
             >
               {r.label}
             </button>
@@ -171,140 +146,138 @@ export default function AdminAnalyticsPage() {
       )}
 
       {loading && !data ? (
-        <div style={{ textAlign: 'center', padding: '5rem 0', color: 'var(--color-text-muted)' }}>
+        <div className="stitch-analytics-loading">
           <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
           <p>Calculating platform analytics from database...</p>
         </div>
       ) : (
         <>
-          {/* KPI Summary Cards Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '1.25rem',
-              marginBottom: '2.5rem',
-            }}
-          >
+          {/* KPI Summary Cards Grid (Stitch 5-6 Cards) */}
+          <div className="stitch-admin-kpi-grid">
             {/* Card 1: Net Revenue */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Net Revenue (Paid - Refunded)
+            <div className="stitch-admin-kpi-card">
+              <div className="stitch-kpi-top">
+                <span className="stitch-kpi-label">Net Revenue</span>
+                <div className="stitch-kpi-icon-wrap stitch-kpi-icon-sales">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0' }}>
-                ₹{totals.revenue.toLocaleString()}
+              <div className="stitch-kpi-amount">
+                ₹{totals.revenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600 }}>
-                ✓ Excludes refunded orders
+              <div className="stitch-kpi-footer">
+                <span className="stitch-kpi-badge-settled">Paid - Refunded</span>
               </div>
             </div>
 
             {/* Card 2: Commission Earned */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Platform Commission
+            <div className="stitch-admin-kpi-card">
+              <div className="stitch-kpi-top">
+                <span className="stitch-kpi-label">Platform Commission</span>
+                <div className="stitch-kpi-icon-wrap stitch-kpi-icon-commission">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="5" x2="5" y2="19"></line>
+                    <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                    <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0284C7', margin: '0.35rem 0' }}>
-                ₹{totals.commission.toLocaleString()}
+              <div className="stitch-kpi-amount" style={{ color: 'var(--color-primary)' }}>
+                ₹{totals.commission.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                From verified vendor payouts
+              <div className="stitch-kpi-footer">
+                <span className="stitch-kpi-subtext">Retained platform split</span>
               </div>
             </div>
 
             {/* Card 3: Orders Count */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Orders Placed
+            <div className="stitch-admin-kpi-card">
+              <div className="stitch-kpi-top">
+                <span className="stitch-kpi-label">Total Orders</span>
+                <div className="stitch-kpi-icon-wrap stitch-kpi-icon-payout">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0' }}>
+              <div className="stitch-kpi-amount">
                 {totals.orders}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                In selected period ({range})
+              <div className="stitch-kpi-footer">
+                <span className="stitch-kpi-subtext">Placed in {range}</span>
               </div>
             </div>
 
             {/* Card 4: Average Order Value */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Average Order Value (AOV)
+            <div className="stitch-admin-kpi-card">
+              <div className="stitch-kpi-top">
+                <span className="stitch-kpi-label">Average Order Value</span>
+                <div className="stitch-kpi-icon-wrap" style={{ background: '#F0FDF4', color: '#16A34A' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0' }}>
-                ₹{totals.averageOrderValue.toLocaleString()}
+              <div className="stitch-kpi-amount">
+                ₹{totals.averageOrderValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Net revenue / order count
-              </div>
-            </div>
-
-            {/* Card 5: Active Customers */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Active Customers
-              </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0' }}>
-                {totals.activeCustomers}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Shoppers who placed orders
+              <div className="stitch-kpi-footer">
+                <span className="stitch-kpi-subtext">Net revenue / order count</span>
               </div>
             </div>
 
-            {/* Card 6: Active Vendors */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                Approved Vendors
+            {/* Card 5: Active Users & Vendors */}
+            <div className="stitch-admin-kpi-card">
+              <div className="stitch-kpi-top">
+                <span className="stitch-kpi-label">Active Platform Users</span>
+                <div className="stitch-kpi-icon-wrap" style={{ background: '#FAF5FF', color: '#9333EA' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
               </div>
-              <div style={{ fontSize: '1.85rem', fontWeight: 900, color: '#0f172a', margin: '0.35rem 0' }}>
-                {totals.activeVendors}
+              <div className="stitch-kpi-amount">
+                {totals.activeCustomers} <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-muted)' }}>/ {totals.activeVendors} v</span>
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                Approved active storefronts
+              <div className="stitch-kpi-footer">
+                <span className="stitch-kpi-subtext">Shoppers / Approved Vendors</span>
               </div>
             </div>
           </div>
 
           {/* SVG Charts Grid (Hand-made Plain SVG/CSS) */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
-              gap: '1.5rem',
-              marginBottom: '2.5rem',
-            }}
-          >
-            {/* Chart 1: Revenue Per Day (Plain SVG Area Chart) */}
-            <div
-              style={{
-                background: '#ffffff',
-                borderRadius: '12px',
-                border: '1px solid var(--color-border)',
-                padding: '1.5rem',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>
-                  Daily Net Revenue (₹)
-                </h3>
-                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                  Zero-filled timeseries
-                </span>
+          <div className="stitch-admin-charts-grid">
+            {/* Chart 1: Revenue Per Day (Plain SVG Area Chart - Blue) */}
+            <div className="stitch-chart-card">
+              <div className="stitch-chart-card-header">
+                <div>
+                  <h3 className="stitch-chart-title">Revenue &amp; Growth Trajectory</h3>
+                  <p className="stitch-chart-subtitle">Daily net marketplace turnover over selected timeframe</p>
+                </div>
+                <span className="stitch-chart-badge-primary">Net Revenue (₹)</span>
               </div>
 
-              <div style={{ width: '100%', overflowX: 'auto' }}>
+              <div className="stitch-chart-svg-wrap">
                 <svg
                   viewBox={`0 0 ${chartWidth} ${chartHeight}`}
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 >
                   <defs>
                     <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.25" />
+                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.28" />
                       <stop offset="100%" stopColor="#0284C7" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
-                  {/* Horizontal Grid lines (Light Blue) */}
+                  {/* Horizontal Grid lines */}
                   {[0, 0.25, 0.5, 0.75, 1].map((pct) => {
                     const y = padding.top + graphHeight * (1 - pct);
                     const val = Math.round(maxRevenue * pct);
@@ -315,7 +288,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#BAE6FD"
+                          stroke="#E2E8F0"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -336,7 +309,7 @@ export default function AdminAnalyticsPage() {
                     <path d={revenueAreaD} fill="url(#revenueGrad)" />
                   )}
 
-                  {/* Polyline Line */}
+                  {/* Polyline Line (Blue #0284C7) */}
                   {revenuePathD && (
                     <path
                       d={revenuePathD}
@@ -364,7 +337,6 @@ export default function AdminAnalyticsPage() {
                         onMouseLeave={() => setHoveredPoint(null)}
                         style={{ cursor: 'pointer' }}
                       />
-                      {/* X-axis date labels (show every few points to avoid crowding) */}
                       {(dailySeries.length <= 10 ||
                         idx % Math.ceil(dailySeries.length / 7) === 0 ||
                         idx === dailySeries.length - 1) && (
@@ -390,8 +362,8 @@ export default function AdminAnalyticsPage() {
                         width="90"
                         height="26"
                         rx="4"
-                        fill="#1e293b"
-                        opacity="0.9"
+                        fill="#0f172a"
+                        opacity="0.95"
                       />
                       <text
                         x={Math.max(55, Math.min(hoveredPoint.x, chartWidth - 55))}
@@ -409,25 +381,17 @@ export default function AdminAnalyticsPage() {
               </div>
             </div>
 
-            {/* Chart 2: Orders Per Day (Plain SVG Bar Chart) */}
-            <div
-              style={{
-                background: '#ffffff',
-                borderRadius: '12px',
-                border: '1px solid var(--color-border)',
-                padding: '1.5rem',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>
-                  Daily Order Volume
-                </h3>
-                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                  Orders placed per day
-                </span>
+            {/* Chart 2: Orders Per Day (Plain SVG Bar Chart - Aqua) */}
+            <div className="stitch-chart-card">
+              <div className="stitch-chart-card-header">
+                <div>
+                  <h3 className="stitch-chart-title">Order Volume Distribution</h3>
+                  <p className="stitch-chart-subtitle">Daily completed checkout frequency</p>
+                </div>
+                <span className="stitch-chart-badge-aqua">Orders Placed</span>
               </div>
 
-              <div style={{ width: '100%', overflowX: 'auto' }}>
+              <div className="stitch-chart-svg-wrap">
                 <svg
                   viewBox={`0 0 ${chartWidth} ${chartHeight}`}
                   style={{ width: '100%', height: 'auto', display: 'block' }}
@@ -443,7 +407,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#BAE6FD"
+                          stroke="#E2E8F0"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -459,7 +423,7 @@ export default function AdminAnalyticsPage() {
                     );
                   })}
 
-                  {/* SVG Bars */}
+                  {/* SVG Bars (Aqua #06B6D4) */}
                   {dailySeries.map((d, i) => {
                     const barWidth = Math.max(
                       6,
@@ -484,7 +448,7 @@ export default function AdminAnalyticsPage() {
                           height={barHeight}
                           rx="3"
                           fill="#06B6D4"
-                          opacity="0.85"
+                          opacity="0.88"
                           onMouseEnter={() =>
                             setHoveredPoint({ x: x + barWidth / 2, y, val: d.orders, date: d.date, type: 'orders' })
                           }
@@ -492,7 +456,6 @@ export default function AdminAnalyticsPage() {
                           style={{ cursor: 'pointer' }}
                         />
 
-                        {/* X-axis date labels */}
                         {(dailySeries.length <= 10 ||
                           i % Math.ceil(dailySeries.length / 7) === 0 ||
                           i === dailySeries.length - 1) && (
@@ -519,8 +482,8 @@ export default function AdminAnalyticsPage() {
                         width="70"
                         height="24"
                         rx="4"
-                        fill="#1e293b"
-                        opacity="0.9"
+                        fill="#0f172a"
+                        opacity="0.95"
                       />
                       <text
                         x={Math.max(45, Math.min(hoveredPoint.x, chartWidth - 45))}
@@ -540,33 +503,14 @@ export default function AdminAnalyticsPage() {
           </div>
 
           {/* SubOrder Status Breakdown Bar */}
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '12px',
-              border: '1px solid var(--color-border)',
-              padding: '1.5rem',
-              marginBottom: '2.5rem',
-            }}
-          >
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', marginBottom: '0.5rem' }}>
-              Sub-Order Fulfillment Status Breakdown
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+          <div className="stitch-admin-status-card">
+            <h3 className="stitch-chart-title">Sub-Order Fulfillment Status Breakdown</h3>
+            <p className="stitch-chart-subtitle" style={{ marginBottom: '1.25rem' }}>
               Tracks progress across vendor fulfillment lifecycles ({totalSubOrders} total sub-orders)
             </p>
 
             {/* Stacked Multi-Color Progress Bar */}
-            <div
-              style={{
-                height: '18px',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                display: 'flex',
-                background: '#f1f5f9',
-                marginBottom: '1rem',
-              }}
-            >
+            <div className="stitch-status-stacked-bar">
               {[
                 { key: 'placed', label: 'Placed', color: '#64748b' },
                 { key: 'packed', label: 'Packed', color: '#0284c7' },
@@ -592,7 +536,7 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* Status Legend & Counts */}
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <div className="stitch-status-legend-row">
               {[
                 { key: 'placed', label: 'Placed', color: '#64748b' },
                 { key: 'packed', label: 'Packed', color: '#0284c7' },
@@ -600,53 +544,51 @@ export default function AdminAnalyticsPage() {
                 { key: 'delivered', label: 'Delivered', color: '#10b981' },
                 { key: 'cancelled', label: 'Cancelled', color: '#ef4444' },
               ].map((st) => (
-                <div key={st.key} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: st.color }} />
-                  <span style={{ fontWeight: 600, color: '#334155' }}>{st.label}:</span>
-                  <span style={{ fontWeight: 800, color: '#0f172a' }}>{statusBreakdown[st.key] || 0}</span>
+                <div key={st.key} className="stitch-legend-item">
+                  <div className="stitch-legend-dot" style={{ background: st.color }} />
+                  <span className="stitch-legend-label">{st.label}:</span>
+                  <span className="stitch-legend-val">{statusBreakdown[st.key] || 0}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Top Vendors & Top Products Tables Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
-              gap: '1.5rem',
-              marginBottom: '2.5rem',
-            }}
-          >
+          <div className="stitch-top-metrics-grid">
             {/* Top 5 Vendors */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem', minWidth: 0 }}>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>
-                Top 5 Vendors by Revenue
-              </h3>
+            <div className="stitch-payouts-table-card">
+              <div className="stitch-payouts-card-header">
+                <div>
+                  <h3 className="stitch-payouts-title">Top Vendors by Revenue</h3>
+                  <p className="stitch-payouts-desc">Highest marketplace sales volume</p>
+                </div>
+              </div>
               {topVendors.length === 0 ? (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>No vendor sales recorded in this range.</p>
+                <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.88rem' }}>
+                  No vendor sales recorded in this range.
+                </div>
               ) : (
-                <div style={{ overflowX: 'auto', width: '100%' }}>
-                  <table style={{ width: '100%', minWidth: '320px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                <div className="table-responsive">
+                  <table className="stitch-payouts-table">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
-                        <th style={{ padding: '0.5rem 0' }}>#</th>
-                        <th style={{ padding: '0.5rem 0.5rem' }}>Store Name</th>
-                        <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Revenue</th>
-                        <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Orders</th>
+                      <tr>
+                        <th>#</th>
+                        <th>Store Name</th>
+                        <th className="align-right">Revenue</th>
+                        <th className="align-right">Orders</th>
                       </tr>
                     </thead>
                     <tbody>
                       {topVendors.map((v, i) => (
-                        <tr key={v.vendorId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '0.65rem 0', fontWeight: 700, color: '#94a3b8' }}>{i + 1}</td>
-                          <td style={{ padding: '0.65rem 0.5rem', fontWeight: 700, color: '#1e293b' }}>
+                        <tr key={v.vendorId}>
+                          <td style={{ fontWeight: 700, color: 'var(--color-text-muted)' }}>{i + 1}</td>
+                          <td style={{ fontWeight: 700, color: 'var(--color-text)' }}>
                             🏪 {v.storeName}
                           </td>
-                          <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
-                            ₹{v.revenue.toLocaleString()}
+                          <td className="align-right" style={{ fontWeight: 700, color: 'var(--color-success)' }}>
+                            ₹{v.revenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                           </td>
-                          <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', color: '#64748b' }}>
+                          <td className="align-right" style={{ color: 'var(--color-text-muted)' }}>
                             {v.orderCount}
                           </td>
                         </tr>
@@ -658,105 +600,86 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* Top 5 Products */}
-            <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid var(--color-border)', padding: '1.5rem', minWidth: 0 }}>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>
-                Top 5 Products by Units Sold
-              </h3>
-              {topProducts.length === 0 ? (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>No product sales recorded in this range.</p>
-              ) : (
-                <div style={{ overflowX: 'auto', width: '100%' }}>
-                  <table style={{ width: '100%', minWidth: '320px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left', color: '#64748b' }}>
-                        <th style={{ padding: '0.5rem 0' }}>#</th>
-                        <th style={{ padding: '0.5rem 0.5rem' }}>Product Title</th>
-                      <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Units Sold</th>
-                      <th style={{ padding: '0.5rem 0.5rem', textAlign: 'right' }}>Gross Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {topProducts.map((p, i) => (
-                      <tr key={p.productId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '0.65rem 0', fontWeight: 700, color: '#94a3b8' }}>{i + 1}</td>
-                        <td style={{ padding: '0.65rem 0.5rem', fontWeight: 700, color: '#1e293b', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {p.title}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', fontWeight: 700, color: '#0284C7' }}>
-                          {p.unitsSold}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.5rem', textAlign: 'right', color: '#0f172a' }}>
-                          ₹{p.revenue.toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="stitch-payouts-table-card">
+              <div className="stitch-payouts-card-header">
+                <div>
+                  <h3 className="stitch-payouts-title">Top Products by Units</h3>
+                  <p className="stitch-payouts-desc">Most purchased catalog items</p>
+                </div>
               </div>
-            )}
+              {topProducts.length === 0 ? (
+                <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.88rem' }}>
+                  No product sales recorded in this range.
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="stitch-payouts-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Product Title</th>
+                        <th className="align-right">Units</th>
+                        <th className="align-right">Gross</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topProducts.map((p, i) => (
+                        <tr key={p.productId}>
+                          <td style={{ fontWeight: 700, color: 'var(--color-text-muted)' }}>{i + 1}</td>
+                          <td style={{ fontWeight: 600, color: 'var(--color-text)', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {p.title}
+                          </td>
+                          <td className="align-right" style={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                            {p.unitsSold}
+                          </td>
+                          <td className="align-right" style={{ color: 'var(--color-text)' }}>
+                            ₹{p.revenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Low Stock Alert Section */}
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '12px',
-              border: '1px solid var(--color-border)',
-              padding: '1.5rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '1.3rem' }}>⚠️</span>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>
-                Low Stock Inventory Alerts (Stock ≤ 5 units)
-              </h3>
+          <div className="stitch-payouts-table-card">
+            <div className="stitch-payouts-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>⚠️</span>
+                <div>
+                  <h3 className="stitch-payouts-title">Low Stock Inventory Alerts (Stock ≤ 5 units)</h3>
+                  <p className="stitch-payouts-desc">Real-time warning for items nearing stock depletion</p>
+                </div>
+              </div>
             </div>
 
-            {lowStock.length === 0 ? (
-              <p style={{ color: '#16a34a', fontSize: '0.85rem', fontWeight: 600 }}>
-                ✓ All active products maintain healthy stock levels above 5 units.
-              </p>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-                {lowStock.map((item) => (
-                  <div
-                    key={item._id}
-                    style={{
-                      border: '1px solid #fee2e2',
-                      background: '#fffaf0',
-                      borderRadius: '8px',
-                      padding: '1rem',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0f172a' }}>
-                        {item.title}
+            <div style={{ padding: '1.5rem' }}>
+              {lowStock.length === 0 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-success)', fontWeight: 600, fontSize: '0.9rem' }}>
+                  <span>✓</span>
+                  <span>All active products maintain healthy stock levels above 5 units.</span>
+                </div>
+              ) : (
+                <div className="stitch-low-stock-grid">
+                  {lowStock.map((item) => (
+                    <div key={item._id} className="stitch-low-stock-card">
+                      <div>
+                        <div className="stitch-low-stock-title">{item.title}</div>
+                        <div className="stitch-low-stock-meta">
+                          🏪 {item.storeName} • {item.category} • ₹{item.price.toLocaleString()}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                        🏪 {item.storeName} • {item.category} • ₹{item.price.toLocaleString()}
-                      </div>
+                      <span className="badge badge-danger">
+                        {item.stock} left
+                      </span>
                     </div>
-                    <span
-                      style={{
-                        background: '#dc2626',
-                        color: '#ffffff',
-                        fontSize: '0.75rem',
-                        fontWeight: 800,
-                        padding: '0.25rem 0.6rem',
-                        borderRadius: '999px',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {item.stock} left
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}

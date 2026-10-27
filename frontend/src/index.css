@@ -2,6 +2,9 @@
    Multi-Vendor E-Commerce Marketplace - Plain CSS Design System
    ========================================================================== */
 
+/* Google Fonts — Stitch design: Plus Jakarta Sans (headings) + Inter (body) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+
 :root {
   /* Water Blue Brand Palette */
   --color-primary: #0284C7;
@@ -13,32 +16,37 @@
   --color-accent-light: #E0F2FE;
 
   /* Status Colors */
-  --color-success: #10b981;
+  --color-success: #10B981;
   --color-success-dark: #059669;
-  --color-success-bg: #ecfdf5;
-  --color-success-border: #a7f3d0;
+  --color-success-bg: #ECFDF5;
+  --color-success-border: #A7F3D0;
 
-  --color-warning: #f59e0b;
-  --color-warning-dark: #d97706;
-  --color-warning-bg: #fffbeb;
-  --color-warning-border: #fde68a;
+  --color-warning: #F59E0B;
+  --color-warning-dark: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
 
-  --color-danger: #ef4444;
-  --color-danger-dark: #dc2626;
-  --color-danger-bg: #fef2f2;
-  --color-danger-border: #fecaca;
+  --color-danger: #EF4444;
+  --color-danger-dark: #DC2626;
+  --color-danger-bg: #FEF2F2;
+  --color-danger-border: #FECACA;
+
+  /* Info / Shipped status (same as primary family) */
+  --color-info: #0284C7;
+  --color-info-bg: #F0F9FF;
+  --color-info-border: #BAE6FD;
 
   /* Neutral Slate / Blue Gray Scale */
-  --color-gray-50: #f8fafc;
-  --color-gray-100: #f0f9ff;
-  --color-gray-200: #e0f2fe;
-  --color-gray-300: #bae6fd;
-  --color-gray-400: #7dd3fc;
-  --color-gray-500: #64748b;
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F0F9FF;
+  --color-gray-200: #E0F2FE;
+  --color-gray-300: #BAE6FD;
+  --color-gray-400: #7DD3FC;
+  --color-gray-500: #64748B;
   --color-gray-600: #475569;
   --color-gray-700: #334155;
-  --color-gray-800: #1e293b;
-  --color-gray-900: #0f172a;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
 
   /* Surface & Background Colors */
   --color-bg: #F0F9FF;
@@ -55,33 +63,44 @@
   --color-text-light: #64748B;
   --color-text-inverse: #FFFFFF;
 
-  /* Typography (System Font Stack) */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --font-xs: 0.75rem;
-  --font-sm: 0.875rem;
-  --font-base: 1rem;
-  --font-lg: 1.125rem;
-  --font-xl: 1.25rem;
-  --font-2xl: 1.5rem;
-  --font-3xl: 1.875rem;
-  --font-4xl: 2.25rem;
+  /* Semantic extras */
+  --color-star: #F59E0B;
+  --color-star-empty: #E0F2FE;
+  --color-backdrop: rgba(15, 23, 43, 0.5);
 
-  /* Border Radius */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  /* Typography — Stitch: Plus Jakarta Sans (headings) + Inter (body/label) */
+  --font-family-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-xs: 0.75rem;   /* 12px – body-sm / label-sm */
+  --font-sm: 0.875rem;  /* 14px – body-md / label-md */
+  --font-base: 1rem;    /* 16px – body-lg */
+  --font-lg: 1.125rem;  /* 18px – headline-sm */
+  --font-xl: 1.25rem;   /* 20px */
+  --font-2xl: 1.5rem;   /* 24px – headline-md */
+  --font-3xl: 2rem;     /* 32px – headline-lg (was 1.875rem, bumped to match Stitch 32px) */
+  --font-4xl: 2.5rem;   /* 40px – headline-xl (was 2.25rem, bumped to match Stitch 40px) */
 
-  /* Soft Water-Blue Tinted Shadows */
+  /* Border Radius – Stitch default roundedness: 12px (0.75rem) */
+  --radius-xs: 4px;    /* chips, small badges */
+  --radius-sm: 6px;    /* tight inputs, small elements */
+  --radius-md: 12px;   /* cards, buttons, inputs, dropdowns (was 10px, now 12px per Stitch) */
+  --radius-lg: 16px;   /* modals, large containers */
+  --radius-xl: 24px;   /* banners, promotional cards */
+  --radius-full: 9999px; /* avatars, pills */
+
+  /* Soft Water-Blue Tinted Shadows (primary blue at low opacity, not black) */
   --shadow-xs: 0 1px 2px 0 rgba(2, 132, 199, 0.04);
   --shadow-sm: 0 1px 3px 0 rgba(2, 132, 199, 0.08), 0 1px 2px -1px rgba(2, 132, 199, 0.04);
   --shadow-md: 0 4px 8px -1px rgba(2, 132, 199, 0.08), 0 2px 4px -2px rgba(2, 132, 199, 0.04);
   --shadow-lg: 0 10px 16px -3px rgba(2, 132, 199, 0.08), 0 4px 6px -4px rgba(2, 132, 199, 0.04);
   --shadow-xl: 0 20px 25px -5px rgba(2, 132, 199, 0.09), 0 8px 10px -6px rgba(2, 132, 199, 0.04);
 
-  /* Spacing Scale (4/8/12/16/24/32/48) */
+  /* Focus ring (primary-light at 15% and 30% opacity) */
+  --focus-ring: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  --focus-ring-strong: 0 0 0 3px rgba(14, 165, 233, 0.3);
+
+  /* Spacing Scale (4/8/12/16/24/32/48) – 8px base rhythm */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -101,7 +120,12 @@
   --z-toast: 1080;
   --z-popover: 1090;
 
+  /* Layout */
   --max-width: 1200px;
+  --navbar-height: 64px;
+  --sidebar-width: 250px;
+
+  /* Transition */
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -609,28 +633,33 @@ button {
 }
 
 /* ==========================================================================
-   Navbar & Mobile Navigation
+   Navbar & Mobile Navigation (Stitch Design Spec)
    ========================================================================== */
 
 .navbar {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background-color: rgba(255, 255, 255, 0.96);
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 8px -2px rgba(2, 132, 199, 0.08);
+  box-shadow: 0 1px 8px rgba(0, 97, 148, 0.04);
   width: 100%;
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
 }
 
 .navbar-container {
   max-width: var(--max-width);
+  width: 100%;
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
+  gap: 1.5rem;
   position: relative;
 }
 
@@ -651,18 +680,150 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.22);
   flex-shrink: 0;
 }
 
 .brand-name {
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-family: var(--font-family-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--color-text-main);
   white-space: nowrap;
+}
+
+/* Autocomplete Search Bar */
+.navbar-search-wrapper {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+
+.navbar-search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-search-form .search-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.navbar-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 2.25rem 0 2.5rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-sm);
+  font-family: var(--font-family-body);
+  transition: var(--transition);
+}
+
+.navbar-search-input:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.navbar-search-input::placeholder {
+  color: var(--color-text-light);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+}
+
+.search-clear-btn:hover {
+  color: var(--color-text-main);
+}
+
+.search-spinner-sm {
+  position: absolute;
+  right: 0.75rem;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Suggestions Dropdown */
+.navbar-suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  z-index: var(--z-dropdown);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+}
+
+.suggestion-icon {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+}
+
+.suggestion-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Desktop Navigation Links */
@@ -674,43 +835,38 @@ button {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.5rem;
   list-style: none;
 }
 
 .nav-link {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-family: var(--font-family-body);
+  font-size: var(--font-sm);
+  font-weight: 500;
   color: var(--color-text-muted);
-  transition: var(--transition);
   text-decoration: none;
-  padding: 0.35rem 0.25rem;
-  position: relative;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  color: var(--color-text-main);
+  background-color: var(--color-bg-soft);
+}
+
 .nav-link.active {
-  color: var(--color-primary-dark);
-}
-
-.nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  right: 0;
-  height: 2px;
+  color: #ffffff;
   background-color: var(--color-primary);
-  border-radius: var(--radius-full);
+  font-weight: 600;
 }
 
 /* Nav Actions (Right side: Cart, Auth, Hamburger) */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.75rem;
   flex-shrink: 0;
 }
 
@@ -719,8 +875,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-full);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -729,23 +885,19 @@ button {
 }
 
 .nav-cart-btn:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-bg-soft);
   border-color: var(--color-primary);
-  transform: translateY(-1px);
-}
-
-.cart-icon {
-  font-size: 1.15rem;
+  color: var(--color-primary);
 }
 
 .cart-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background-color: var(--color-primary);
+  top: -2px;
+  right: -2px;
+  background-color: var(--color-danger);
   color: #fff;
   font-size: 0.7rem;
-  font-weight: 800;
+  font-weight: 700;
   min-width: 18px;
   height: 18px;
   border-radius: var(--radius-full);
@@ -753,7 +905,14 @@ button {
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  box-shadow: 0 2px 5px rgba(2, 132, 199, 0.4);
+  border: 2px solid #ffffff;
+}
+
+.desktop-auth-container {
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--color-border);
 }
 
 .user-profile-menu {
@@ -762,11 +921,23 @@ button {
   gap: 0.65rem;
 }
 
+.user-avatar-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .user-name {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--font-sm);
+  font-weight: 600;
   color: var(--color-text-main);
-  max-width: 140px;
+  max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -783,32 +954,36 @@ button {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background-color: var(--color-surface);
   color: var(--color-text-main);
-  font-size: 1.25rem;
-  line-height: 1;
+  cursor: pointer;
   transition: var(--transition);
 }
 
 .nav-mobile-toggle:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary);
 }
 
-/* Mobile Navigation Drawer (<860px) */
+/* Mobile Navigation Drawer (<1100px) */
 .navbar-mobile-drawer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-lg);
-  padding: 1.25rem 1.5rem 1.75rem;
+  padding: 1rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   animation: mobileMenuSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 80vh;
+  max-height: calc(100vh - var(--navbar-height));
   overflow-y: auto;
 }
 
@@ -831,7 +1006,7 @@ button {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.25rem;
 }
 
 .mobile-nav-link {
@@ -839,24 +1014,29 @@ button {
   align-items: center;
   padding: 0.65rem 0.85rem;
   border-radius: var(--radius-md);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: var(--font-sm);
+  font-weight: 500;
   color: var(--color-text-main);
   text-decoration: none;
   transition: var(--transition);
 }
 
-.mobile-nav-link:hover,
+.mobile-nav-link:hover {
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+}
+
 .mobile-nav-link.active {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .mobile-section-heading {
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--color-text-light);
   padding: 0.75rem 0.85rem 0.25rem;
 }
@@ -873,12 +1053,11 @@ button {
   border: 1px solid var(--color-border);
 }
 
-/* Responsive Navigation Breakpoints (collapse below 1100px) */
+/* Responsive Navigation Breakpoints (collapse below 1100px per AGENTS.md §7) */
 @media (max-width: 1100px) {
   .desktop-only-search,
   .desktop-only-nav,
-  .desktop-auth-container,
-  .navbar-nav {
+  .desktop-auth-container {
     display: none !important;
   }
 
@@ -887,7 +1066,7 @@ button {
   }
 
   .navbar-container {
-    padding: 0.75rem 1rem;
+    padding: 0 1rem;
   }
 }
 
@@ -1101,35 +1280,659 @@ button {
 }
 
 /* ==========================================================================
-   Footer
+   Stitch Hero & Marketplace Home (Multi-Vendor Marketplace Web)
    ========================================================================== */
 
-.footer {
-  background-color: #ffffff;
-  border-top: 1px solid var(--color-border);
-  padding: 3rem 0 2rem;
-  margin-top: 4rem;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  padding-bottom: 2rem;
+.stitch-hero-section {
+  position: relative;
+  background-color: var(--color-bg);
+  padding: 3rem 0 3.5rem;
+  overflow: hidden;
   border-bottom: 1px solid var(--color-border);
 }
 
-.footer-bottom {
-  padding-top: 1.5rem;
+.hero-decor-blob-1 {
+  position: absolute;
+  top: -4rem;
+  right: -4rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.hero-decor-blob-2 {
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 20rem;
+  height: 20rem;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.07) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.stitch-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.stitch-hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.stitch-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+  font-family: var(--font-family-body);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+}
+
+.stitch-hero-title {
+  font-family: var(--font-family-heading);
+  font-size: clamp(2rem, 3.8vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: var(--color-text-main);
+  margin: 0.25rem 0;
+}
+
+.stitch-gradient-text {
+  color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stitch-hero-desc {
+  font-family: var(--font-family-body);
+  font-size: var(--font-base);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 540px;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stitch-hero-trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  padding-top: 1.25rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.stitch-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+/* Hero Right: 2x2 Product Cards Grid */
+.stitch-hero-right {
+  width: 100%;
+}
+
+.stitch-hero-products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.stitch-product-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  box-shadow: 0 4px 18px rgba(0, 97, 148, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stitch-product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 97, 148, 0.1);
+  border-color: var(--color-primary-light);
+}
+
+.stitch-card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-bg);
+  margin-bottom: 0.75rem;
+}
+
+.stitch-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.stitch-product-card:hover .stitch-card-img {
+  transform: scale(1.04);
+}
+
+.stitch-card-category {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.stitch-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stitch-card-vendor {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+.stitch-card-title {
+  font-family: var(--font-family-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0.15rem 0 0.4rem;
+}
+
+.stitch-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.stitch-card-price {
+  font-family: var(--font-family-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stitch-card-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  transition: var(--transition);
+}
+
+.stitch-product-card:hover .stitch-card-action-btn {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+}
+
+/* Skeletons */
+.stitch-hero-skeleton-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-skeleton-img {
+  width: 100%;
+  height: 140px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+}
+
+.stitch-skeleton-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stitch-skeleton-line {
+  height: 12px;
+  border-radius: 4px;
+}
+
+.stitch-skeleton-line.short {
+  width: 50%;
+}
+
+.stitch-skeleton-line.price {
+  width: 35%;
+  height: 16px;
+  margin-top: 0.4rem;
+}
+
+.stitch-product-empty-card {
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stitch-empty-icon {
+  margin-bottom: 0.25rem;
+}
+
+/* ==========================================================================
+   Stitch Benefits Section & Revenue Split Graphic
+   ========================================================================== */
+
+.stitch-benefits-section {
+  width: 100%;
+  background-color: var(--color-bg-soft);
+  padding: 4.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stitch-section-heading {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3rem;
+}
+
+.stitch-section-eyebrow {
+  display: inline-block;
+  font-family: var(--font-family-body);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-section-title {
+  font-family: var(--font-family-heading);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.stitch-section-subtitle {
+  font-size: var(--font-base);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* 3 Equal Pillar Cards */
+.stitch-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stitch-pillar-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  box-shadow: 0 4px 18px rgba(0, 97, 148, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stitch-pillar-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.stitch-pillar-title {
+  font-family: var(--font-family-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 1.25rem;
+}
+
+.stitch-pillar-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0;
+  margin: 0;
+}
+
+.stitch-pillar-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.stitch-pillar-list li svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Split Visual Graphic Container */
+.stitch-split-box {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 97, 148, 0.04);
+}
+
+.stitch-split-header {
+  margin-bottom: 1.5rem;
+}
+
+.stitch-split-title {
+  font-family: var(--font-family-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.25rem;
+}
+
+.stitch-split-sub {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.stitch-split-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.stitch-split-bar {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  display: flex;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-bar-vendor {
+  background: var(--color-primary);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  color: #ffffff;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stitch-bar-platform {
+  background: var(--color-accent);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stitch-split-legend {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
-  color: var(--color-text-light);
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.stitch-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stitch-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.stitch-legend-color.vendor-color {
+  background-color: var(--color-primary);
+}
+
+.stitch-legend-color.platform-color {
+  background-color: var(--color-accent);
+}
+
+/* Multi-Vendor Cart Split Example */
+.stitch-multivendor-cart-example {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.stitch-cart-example-title {
+  display: block;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 1rem;
+}
+
+.stitch-cart-vendors-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.stitch-vendor-split-card {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stitch-vendor-split-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stitch-vendor-name {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-vendor-amount {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stitch-mini-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  background-color: var(--color-border);
+}
+
+.stitch-mini-vendor {
+  background-color: var(--color-primary);
+  height: 100%;
+}
+
+.stitch-mini-platform {
+  background-color: var(--color-accent);
+  height: 100%;
+}
+
+.stitch-vendor-breakdown {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+/* ==========================================================================
+   Stitch Footer
+   ========================================================================== */
+
+.footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 3.5rem 0 2rem;
+  margin-top: 0;
+  color: var(--color-text-main);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 320px;
+}
+
+.footer-text {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-col-title {
+  font-family: var(--font-family-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links a {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--color-primary);
+}
+
+.footer-tech-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.footer-tech-label {
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .stack-pills {
@@ -1139,12 +1942,99 @@ button {
 }
 
 .stack-pill {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  background-color: var(--color-surface-hover);
+  font-size: var(--font-xs);
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   color: var(--color-text-muted);
+}
+
+.footer-bottom {
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-demo-notice {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.footer-copyright {
+  font-size: var(--font-xs);
+  color: var(--color-text-light);
+}
+
+/* ==========================================================================
+   Responsive Adaptations for Marketplace Home & Navigation
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .stitch-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .stitch-hero-desc {
+    max-width: 100%;
+  }
+
+  .stitch-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-hero-trust-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stitch-cart-vendors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-hero-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stitch-hero-actions {
+    width: 100%;
+  }
+
+  .stitch-hero-actions .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .stitch-split-legend {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* ==========================================================================
@@ -3969,4 +4859,6197 @@ button {
     padding: var(--space-3) !important;
   }
 }
+
+/* ==========================================================================
+   Stitch Customer Product Listing & Detail Styles
+   ========================================================================== */
+
+/* Breadcrumb */
+.catalog-breadcrumb,
+.product-detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.breadcrumb-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-primary);
+}
+
+.breadcrumb-sep {
+  color: var(--color-gray-400);
+  font-size: 0.75rem;
+}
+
+.breadcrumb-current {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+/* Catalog Title & Header */
+.catalog-main-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.title-highlight {
+  color: var(--color-primary);
+}
+
+.title-count {
+  font-size: var(--font-lg);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-left: 0.5rem;
+}
+
+/* Filters Sidebar */
+.filters-sidebar {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.filters-header h2 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.clear-filters-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.clear-filters-link:hover {
+  text-decoration: underline;
+  color: var(--color-primary-dark);
+}
+
+.filter-group-title {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+/* Price Inputs with prefix */
+.price-inputs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-input-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.price-currency-prefix {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.price-input-wrap input {
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem 1.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  transition: all 0.15s ease;
+}
+
+.price-input-wrap input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+  background-color: var(--color-surface);
+}
+
+.price-separator {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: var(--font-sm);
+}
+
+/* Rating filter pill buttons */
+.rating-pills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rating-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.rating-pill-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-light);
+}
+
+.rating-pill-btn.active {
+  background: var(--color-accent-light);
+  border-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.rating-pill-stars {
+  display: inline-flex;
+  gap: 0.15rem;
+}
+
+.rating-pill-text {
+  font-size: var(--font-xs);
+  color: var(--color-text-main);
+}
+
+/* Catalog Top Action Bar */
+.catalog-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.catalog-actions-left {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.catalog-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sort-select-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.catalog-sort-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+/* In Stock & Badge Indicators */
+.stock-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.stock-indicator-badge.in-stock {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success-border);
+}
+
+.stock-indicator-badge.out-of-stock {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+  border: 1px solid var(--color-danger-border);
+}
+
+/* Card Quick Cart Button */
+.card-quick-cart-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-surface);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 36px;
+}
+
+.card-quick-cart-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-quick-cart-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Stitch Pagination Arrows & Numbers */
+.catalog-pagination-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+}
+
+.pagination-arrow-btn,
+.pagination-num-btn {
+  min-width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pagination-arrow-btn:hover:not(:disabled),
+.pagination-num-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pagination-arrow-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-num-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Product Detail Page Styles
+   ========================================================================== */
+.product-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+/* Gallery column */
+.product-gallery-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-main-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.product-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.product-detail-category-tag {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.product-thumbnails-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.product-thumb-btn {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.product-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-thumb-btn:hover {
+  border-color: var(--color-primary-light);
+}
+
+.product-thumb-btn.active {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+/* Info Column */
+.product-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-info-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-detail-store-category {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.product-detail-store-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.product-detail-store-link:hover {
+  text-decoration: underline;
+}
+
+.product-stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.product-stock-pill.in-stock {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success-border);
+}
+
+.product-stock-pill.out-of-stock {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+  border: 1px solid var(--color-danger-border);
+}
+
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-success);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseGreen 1.8s infinite;
+}
+
+@keyframes pulseGreen {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.product-detail-title {
+  font-family: var(--font-family-heading);
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.product-rating-overview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stars-cluster {
+  display: inline-flex;
+  gap: 0.15rem;
+}
+
+.rating-score-bold {
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-size: var(--font-sm);
+}
+
+.reviews-count-link {
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reviews-count-link:hover {
+  color: var(--color-primary);
+}
+
+.product-price-large-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.product-price-current {
+  font-family: var(--font-family-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.product-price-note {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.product-desc-box {
+  color: var(--color-text-muted);
+  font-size: var(--font-base);
+  line-height: 1.6;
+}
+
+.product-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.product-tag-chip {
+  padding: 0.25rem 0.6rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+/* Vendor Info Badge Card */
+.vendor-info-badge-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.vendor-badge-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vendor-icon-svg {
+  color: var(--color-primary);
+}
+
+.vendor-badge-title {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.vendor-badge-sub {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.vendor-view-store-btn {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.vendor-view-store-btn:hover {
+  text-decoration: underline;
+}
+
+/* Purchase Actions Box */
+.product-purchase-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.customer-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.quantity-picker-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.qty-btn {
+  background: var(--color-bg);
+  border: none;
+  width: 38px;
+  height: 44px;
+  font-size: 1.1rem;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: var(--color-border);
+}
+
+.qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qty-display {
+  width: 48px;
+  text-align: center;
+  font-weight: 600;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+}
+
+.product-add-cart-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.product-add-cart-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.product-add-cart-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.role-restriction-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Stitch Product Reviews Section
+   ========================================================================== */
+.stitch-reviews-section {
+  border-top: 1px solid var(--color-border);
+  padding-top: 3rem;
+  margin-top: 2rem;
+}
+
+.stitch-reviews-heading {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 2rem;
+}
+
+.stitch-reviews-summary-card {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2.5rem;
+  padding: 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+}
+
+.stitch-score-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid var(--color-border-subtle);
+  padding-right: 2rem;
+}
+
+.stitch-score-num {
+  font-family: var(--font-family-heading);
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-score-stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-score-count {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-bars-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.stitch-bar-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 40px;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-bar-label {
+  font-weight: 600;
+  color: var(--color-text-main);
+  white-space: nowrap;
+}
+
+.stitch-bar-track {
+  width: 100%;
+  height: 8px;
+  background: var(--color-bg-soft);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.stitch-bar-fill {
+  height: 100%;
+  background: var(--color-warning);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.stitch-bar-count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* Review Form Card */
+.stitch-review-form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+}
+
+.stitch-review-form-card h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 1.25rem;
+}
+
+.stitch-interactive-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.star-input-btn {
+  background: none;
+  border: none;
+  padding: 0.2rem;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.star-input-btn:hover {
+  transform: scale(1.15);
+}
+
+.stitch-restricted-review-box {
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  margin-bottom: 2.5rem;
+}
+
+/* Reviews List & Cards */
+.stitch-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-review-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+}
+
+.stitch-review-card:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.stitch-reviewer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stitch-reviewer-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stitch-reviewer-name {
+  font-weight: 700;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+}
+
+.stitch-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-success-dark);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-review-date {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-review-comment {
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  line-height: 1.6;
+}
+
+.stitch-review-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.stitch-action-link-btn {
+  background: none;
+  border: none;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.stitch-action-link-btn.danger {
+  color: var(--color-danger);
+}
+
+.stitch-action-link-btn:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Responsive Rules (< 1100px, < 768px, < 600px) per AGENTS.md
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .product-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .catalog-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Slide-in drawer for filters sidebar */
+  .filters-sidebar {
+    display: none;
+  }
+
+  .filters-sidebar.mobile-open {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 320px;
+    max-width: 85vw;
+    z-index: 1000;
+    border-radius: 0;
+    overflow-y: auto;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+    background: var(--color-surface);
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-reviews-summary-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .stitch-score-col {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-right: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  /* Sticky bottom action bar for Product Detail Page */
+  .product-purchase-box {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+    padding: 1rem;
+    margin: 0 -1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .customer-actions-cluster {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .product-add-cart-btn {
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .card-quick-cart-btn {
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   Stitch Customer Shopping Cart, Checkout & Test Gateway Modal Styles
+   ========================================================================== */
+
+/* Page Containers */
+.cart-page-container,
+.checkout-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+.stitch-cart-loading {
+  text-align: center;
+  padding: 6rem 1.5rem;
+  color: var(--color-text-muted);
+}
+
+/* Empty States */
+.stitch-empty-cart-card,
+.stitch-empty-checkout-card {
+  max-width: 580px;
+  margin: 3rem auto;
+  padding: 3.5rem 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-empty-cart-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--color-bg-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.stitch-empty-cart-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.75rem;
+}
+
+.stitch-empty-cart-desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.stitch-explore-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.75rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-sm);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.stitch-explore-btn:hover {
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cart Header */
+.stitch-cart-header,
+.stitch-checkout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.stitch-cart-title,
+.stitch-checkout-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.stitch-cart-meta {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+.stitch-checkout-subtitle {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+
+.stitch-clear-cart-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stitch-clear-cart-btn:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+/* Alerts */
+.stitch-cart-issue-alert,
+.stitch-checkout-error-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  color: var(--color-danger-dark);
+  font-size: var(--font-sm);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* Grid Layouts */
+.stitch-cart-grid,
+.stitch-checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* Cart Items Column & Vendor Groups */
+.stitch-cart-items-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.stitch-vendor-group-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-vendor-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.stitch-vendor-group-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-vendor-group-name svg {
+  color: var(--color-primary);
+}
+
+.stitch-vendor-shipping-note {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-vendor-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Cart Item Row */
+.stitch-cart-item-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  transition: all 0.15s ease;
+}
+
+.stitch-cart-item-row:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-cart-item-row.stitch-cart-item-blocked {
+  border-color: var(--color-danger-border);
+  background: #fffdfd;
+}
+
+.stitch-item-thumb-box {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.stitch-item-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stitch-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stitch-item-title {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  text-decoration: none;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.stitch-item-title:hover {
+  color: var(--color-primary);
+}
+
+.stitch-item-unit-price {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-item-warnings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.stitch-warning-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-warning-tag.inactive,
+.stitch-warning-tag.out-of-stock {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+  border: 1px solid var(--color-danger-border);
+}
+
+.stitch-warning-tag.low-stock {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-dark);
+  border: 1px solid var(--color-warning-border);
+}
+
+.stitch-stock-tag.in-stock {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.stitch-item-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Cart Quantity Stepper */
+.stitch-cart-qty-stepper {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.stitch-cart-qty-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stitch-cart-qty-btn:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.stitch-cart-qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.stitch-cart-qty-val {
+  width: 36px;
+  text-align: center;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-item-total-price {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+  min-width: 90px;
+  text-align: right;
+}
+
+.stitch-cart-remove-btn {
+  background: none;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stitch-cart-remove-btn:hover {
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+.stitch-vendor-subtotal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-vendor-subtotal-val {
+  font-weight: 700;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+}
+
+/* Summary Sidebars (Cart & Checkout) */
+.stitch-cart-summary-col,
+.stitch-checkout-summary-col {
+  position: sticky;
+  top: 5.5rem;
+}
+
+.stitch-summary-card,
+.stitch-checkout-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-summary-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stitch-summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stitch-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.stitch-summary-val {
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-summary-val.free {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.stitch-coupon-wrap {
+  padding: 0.5rem 0;
+}
+
+.stitch-discount-row {
+  color: var(--color-success-dark);
+}
+
+.stitch-discount-label {
+  font-weight: 600;
+  color: var(--color-success-dark);
+}
+
+.stitch-discount-val {
+  font-weight: 700;
+  color: var(--color-success-dark);
+}
+
+.stitch-summary-divider {
+  height: 1px;
+  background-color: var(--color-border-subtle);
+  margin: 0.25rem 0;
+}
+
+.stitch-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.stitch-total-label {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-total-val {
+  font-family: var(--font-family-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.stitch-checkout-btn,
+.stitch-place-order-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.85rem 1.5rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-checkout-btn:hover:not(:disabled),
+.stitch-place-order-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.stitch-checkout-btn:disabled,
+.stitch-place-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stitch-safe-checkout-note {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Checkout Form & Vendor Splits
+   ========================================================================== */
+.stitch-checkout-form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.stitch-form-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.stitch-step-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--font-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.stitch-form-section-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 0.2rem;
+}
+
+.stitch-form-section-desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.stitch-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stitch-form-group.span-full {
+  grid-column: 1 / -1;
+}
+
+.stitch-form-label {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-form-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  transition: all 0.15s ease;
+}
+
+.stitch-form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+  background-color: var(--color-surface);
+}
+
+.stitch-form-input.input-error {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+.stitch-field-error {
+  font-size: var(--font-xs);
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+/* Vendor Splits (Checkout Summary) */
+.stitch-vendor-splits-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stitch-vendor-split-item-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.stitch-split-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: var(--font-xs);
+}
+
+.stitch-split-store-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-split-store-name svg {
+  color: var(--color-primary);
+}
+
+.stitch-split-subtotal {
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-split-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: var(--font-xs);
+}
+
+.stitch-split-product-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+}
+
+.stitch-split-prod-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.stitch-split-prod-qty {
+  color: var(--color-gray-500);
+}
+
+.stitch-split-prod-price {
+  font-weight: 500;
+}
+
+.stitch-split-discount-row {
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.72rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-success-dark);
+  font-weight: 600;
+}
+
+.stitch-split-vendor-final-row {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-demo-notice-card {
+  background-color: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  color: var(--color-primary-dark);
+  font-size: var(--font-xs);
+  line-height: 1.45;
+}
+
+.stitch-demo-notice-card p {
+  margin: 0;
+}
+
+/* Sticky Bottom Mobile Bar (< 768px) */
+.stitch-mobile-sticky-checkout-bar {
+  display: none;
+}
+
+/* ==========================================================================
+   Stitch Test Gateway Modal Styles
+   ========================================================================== */
+.stitch-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background-color: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.stitch-gateway-modal {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalSlideUp 0.25s ease-out;
+}
+
+.stitch-modal-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.stitch-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stitch-modal-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stitch-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stitch-modal-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stitch-sandbox-badge {
+  background-color: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  color: var(--color-warning-dark);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-modal-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.stitch-modal-close-btn:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-main);
+}
+
+.stitch-modal-body {
+  padding: 1.5rem;
+}
+
+.stitch-modal-demo-notice {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: var(--font-xs);
+  color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.45;
+}
+
+.stitch-modal-amount-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-bg-soft);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.stitch-amount-order-label {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  display: block;
+}
+
+.stitch-amount-session-label {
+  font-size: 0.7rem;
+  color: var(--color-gray-500);
+}
+
+.stitch-amount-value-col {
+  text-align: right;
+}
+
+.stitch-amount-sublabel {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stitch-amount-large {
+  font-family: var(--font-family-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+/* State Screens (Init / Processing / Success / Failure) */
+.stitch-modal-state-box {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.stitch-status-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+}
+
+.stitch-status-icon-circle.success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.stitch-status-icon-circle.failure {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+}
+
+.stitch-success-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-success);
+  margin: 0 0 0.35rem;
+}
+
+.stitch-failure-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-danger);
+  margin: 0 0 0.35rem;
+}
+
+.stitch-success-desc,
+.stitch-failure-desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.stitch-receipt-box {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: var(--font-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stitch-receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stitch-receipt-label {
+  color: var(--color-text-muted);
+}
+
+.stitch-receipt-code {
+  font-weight: 600;
+  color: var(--color-text-main);
+  background: var(--color-surface);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.stitch-receipt-method {
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-receipt-status {
+  font-weight: 700;
+  color: var(--color-success-dark);
+  background: var(--color-success-bg);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-error-code-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.stitch-error-code-badge {
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger-dark);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-failure-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.stitch-modal-cancel-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.stitch-modal-retry-btn,
+.stitch-modal-confirm-btn {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  width: 100%;
+}
+
+.stitch-modal-retry-btn:hover,
+.stitch-modal-confirm-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Modal Tabs */
+.stitch-modal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stitch-modal-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-sm);
+  transition: all 0.15s ease;
+  min-height: 44px;
+}
+
+.stitch-modal-tab-btn.active {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+}
+
+.stitch-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.stitch-input-trailing-icon {
+  position: absolute;
+  right: 0.85rem;
+  color: var(--color-primary);
+  pointer-events: none;
+}
+
+.stitch-form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Quick Test Scenarios */
+.stitch-scenario-panel {
+  background-color: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+}
+
+.stitch-scenario-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.stitch-scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.5rem;
+}
+
+.stitch-scenario-chip {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stitch-scenario-chip:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.stitch-chip-title {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-text-main);
+  display: block;
+}
+
+.stitch-chip-desc {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.stitch-scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stitch-scenario-upi-chip {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.stitch-scenario-upi-chip:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.stitch-chip-code {
+  font-size: var(--font-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* UPI Simulated QR */
+.stitch-upi-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.stitch-qr-preview {
+  width: 90px;
+  height: 90px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.stitch-qr-hint {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-modal-submit-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.85rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-modal-submit-pay-btn:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   Responsive Adaptations for Cart & Checkout (< 1100px, < 768px, < 600px)
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .stitch-cart-grid,
+  .stitch-checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .stitch-cart-summary-col,
+  .stitch-checkout-summary-col {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-cart-item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .stitch-item-actions-cluster {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stitch-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sticky bottom checkout bar for mobile */
+  .stitch-mobile-sticky-checkout-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 95;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--color-border);
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .stitch-mobile-total-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stitch-mobile-label {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  .stitch-mobile-val {
+    font-family: var(--font-family-heading);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-primary);
+  }
+
+  .stitch-mobile-place-btn {
+    padding: 0.65rem 1.25rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: var(--font-sm);
+    cursor: pointer;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-cart-header,
+  .stitch-checkout-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .stitch-checkout-btn,
+  .stitch-place-order-btn,
+  .stitch-modal-submit-pay-btn {
+    min-height: 48px;
+    width: 100%;
+  }
+
+  .stitch-scenario-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Stitch Customer Orders & Tracking Styles
+   ========================================================================== */
+
+.orders-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* Back Link */
+.stitch-back-orders-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.stitch-back-orders-link:hover {
+  color: var(--color-primary);
+}
+
+/* Orders Header */
+.stitch-orders-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.stitch-orders-main-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-3xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.stitch-orders-main-subtitle {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+
+/* Status Badges */
+.stitch-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.stitch-status-badge.paid,
+.stitch-status-badge.delivered {
+  background-color: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success-dark);
+}
+
+.stitch-status-badge.shipped {
+  background-color: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary-dark);
+}
+
+.stitch-status-badge.packed,
+.stitch-status-badge.pending {
+  background-color: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  color: var(--color-warning-dark);
+}
+
+.stitch-status-badge.failed,
+.stitch-status-badge.cancelled {
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  color: var(--color-danger-dark);
+}
+
+.stitch-status-badge.placed,
+.stitch-status-badge.refunded {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* Empty Orders */
+.stitch-empty-orders-card {
+  max-width: 580px;
+  margin: 3rem auto;
+  padding: 3.5rem 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-empty-orders-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-bg-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.stitch-empty-orders-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.75rem;
+}
+
+.stitch-empty-orders-desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Orders List View */
+.stitch-orders-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-order-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+}
+
+.stitch-order-summary-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-order-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.stitch-order-meta-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.stitch-order-num-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-order-num-sub {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.stitch-order-num-val {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stitch-order-date-tag,
+.stitch-order-vendor-count-tag {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.stitch-order-card-action-cluster {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stitch-order-total-block {
+  text-align: right;
+  margin-right: 0.5rem;
+}
+
+.stitch-order-total-label {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  display: block;
+}
+
+.stitch-order-total-price {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--color-text-main);
+}
+
+.stitch-order-pay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+
+.stitch-order-pay-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.stitch-order-pay-btn.large {
+  padding: 0.65rem 1.4rem;
+  font-size: var(--font-sm);
+  min-height: 44px;
+}
+
+.stitch-order-details-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+  text-decoration: none;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  transition: all 0.15s ease;
+  min-height: 38px;
+}
+
+.stitch-order-details-link:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Sub-orders summary inside order list card */
+.stitch-order-suborders-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.stitch-suborder-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-xs);
+}
+
+.stitch-suborder-store {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.stitch-suborder-store svg {
+  color: var(--color-primary);
+}
+
+.stitch-suborder-status-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-suborder-status-pill.delivered {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+}
+
+.stitch-suborder-status-pill.shipped {
+  background: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+}
+
+.stitch-suborder-status-pill.packed,
+.stitch-suborder-status-pill.placed {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-dark);
+}
+
+.stitch-suborder-status-pill.cancelled {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+}
+
+.stitch-suborder-item-count {
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Order Detail Page Specifics
+   ========================================================================== */
+.stitch-order-placed-success-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  background-color: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  border-radius: var(--radius-md);
+  color: var(--color-success-dark);
+  font-size: var(--font-sm);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.stitch-order-placed-success-banner code {
+  font-weight: 700;
+  color: var(--color-success-dark);
+}
+
+.stitch-order-details-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+}
+
+.stitch-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.stitch-order-main-number {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-2xl);
+  font-weight: 800;
+  color: var(--color-text-main);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.stitch-order-date-full {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.35rem;
+}
+
+.stitch-download-invoice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.stitch-download-invoice-btn:hover:not(:disabled) {
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+}
+
+.stitch-download-invoice-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Shipping & Payment Overview 2-Col Grid */
+.stitch-order-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.stitch-overview-box {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-overview-box-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.stitch-overview-box-header h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stitch-address-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.stitch-address-recipient {
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-size: var(--font-base);
+  margin-bottom: 0.25rem;
+}
+
+.stitch-address-phone {
+  margin-top: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-main);
+}
+
+.stitch-payment-summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: var(--font-sm);
+}
+
+.stitch-payment-method-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: var(--font-xs);
+}
+
+.stitch-pm-label {
+  color: var(--color-text-muted);
+}
+
+.stitch-pm-val {
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+/* Sub-Orders & Tracking Section */
+.stitch-suborders-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stitch-suborders-section-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stitch-suborders-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.stitch-suborder-tracking-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-suborder-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: 1.25rem;
+}
+
+.stitch-suborder-vendor-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.stitch-vendor-initials-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  font-size: var(--font-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stitch-suborder-vendor-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 0.15rem;
+}
+
+.stitch-suborder-number-tag {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+/* Sub-order products list */
+.stitch-suborder-items-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+
+.stitch-suborder-product-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.stitch-suborder-product-media {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.stitch-suborder-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stitch-suborder-product-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.stitch-suborder-item-title {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  text-decoration: none;
+  display: block;
+}
+
+.stitch-suborder-item-title:hover {
+  color: var(--color-primary);
+}
+
+.stitch-suborder-item-meta {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.stitch-suborder-item-price-col {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+  text-align: right;
+}
+
+/* 4-Step Shipment Progress Timeline */
+.stitch-shipment-timeline-wrap {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stitch-timeline-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 1.5rem;
+}
+
+.stitch-4step-timeline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.stitch-timeline-track {
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  right: 24px;
+  height: 4px;
+  background-color: var(--color-border);
+  z-index: 1;
+}
+
+.stitch-timeline-fill-bar {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.stitch-timeline-node {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 80px;
+}
+
+.stitch-node-icon-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.stitch-timeline-node.done .stitch-node-icon-circle {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.stitch-timeline-node.current .stitch-node-icon-circle {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--color-bg-soft);
+}
+
+.stitch-node-label {
+  font-size: var(--font-xs);
+  font-weight: 700;
+  text-transform: capitalize;
+  margin-top: 0.5rem;
+  color: var(--color-text-main);
+}
+
+.stitch-timeline-node.current .stitch-node-label {
+  color: var(--color-primary);
+}
+
+.stitch-node-subtext {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  margin-top: 0.1rem;
+}
+
+.stitch-suborder-cancelled-banner {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: var(--font-sm);
+}
+
+/* Sub-order Footer Actions */
+.stitch-suborder-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-subtle);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.stitch-review-vendor-items-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.stitch-write-review-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.stitch-write-review-link:hover {
+  text-decoration: underline;
+  color: var(--color-primary-dark);
+}
+
+.stitch-review-unavailable-hint {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-suborder-net-total {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stitch-subtotal-text {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-subtotal-val {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+/* Cancellation Card */
+.stitch-cancel-order-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-cancel-card-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 0.25rem;
+}
+
+.stitch-cancel-card-desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 600px;
+}
+
+.stitch-cancel-order-btn {
+  padding: 0.65rem 1.4rem;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: var(--font-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 44px;
+}
+
+.stitch-cancel-order-btn:hover:not(:disabled) {
+  background-color: var(--color-danger-bg);
+}
+
+.stitch-cancel-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Demo Notice Banner */
+.stitch-demo-notice-banner {
+  background-color: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--color-primary-dark);
+  font-size: var(--font-sm);
+  box-shadow: var(--shadow-xs);
+  margin-top: 2.5rem;
+}
+
+.stitch-demo-notice-banner p {
+  margin: 0;
+}
+
+/* Responsive (< 1100px, < 768px, < 600px) */
+@media (max-width: 1100px) {
+  .stitch-order-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-order-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stitch-order-card-action-cluster {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stitch-suborder-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .stitch-suborder-footer-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stitch-cancel-order-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stitch-cancel-order-btn {
+    width: 100%;
+  }
+
+  .stitch-4step-timeline {
+    width: 100%;
+  }
+
+  .stitch-timeline-node {
+    width: 60px;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-order-card-action-cluster {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-order-pay-btn,
+  .stitch-order-details-link,
+  .stitch-download-invoice-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   Stitch Customer Authentication (Login, Register) & Common Components
+   ========================================================================== */
+
+/* Auth Page Containers */
+.auth-page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  background-color: var(--color-bg);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 460px;
+}
+
+.stitch-auth-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2.25rem;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.stitch-brand-logo-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-auth-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+
+.stitch-auth-subtitle {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.stitch-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-auth-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  margin-top: 0.5rem;
+}
+
+.stitch-auth-submit-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.stitch-auth-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Quick Demo Logins Box (Dev Only) */
+.stitch-demo-logins-box {
+  margin-top: 1.75rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.stitch-demo-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.stitch-demo-buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.stitch-demo-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.stitch-demo-btn:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.stitch-demo-role {
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.stitch-demo-user {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-role-notice-card {
+  background-color: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stitch-role-badge-row {
+  display: flex;
+}
+
+.stitch-role-notice-card p {
+  margin: 0;
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.stitch-auth-footer {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border-subtle);
+  text-align: center;
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.stitch-auth-footer p {
+  margin: 0;
+}
+
+.stitch-auth-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.stitch-auth-link:hover {
+  text-decoration: underline;
+  color: var(--color-primary-dark);
+}
+
+/* ==========================================================================
+   Stitch Vendor Product Management & Add/Edit Form Styles
+   ========================================================================== */
+
+.vendor-products-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Vendor Stats Grid */
+.stitch-vendor-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.stitch-vendor-stat-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.stitch-vendor-stat-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-primary-light);
+}
+
+.stitch-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.35rem;
+}
+
+.stitch-stat-val {
+  font-family: var(--font-family-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+}
+
+.stitch-stat-val.primary {
+  color: var(--color-primary);
+}
+
+.stitch-stat-val.success {
+  color: var(--color-success);
+}
+
+.stitch-stat-val.warning {
+  color: var(--color-warning-dark);
+}
+
+.stitch-stat-val.danger {
+  color: var(--color-danger);
+}
+
+.stitch-stat-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stitch-stat-icon-wrap.primary {
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary);
+}
+
+.stitch-stat-icon-wrap.success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.stitch-stat-icon-wrap.warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-dark);
+}
+
+.stitch-stat-icon-wrap.danger {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* Vendor Table Container */
+.stitch-vendor-table-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.stitch-table-toolbar {
+  padding: 1.25rem 1.5rem;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.stitch-table-title-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stitch-table-main-title {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.stitch-table-count-badge {
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary-dark);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-table-controls-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.stitch-table-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.stitch-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.stitch-table-search-input {
+  min-height: 40px;
+  padding: 0.45rem 0.85rem 0.45rem 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  transition: all 0.15s ease;
+  width: 200px;
+}
+
+.stitch-table-search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+  box-shadow: var(--focus-ring);
+  width: 240px;
+}
+
+.stitch-table-filter-select {
+  min-height: 40px;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+.stitch-table-filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.stitch-add-product-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.5rem 1.25rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-xs);
+  white-space: nowrap;
+}
+
+.stitch-add-product-btn:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* Custom Stitch Data Table */
+.stitch-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.stitch-data-table thead tr {
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stitch-data-table th {
+  padding: 0.85rem 1.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.stitch-data-table tbody tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color 0.15s ease;
+}
+
+.stitch-data-table tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.stitch-data-table td {
+  padding: 1rem 1.25rem;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  vertical-align: middle;
+}
+
+.stitch-table-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.stitch-table-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.stitch-table-prod-title {
+  font-weight: 600;
+  color: var(--color-text-main);
+  display: block;
+  line-height: 1.3;
+}
+
+.stitch-table-prod-id {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  display: block;
+  font-family: monospace;
+}
+
+.stitch-category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.stitch-table-price {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+/* Stock Badges with Dot */
+.stitch-stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.stitch-stock-pill.low-stock {
+  color: var(--color-warning-dark);
+  background-color: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-stock-pill.out-of-stock {
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.stitch-stock-pill .stock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.stitch-table-actions-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stitch-table-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 32px;
+}
+
+.stitch-table-action-btn.edit {
+  color: var(--color-primary);
+}
+
+.stitch-table-action-btn.edit:hover {
+  background-color: var(--color-bg-soft);
+  border-color: var(--color-primary);
+}
+
+.stitch-table-action-btn.deactivate {
+  color: var(--color-danger);
+}
+
+.stitch-table-action-btn.deactivate:hover {
+  background-color: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+}
+
+.stitch-table-footer {
+  padding: 1rem 1.5rem;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stitch-table-footer-text {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+/* Dropzone & Multi Image Uploader */
+.stitch-upload-dropzone {
+  position: relative;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background-color: var(--color-bg);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.stitch-upload-dropzone:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-soft);
+}
+
+.stitch-file-input-hidden {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.stitch-upload-prompt {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  color: var(--color-text-main);
+  margin: 0 0 0.2rem;
+}
+
+.stitch-upload-subhint {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-uploading-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.stitch-uploading-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.stitch-uploading-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stitch-uploading-bar-track {
+  flex: 1;
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.stitch-uploading-bar-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.2s ease;
+}
+
+.stitch-uploading-pct {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Uploaded Gallery Grid with Primary Selector */
+.stitch-uploaded-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.stitch-uploaded-thumb-card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg);
+  group: relative;
+}
+
+.stitch-uploaded-thumb-card.primary-image {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.stitch-thumb-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stitch-primary-image-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-thumb-overlay-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.stitch-uploaded-thumb-card:hover .stitch-thumb-overlay-actions {
+  opacity: 1;
+}
+
+.stitch-thumb-btn-set-primary {
+  background-color: #fff;
+  color: var(--color-primary-dark);
+  border: none;
+  border-radius: var(--radius-xs);
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stitch-thumb-btn-delete {
+  background-color: var(--color-danger);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.stitch-modal-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Responsive adjustments (< 768px, < 600px) */
+@media (max-width: 768px) {
+  .stitch-table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-table-controls-cluster {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-table-search-input {
+    width: 100%;
+  }
+
+  .stitch-table-search-input:focus {
+    width: 100%;
+  }
+
+  .stitch-add-product-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .stitch-data-table th,
+  .stitch-data-table td {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-vendor-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stitch-table-actions-cell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-modal-actions-row {
+    flex-direction: column;
+  }
+
+  .stitch-modal-actions-row button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   Stitch Design: Vendor Orders & Earnings
+   ========================================================================== */
+
+/* Vendor Orders Container */
+.stitch-vendor-orders-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+.stitch-vendor-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stitch-vendor-page-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.02em;
+}
+
+.stitch-vendor-page-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 600px;
+}
+
+/* Status Filter Tabs */
+.stitch-status-tabs-container {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.stitch-status-tabs-row {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.stitch-status-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.stitch-status-tab-btn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.stitch-status-tab-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+}
+
+.stitch-tab-count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.stitch-status-tab-btn.active .stitch-tab-count-pill {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Vendor Order Cards Stack */
+.stitch-vendor-orders-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stitch-vendor-order-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stitch-vendor-order-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-gray-300);
+}
+
+/* Card Header */
+.stitch-vorder-card-header {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stitch-vorder-meta-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.stitch-vorder-number {
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stitch-vorder-date {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-vorder-payout-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.85rem;
+}
+
+.stitch-vorder-payout-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.stitch-vorder-payout-value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-success);
+}
+
+/* Card Body Grid */
+.stitch-vorder-card-body-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.stitch-vorder-items-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-vorder-subhead {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.stitch-vorder-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.stitch-vorder-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem;
+  background: var(--color-surface-hover);
+  border-radius: 8px;
+}
+
+.stitch-vorder-item-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.stitch-vorder-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.stitch-vorder-item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stitch-vorder-item-math {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-vorder-item-line-total {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-left: auto;
+  padding-right: 0.5rem;
+}
+
+.stitch-vorder-shipping-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-vorder-address-box {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  flex: 1;
+}
+
+.stitch-vorder-recipient-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
+}
+
+.stitch-vorder-address-lines {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.stitch-vorder-recipient-phone {
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Card Footer */
+.stitch-vorder-card-footer {
+  padding: 1rem 1.5rem;
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stitch-vorder-status-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-vorder-step-label {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stitch-advance-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 40px;
+}
+
+.stitch-advance-step-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.stitch-vorder-completed-note {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+/* Vendor Earnings Page */
+.stitch-vendor-earnings-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+.stitch-vendor-earnings-loading {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.stitch-earnings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stitch-earnings-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.02em;
+}
+
+.stitch-earnings-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 620px;
+}
+
+.stitch-earnings-badge-meta {
+  display: flex;
+  align-items: center;
+}
+
+/* KPI 3-Card Grid */
+.stitch-earnings-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.stitch-earnings-kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stitch-earnings-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stitch-kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.stitch-kpi-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.stitch-kpi-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stitch-kpi-icon-sales {
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+}
+
+.stitch-kpi-icon-commission {
+  background: #FFF1F2;
+  color: var(--color-danger);
+}
+
+.stitch-kpi-icon-payout {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+}
+
+.stitch-kpi-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.stitch-kpi-commission-val {
+  color: var(--color-accent-hover);
+}
+
+.stitch-kpi-net-val {
+  color: var(--color-success);
+}
+
+.stitch-kpi-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.stitch-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.stitch-kpi-badge-settled {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Payouts Table Card */
+.stitch-payouts-table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-payouts-card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-surface);
+  gap: 1rem;
+}
+
+.stitch-payouts-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+
+.stitch-payouts-desc {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.stitch-payouts-count-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.stitch-payouts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.stitch-payouts-table th {
+  padding: 0.9rem 1.25rem;
+  background: var(--color-surface-hover);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.stitch-payouts-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.stitch-payouts-table tr:last-child td {
+  border-bottom: none;
+}
+
+.stitch-payouts-table tr:hover td {
+  background: var(--color-surface-hover);
+}
+
+.stitch-payouts-table .align-right {
+  text-align: right;
+}
+
+.stitch-payouts-table .align-center {
+  text-align: center;
+}
+
+.stitch-payout-cell-date {
+  white-space: nowrap;
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-payout-cell-order {
+  font-weight: 700;
+}
+
+.stitch-payout-ordnum {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-primary-dark);
+}
+
+.stitch-payout-cell-num {
+  font-weight: 600;
+}
+
+.stitch-payout-cell-commission {
+  color: var(--color-accent-hover);
+  font-weight: 600;
+}
+
+.stitch-payout-cell-net {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.stitch-payout-cell-transfer {
+  font-family: monospace;
+}
+
+.stitch-transfer-code {
+  font-size: 0.78rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+}
+
+.stitch-payout-fail-msg {
+  font-size: 0.72rem;
+  color: var(--color-danger);
+  margin-top: 0.25rem;
+}
+
+.stitch-payouts-pagination {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.stitch-pagination-page-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Responsive Adaptations (< 1100px, < 768px, < 600px)
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .stitch-vorder-card-body-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-earnings-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stitch-vorder-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stitch-vorder-payout-badge {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stitch-vorder-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-advance-step-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-status-tabs-row {
+    padding-bottom: 0.5rem;
+  }
+
+  .stitch-vorder-item-row {
+    align-items: flex-start;
+  }
+
+  .stitch-vorder-item-line-total {
+    margin-left: 0;
+    padding-right: 0;
+    align-self: flex-end;
+  }
+
+  .stitch-payouts-pagination {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stitch-payouts-pagination button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   Stitch Design: Store Profile & Seller Onboarding
+   ========================================================================== */
+
+/* Page Container */
+.stitch-vendor-profile-page,
+.stitch-onboarding-container {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3.5rem;
+}
+
+.stitch-profile-loading {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* Header Context Banner */
+.stitch-profile-header-banner,
+.stitch-onboarding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stitch-profile-pretitle {
+  display: inline-block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.stitch-profile-main-title,
+.stitch-onboarding-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.stitch-onboarding-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0.4rem 0 0;
+  max-width: 600px;
+}
+
+/* Standard Commission Pill */
+.stitch-profile-standard-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-profile-verified-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.stitch-profile-standard-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.stitch-profile-standard-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stitch-profile-standard-rate {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-profile-standard-rate strong {
+  color: var(--color-primary);
+}
+
+/* Profile Card */
+.stitch-profile-card,
+.stitch-onboarding-status-card,
+.stitch-onboarding-form-card,
+.stitch-onboarding-unauth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.stitch-profile-card-header,
+.stitch-onboarding-form-header {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stitch-profile-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stitch-profile-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stitch-profile-card-heading,
+.stitch-onboarding-form-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.stitch-profile-card-subheading,
+.stitch-onboarding-form-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0.25rem 0 0;
+}
+
+/* Profile Form */
+.stitch-profile-form {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Logo Upload Panel */
+.stitch-logo-upload-panel {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+
+.stitch-logo-preview-wrapper {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+.stitch-logo-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stitch-logo-placeholder-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.stitch-logo-meta-controls {
+  flex: 1;
+}
+
+.stitch-logo-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+
+.stitch-logo-recommendation {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin: 0 0 0.85rem;
+}
+
+.stitch-logo-btn-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stitch-logo-upload-btn {
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Form Fields */
+.stitch-profile-fields-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stitch-profile-input,
+.stitch-profile-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  background: var(--color-surface);
+}
+
+.stitch-profile-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Commission Rate Card */
+.stitch-commission-rate-card {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.stitch-commission-rate-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stitch-commission-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stitch-commission-card-title {
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+
+.stitch-commission-card-desc {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 520px;
+}
+
+.stitch-commission-rate-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.stitch-commission-rate-num {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.stitch-commission-rate-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-success);
+  margin-top: 0.35rem;
+}
+
+/* Action Rows */
+.stitch-profile-action-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.stitch-save-profile-btn {
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* Onboarding Status Card Styles */
+.stitch-onboarding-status-card {
+  padding: 1.75rem;
+}
+
+.stitch-onboarding-status-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.stitch-onboarding-status-heading {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.stitch-onboarding-status-subhead {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0.2rem 0 0;
+}
+
+.stitch-onboarding-store-preview-box {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.stitch-onboarding-store-preview-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.35rem;
+}
+
+.stitch-onboarding-store-preview-desc {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Status Panels */
+.stitch-status-state-panel {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 14px;
+}
+
+.stitch-status-pending-panel {
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+}
+
+.stitch-status-approved-panel {
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+}
+
+.stitch-status-rejected-panel {
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+}
+
+.stitch-status-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stitch-icon-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--color-warning-dark);
+}
+
+.stitch-icon-approved {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--color-success-dark);
+}
+
+.stitch-icon-rejected {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--color-danger-dark);
+}
+
+.stitch-status-content {
+  flex: 1;
+}
+
+.stitch-status-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  color: var(--color-text);
+}
+
+.stitch-status-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.stitch-status-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.stitch-status-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-status-actions-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.stitch-rejection-reason-box {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px dashed var(--color-danger-border);
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--color-danger-dark);
+  margin-top: 0.75rem;
+}
+
+/* Unauthenticated State */
+.stitch-onboarding-unauth-card {
+  max-width: 520px;
+  margin: 3rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.stitch-onboarding-unauth-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stitch-onboarding-unauth-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.stitch-onboarding-unauth-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.75rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Responsive Adaptations for Profile & Onboarding
+   ========================================================================== */
+@media (max-width: 768px) {
+  .stitch-logo-upload-panel {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stitch-logo-btn-cluster {
+    justify-content: center;
+  }
+
+  .stitch-commission-rate-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stitch-commission-rate-right {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.75rem;
+  }
+
+  .stitch-status-state-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-save-profile-btn,
+  .stitch-status-actions-cluster button,
+  .stitch-status-actions-cluster a,
+  .stitch-status-meta-row button {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Stitch Design: Admin Analytics, Vendor Approvals & Coupons
+   ========================================================================== */
+
+/* Main Containers */
+.stitch-admin-analytics-container,
+.stitch-admin-approvals-container,
+.stitch-admin-coupons-container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3.5rem;
+}
+
+.stitch-analytics-loading {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* Header Area */
+.stitch-admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stitch-admin-control-badge {
+  display: inline-block;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.stitch-admin-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stitch-admin-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.stitch-admin-subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0.35rem 0 0;
+  max-width: 650px;
+}
+
+/* Range Selector Segmented Control */
+.stitch-range-selector-pill {
+  display: inline-flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0.25rem;
+  box-shadow: var(--shadow-sm);
+  gap: 0.25rem;
+}
+
+.stitch-range-btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stitch-range-btn:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+
+.stitch-range-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.3);
+}
+
+/* 5-Column Responsive KPI Grid */
+.stitch-admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.stitch-admin-kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 1px 6px rgba(0, 97, 148, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stitch-admin-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 97, 148, 0.08);
+}
+
+/* Charts Grid */
+.stitch-admin-charts-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1.2fr;
+  gap: 1.5rem;
+  margin-bottom: 2.25rem;
+}
+
+.stitch-chart-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.stitch-chart-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.stitch-chart-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.25rem;
+}
+
+.stitch-chart-subtitle {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.stitch-chart-badge-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  background: var(--color-accent-light);
+  color: var(--color-primary-dark);
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.stitch-chart-badge-aqua {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  background: #E0F7FA;
+  color: #0891B2;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.stitch-chart-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Status Breakdown Card */
+.stitch-admin-status-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.25rem;
+}
+
+.stitch-status-stacked-bar {
+  height: 18px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  background: var(--color-surface-hover);
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--color-border);
+}
+
+.stitch-status-legend-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stitch-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.stitch-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stitch-legend-label {
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.stitch-legend-val {
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* Top Metrics Tables Grid */
+.stitch-top-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2.25rem;
+}
+
+/* Low Stock Card Grid */
+.stitch-low-stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.stitch-low-stock-card {
+  border: 1px solid var(--color-danger-border);
+  background: #FFFBFB;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stitch-low-stock-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  margin-bottom: 0.2rem;
+}
+
+.stitch-low-stock-meta {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* Vendor Approvals Custom Elements */
+.stitch-approvals-count-pill {
+  display: flex;
+  align-items: center;
+}
+
+.stitch-vendor-table-store-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.stitch-vendor-table-thumb-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stitch-vendor-table-store-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  display: block;
+}
+
+.stitch-vendor-table-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.stitch-commission-inline-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stitch-commission-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.stitch-commission-mini-input {
+  width: 65px;
+  padding: 0.35rem 1.4rem 0.35rem 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.stitch-commission-input-suffix {
+  position: absolute;
+  right: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.stitch-vendor-action-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Coupons Page Elements */
+.stitch-create-coupon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.stitch-coupon-code-pill {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 0.9rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  color: var(--color-primary-dark);
+}
+
+.stitch-coupon-actions-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Coupon Modal */
+.stitch-coupon-modal-dialog {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  max-width: 540px;
+  width: 100%;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.stitch-coupon-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.stitch-coupon-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.stitch-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.stitch-modal-close-btn:hover {
+  color: var(--color-text);
+}
+
+.stitch-coupon-code-input {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.stitch-coupon-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   Responsive Adaptations (< 1100px, < 768px, < 600px)
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .stitch-admin-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stitch-top-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stitch-admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-range-selector-pill {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stitch-range-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .stitch-create-coupon-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .stitch-admin-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stitch-vendor-action-btn-group,
+  .stitch-coupon-actions-cluster {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stitch-coupon-modal-actions {
+    flex-direction: column;
+  }
+
+  .stitch-coupon-modal-actions button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   Stitch Design: Admin Orders & Payouts Elements
+   ========================================================================== */
+
+.stitch-admin-orders-container,
+.stitch-admin-payouts-container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3.5rem;
+}
+
+.stitch-payment-filter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 0.35rem 0.85rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stitch-filter-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.stitch-payment-select {
+  border: none;
+  background: transparent;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.stitch-suborder-vendor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.stitch-suborder-chip-store {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.stitch-split-view-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.stitch-split-view-link:hover {
+  color: var(--color-primary-dark);
+}
+
+.stitch-split-item-card {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.stitch-retry-payout-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .stitch-payment-filter-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ==========================================================================
+   Stitch Design: Vendor Ecosystem Workspace & Sidebar Layout
+   ========================================================================== */
+
+.stitch-ecosystem-layout {
+  display: flex;
+  min-height: calc(100vh - 72px);
+  width: 100%;
+  background: var(--color-surface);
+}
+
+/* Desktop Sidebar */
+.stitch-ecosystem-sidebar {
+  width: 256px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  box-shadow: 1px 0 6px rgba(0, 0, 0, 0.02);
+  z-index: 40;
+}
+
+.stitch-sidebar-header {
+  padding: 1.5rem 1.25rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stitch-sidebar-brand-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stitch-sidebar-title-block {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.stitch-sidebar-hub-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.stitch-sidebar-hub-sub {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* Nav Links */
+.stitch-sidebar-nav {
+  padding: 1.25rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.stitch-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.stitch-sidebar-item:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.stitch-sidebar-item.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.28);
+}
+
+.stitch-sidebar-item.active .stitch-sidebar-item-icon {
+  color: #ffffff;
+}
+
+.stitch-sidebar-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+}
+
+.stitch-sidebar-item-label {
+  flex: 1;
+}
+
+/* Sidebar Footer */
+.stitch-sidebar-footer {
+  padding: 1rem 0.85rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.stitch-sidebar-back-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.stitch-sidebar-back-link:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+/* Ecosystem Content Canvas */
+.stitch-ecosystem-content {
+  flex: 1;
+  padding: 0 2rem 3rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Responsive Sidebar: Sticky Horizontal Top Tab Bar Below 900px
+   ========================================================================== */
+@media (max-width: 900px) {
+  .stitch-ecosystem-layout {
+    flex-direction: column;
+  }
+
+  .stitch-ecosystem-sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    top: 72px;
+    z-index: 40;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .stitch-sidebar-header {
+    display: none;
+  }
+
+  .stitch-sidebar-footer {
+    display: none;
+  }
+
+  .stitch-sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stitch-sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stitch-sidebar-item {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.84rem;
+    white-space: nowrap;
+    border-radius: 9999px;
+  }
+
+  .stitch-ecosystem-content {
+    padding: 0 1rem 3rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 

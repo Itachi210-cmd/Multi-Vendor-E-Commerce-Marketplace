@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 
 const STATUS_FILTERS = [
-  { id: 'all', label: 'All Payouts' },
+  { id: 'all', label: 'All Transfers' },
   { id: 'processed', label: 'Processed' },
   { id: 'failed', label: 'Failed' },
   { id: 'reversed', label: 'Reversed' },
@@ -64,7 +64,7 @@ export default function AdminPayoutsPage() {
         setPayouts((prev) =>
           prev.map((p) => (p._id === payoutId ? { ...p, ...res.data.payout } : p))
         );
-        setActionSuccess(`Payout ${payoutId} retried successfully!`);
+        setActionSuccess(`Payout transfer ${payoutId} retried successfully!`);
       }
     } catch (err) {
       alert(err.response?.data?.error || err.response?.data?.message || err.message || 'Retry failed');
@@ -87,16 +87,23 @@ export default function AdminPayoutsPage() {
   };
 
   return (
-    <div className="content-container" style={{ padding: '3rem 1.5rem 5rem' }}>
-      <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-        <h1 className="section-title">Platform Payouts & Route Transfers</h1>
-        <p className="section-subtitle">
-          Monitor automated vendor payouts, platform commission splits, and retry failed transfers.
-        </p>
+    <div className="stitch-admin-payouts-container">
+      {/* Header */}
+      <div className="stitch-admin-header">
+        <div>
+          <span className="stitch-admin-control-badge">Settlement Transfers</span>
+          <h1 className="stitch-admin-title">Platform Payouts &amp; Route Transfers</h1>
+          <p className="stitch-admin-subtitle">
+            Monitor automated vendor split payouts (simulated), platform commission splits, and retry failed transfers.
+          </p>
+        </div>
+        <div className="stitch-approvals-count-pill">
+          <span className="badge badge-neutral">Auto-Split Sandbox Mode</span>
+        </div>
       </div>
 
       {actionSuccess && (
-        <div className="alert-box alert-success" style={{ marginBottom: '1.5rem' }}>
+        <div className="alert-box alert-success" style={{ marginBottom: '1.5rem', backgroundColor: 'var(--color-success-bg)', color: 'var(--color-success)' }}>
           <span>✓</span>
           <div>{actionSuccess}</div>
         </div>
@@ -110,120 +117,113 @@ export default function AdminPayoutsPage() {
       )}
 
       {/* Filter Tabs */}
-      <div
-        className="filter-bar"
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          flexWrap: 'wrap',
-          marginBottom: '1.5rem',
-        }}
-      >
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.id}
-            type="button"
-            className={`btn btn-sm ${statusFilter === f.id ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setStatusFilter(f.id)}
-            style={{ borderRadius: '20px', padding: '0.4rem 1rem' }}
-          >
-            {f.label}
-          </button>
-        ))}
+      <div className="stitch-status-tabs-container" style={{ marginBottom: '1.75rem' }}>
+        <div className="stitch-status-tabs-row">
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              className={`stitch-status-tab-btn ${statusFilter === f.id ? 'active' : ''}`}
+              onClick={() => setStatusFilter(f.id)}
+            >
+              <span>{f.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Payouts Table */}
-      <div
-        className="table-card"
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid var(--color-border)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-            Payout Records ({total})
-          </h3>
+      <div className="stitch-payouts-table-card">
+        <div className="stitch-payouts-card-header">
+          <div>
+            <h3 className="stitch-payouts-title">Vendor Settlement Transfers</h3>
+            <p className="stitch-payouts-desc">Automated Route disbursement log across vendor stores</p>
+          </div>
+          <span className="stitch-payouts-count-badge">
+            {total} {total === 1 ? 'record' : 'records'}
+          </span>
         </div>
 
         {loading ? (
-          <div style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
+          <div className="stitch-profile-loading">
             <div className="spinner" style={{ margin: '0 auto 1.5rem' }}></div>
             <p>Loading payouts...</p>
           </div>
         ) : payouts.length === 0 ? (
-          <div style={{ padding: '4rem 1.5rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-            <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>No payouts matching this filter.</p>
+          <div className="stitch-empty-state-card" style={{ border: 'none', padding: '4rem 1.5rem' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💸</div>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No payouts matching this filter</h4>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>
+              There are no transfer records under the selected category.
+            </p>
           </div>
         ) : (
-          <div className="table-responsive" style={{ overflowX: 'auto' }}>
-            <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+          <div className="table-responsive">
+            <table className="stitch-payouts-table">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface-hover)' }}>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Date</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Order Number</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Vendor Store</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Net Payout</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Commission</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Transfer ID</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'center' }}>Status</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'center' }}>Action</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Order</th>
+                  <th>Vendor Store</th>
+                  <th className="align-right">Net Payout</th>
+                  <th className="align-right">Commission</th>
+                  <th>Transfer ID</th>
+                  <th className="align-center">Status</th>
+                  <th className="align-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {payouts.map((p) => (
-                  <tr key={p._id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                    <td style={{ padding: '1rem 1.25rem', whiteSpace: 'nowrap' }}>
-                      {new Date(p.createdAt).toLocaleDateString()}
+                  <tr key={p._id}>
+                    <td className="stitch-payout-cell-date">
+                      {new Date(p.createdAt).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
                     </td>
-                    <td style={{ padding: '1rem 1.25rem', fontWeight: 600 }}>
-                      {p.orderId?.orderNumber || '—'}
+                    <td>
+                      <span className="stitch-payout-ordnum">
+                        {p.orderId?.orderNumber || '—'}
+                      </span>
                     </td>
-                    <td style={{ padding: '1rem 1.25rem' }}>
-                      <strong>{p.vendorId?.storeName || 'Vendor'}</strong>
+                    <td>
+                      <strong style={{ color: 'var(--color-text)', fontSize: '0.92rem' }}>
+                        🏪 {p.vendorId?.storeName || 'Vendor'}
+                      </strong>
                     </td>
-                    <td style={{ padding: '1rem 1.25rem', textAlign: 'right', fontWeight: 700, color: 'var(--color-success)' }}>
+                    <td className="align-right" style={{ fontWeight: 700, color: 'var(--color-success)' }}>
                       ₹{p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: '1rem 1.25rem', textAlign: 'right', color: 'var(--color-accent)' }}>
+                    <td className="align-right" style={{ color: 'var(--color-accent-hover)', fontWeight: 600 }}>
                       ₹{p.commission.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: '1rem 1.25rem' }}>
-                      <code style={{ fontSize: '0.78rem' }}>{p.transferId || '—'}</code>
+                    <td>
+                      <code className="stitch-transfer-code">{p.transferId || 'tr_simulated'}</code>
                     </td>
-                    <td style={{ padding: '1rem 1.25rem', textAlign: 'center' }}>
+                    <td className="align-center">
                       <span className={`badge ${getStatusBadge(p.status)}`}>
+                        <span className="badge-dot"></span>
                         {p.status.toUpperCase()}
                       </span>
                       {p.failureReason && (
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-danger)', marginTop: '0.2rem' }}>
+                        <div className="stitch-payout-fail-msg">
                           {p.failureReason}
                         </div>
                       )}
                     </td>
-                    <td style={{ padding: '1rem 1.25rem', textAlign: 'center' }}>
+                    <td className="align-center">
                       {p.status === 'failed' ? (
                         <button
                           type="button"
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary btn-sm stitch-retry-payout-btn"
                           disabled={retryingId === p._id}
                           onClick={() => handleRetryPayout(p._id)}
-                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
                         >
                           {retryingId === p._id ? 'Retrying...' : '🔄 Retry'}
                         </button>
                       ) : (
-                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem' }}>—</span>
+                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>—</span>
                       )}
                     </td>
                   </tr>
@@ -235,15 +235,7 @@ export default function AdminPayoutsPage() {
 
         {/* Pagination */}
         {pages > 1 && (
-          <div
-            style={{
-              padding: '1rem 1.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderTop: '1px solid var(--color-border)',
-            }}
-          >
+          <div className="stitch-payouts-pagination">
             <button
               className="btn btn-secondary btn-sm"
               disabled={page <= 1}
@@ -251,7 +243,7 @@ export default function AdminPayoutsPage() {
             >
               Previous
             </button>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            <span className="stitch-pagination-page-label">
               Page {page} of {pages}
             </span>
             <button

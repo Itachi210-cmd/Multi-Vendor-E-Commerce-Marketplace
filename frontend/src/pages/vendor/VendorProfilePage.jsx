@@ -110,18 +110,32 @@ export default function VendorProfilePage() {
 
   if (loading) {
     return (
-      <div className="auth-loading-screen">
-        <div className="spinner"></div>
+      <div className="stitch-profile-loading">
+        <div className="spinner" style={{ margin: '0 auto 1.5rem' }}></div>
         <p>Loading store profile...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '700px' }}>
-      <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-        <h1 className="section-title">Store Profile &amp; Branding</h1>
-        <p className="section-subtitle">Manage public storefront name, bio, and brand logo.</p>
+    <div className="stitch-vendor-profile-page">
+      {/* Header Context Banner */}
+      <div className="stitch-profile-header-banner">
+        <div>
+          <span className="stitch-profile-pretitle">Vendor Management &amp; Settings</span>
+          <h1 className="stitch-profile-main-title">Store Profile &amp; Branding</h1>
+        </div>
+        <div className="stitch-profile-standard-pill">
+          <svg className="stitch-profile-verified-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+          <div className="stitch-profile-standard-text">
+            <span className="stitch-profile-standard-title">Marketplace Standard</span>
+            <span className="stitch-profile-standard-rate">
+              Platform Commission: <strong>{commissionPct}%</strong>
+            </span>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -138,84 +152,167 @@ export default function VendorProfilePage() {
         </div>
       )}
 
-      <div className="auth-card" style={{ padding: '2rem' }}>
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group" style={{ alignItems: 'center', marginBottom: '1rem' }}>
-            <div className="store-logo-preview-box">
+      {/* Main Form Card */}
+      <div className="stitch-profile-card">
+        <div className="stitch-profile-card-header">
+          <div className="stitch-profile-card-title-group">
+            <div className="stitch-profile-icon-badge">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h2 className="stitch-profile-card-heading">Store Profile Management</h2>
+              <p className="stitch-profile-card-subheading">
+                Update your public storefront identity and brand description visible to marketplace buyers.
+              </p>
+            </div>
+          </div>
+          <span className="badge badge-primary">Active Hub</span>
+        </div>
+
+        <form onSubmit={handleSubmit} className="stitch-profile-form">
+          {/* Logo Upload Area */}
+          <div className="stitch-logo-upload-panel">
+            <div className="stitch-logo-preview-wrapper">
               {logoUrl ? (
                 <img
                   src={logoUrl}
-                  alt={storeName}
-                  className="store-logo-preview"
+                  alt={storeName || 'Store Logo'}
+                  className="stitch-logo-preview-img"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = '/placeholder.svg';
                   }}
                 />
               ) : (
-                <div className="store-logo-placeholder">No Logo</div>
+                <div className="stitch-logo-placeholder-box">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>No Logo</span>
+                </div>
               )}
             </div>
 
-            <label className="btn btn-secondary btn-sm" style={{ marginTop: '0.75rem', cursor: 'pointer' }}>
-              {isUploading ? 'Uploading Logo...' : 'Upload Brand Logo'}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleLogoUpload}
-                style={{ display: 'none' }}
-                disabled={isUploading}
-              />
-            </label>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Store Name *</label>
-            <input
-              type="text"
-              className="form-input"
-              value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
-              required
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Store Description</label>
-            <textarea
-              className="form-input"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Direct Logo URL (or use upload above)</label>
-            <input
-              type="url"
-              className="form-input"
-              value={logoUrl}
-              onChange={(e) => setLogoUrl(e.target.value)}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div style={{ backgroundColor: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', margin: '0.5rem 0 1rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Platform Commission Rate:</span>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)' }}>
-              {commissionPct}%
+            <div className="stitch-logo-meta-controls">
+              <h3 className="stitch-logo-title">Store Logo &amp; Branding</h3>
+              <p className="stitch-logo-recommendation">Recommended 400×400px PNG, JPG, or WebP. Direct uploads to storage.</p>
+              <div className="stitch-logo-btn-cluster">
+                <label className="btn btn-primary btn-sm stitch-logo-upload-btn">
+                  {isUploading ? 'Uploading...' : 'Upload New'}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleLogoUpload}
+                    style={{ display: 'none' }}
+                    disabled={isUploading}
+                  />
+                </label>
+                {logoUrl && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setLogoUrl('')}
+                    disabled={isUploading}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-              Set by marketplace administration. Retained upon checkout order splits.
-            </span>
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={isSubmitting || isUploading}>
-            {isSubmitting ? 'Saving Changes...' : 'Save Profile Changes'}
-          </button>
+          {/* Form Fields */}
+          <div className="stitch-profile-fields-grid">
+            <div className="form-group">
+              <label className="form-label" htmlFor="store-name-input">
+                Store Name *
+              </label>
+              <input
+                id="store-name-input"
+                type="text"
+                className="form-input stitch-profile-input"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                required
+                disabled={isSubmitting}
+                placeholder="e.g. Aura Tech Hub"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="store-desc-input">
+                Store Description
+              </label>
+              <textarea
+                id="store-desc-input"
+                className="form-input stitch-profile-textarea"
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={isSubmitting}
+                placeholder="Describe your store offerings, products quality, fulfillment, and customer commitment..."
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="store-logo-url-input">
+                Direct Logo URL (or use image upload above)
+              </label>
+              <input
+                id="store-logo-url-input"
+                type="url"
+                className="form-input stitch-profile-input"
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                disabled={isSubmitting}
+                placeholder="https://example.com/logo.png"
+              />
+            </div>
+          </div>
+
+          {/* Platform Commission Rate Card */}
+          <div className="stitch-commission-rate-card">
+            <div className="stitch-commission-rate-left">
+              <div className="stitch-commission-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="19" y1="5" x2="5" y2="19"></line>
+                  <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                  <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                </svg>
+              </div>
+              <div>
+                <h4 className="stitch-commission-card-title">Platform Commission Rate</h4>
+                <p className="stitch-commission-card-desc">
+                  Standard tiered deduction applied automatically per completed checkout order. Set by marketplace administration.
+                </p>
+              </div>
+            </div>
+            <div className="stitch-commission-rate-right">
+              <span className="stitch-commission-rate-num">{commissionPct}%</span>
+              <div className="stitch-commission-rate-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+                Marketplace Configured
+              </div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <div className="stitch-profile-action-row">
+            <button
+              type="submit"
+              className="btn btn-primary stitch-save-profile-btn"
+              disabled={isSubmitting || isUploading}
+            >
+              {isSubmitting ? 'Saving Changes...' : 'Save Profile Changes'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

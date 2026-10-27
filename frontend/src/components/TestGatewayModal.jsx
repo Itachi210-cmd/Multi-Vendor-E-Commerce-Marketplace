@@ -102,7 +102,6 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
   if (!isOpen) return null;
 
   const handleCardNumberChange = (e) => {
-    // Format card number with spaces every 4 digits
     const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
     const formatted = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
     setCardNumber(formatted);
@@ -211,18 +210,7 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
   const modalContent = (
     <div
-      className="modal-overlay"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 99999,
-        backgroundColor: 'rgba(15, 23, 42, 0.7)',
-        backdropFilter: 'blur(4px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-      }}
+      className="stitch-modal-overlay"
       onClick={(e) => {
         if (e.target === e.currentTarget && step !== 'processing') {
           onClose?.();
@@ -230,87 +218,68 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
       }}
     >
       <div
-        className="modal-container test-gateway-modal"
-        style={{
-          maxWidth: '580px',
-          width: '92%',
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          position: 'relative',
-        }}
+        className="stitch-gateway-modal"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="modal-header" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <span style={{ fontSize: '1.4rem' }}>⚡</span>
+        <div className="stitch-modal-header">
+          <div className="stitch-modal-header-left">
+            <div className="stitch-modal-icon-badge">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <rect width="8" height="5" x="8" y="11" rx="1" />
+                <path d="M10 11V9a2 2 0 1 1 4 0v2" />
+              </svg>
+            </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <h3 style={{ margin: 0, fontSize: '1.15rem' }}>Test Gateway</h3>
-                <span className="badge badge-degraded" style={{ fontSize: '0.68rem', letterSpacing: '0.05em' }}>
+              <div className="stitch-modal-title-row">
+                <h3 className="stitch-modal-title">Test Gateway</h3>
+                <span className="stitch-sandbox-badge">
                   SANDBOX MODE
                 </span>
               </div>
-              <p style={{ margin: '0.2rem 0 0', fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+              <p className="stitch-modal-subtitle">
                 Simulated Payment Provider Layer • No real money charged
               </p>
             </div>
           </div>
           {step !== 'processing' && (
-            <button className="btn-close" onClick={onClose} aria-label="Close">
-              ✕
+            <button className="stitch-modal-close-btn" onClick={onClose} aria-label="Close modal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           )}
         </div>
 
         {/* Modal Body */}
-        <div className="modal-body" style={{ padding: '1.5rem' }}>
+        <div className="stitch-modal-body">
           {/* Demo Notice Banner */}
-          <div
-            style={{
-              background: 'var(--color-bg)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '8px',
-              padding: '0.65rem 0.9rem',
-              marginBottom: '1.25rem',
-              fontSize: '0.82rem',
-              color: 'var(--color-primary-dark)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <span>ℹ️</span>
+          <div className="stitch-modal-demo-notice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
             <span>
               <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
             </span>
           </div>
 
-          {/* Amount Badge Banner */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: 'var(--color-surface-hover)',
-              padding: '0.85rem 1.15rem',
-              borderRadius: '8px',
-              marginBottom: '1.5rem',
-            }}
-          >
+          {/* Amount Summary Row */}
+          <div className="stitch-modal-amount-box">
             <div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', display: 'block' }}>
+              <span className="stitch-amount-order-label">
                 Order #{order?.orderNumber || order?._id}
               </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+              <span className="stitch-amount-session-label">
                 Session: {providerOrderId || 'Initializing...'}
               </span>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block' }}>
-                Amount to Pay
-              </span>
-              <strong style={{ fontSize: '1.35rem', color: 'var(--color-primary)' }}>
+            <div className="stitch-amount-value-col">
+              <span className="stitch-amount-sublabel">Total Payable</span>
+              <strong className="stitch-amount-large">
                 ₹{(amountPaise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </strong>
             </div>
@@ -318,20 +287,18 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
           {/* Step 1: Initializing session */}
           {step === 'init' && (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+            <div className="stitch-modal-state-box">
               <div className="spinner" style={{ margin: '0 auto 1rem' }}></div>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-                Contacting payment provider layer...
-              </p>
+              <p>Contacting payment provider layer...</p>
             </div>
           )}
 
           {/* Step 2: Processing Payment */}
           {step === 'processing' && (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+            <div className="stitch-modal-state-box">
               <div className="spinner" style={{ margin: '0 auto 1.25rem', width: '42px', height: '42px' }}></div>
-              <h4 style={{ margin: '0 0 0.5rem' }}>Processing Payment...</h4>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', maxWidth: '340px', margin: '0 auto' }}>
+              <h4>Processing Payment...</h4>
+              <p>
                 Simulating banking network handshakes, card/UPI verification, and HMAC authorization.
               </p>
             </div>
@@ -339,60 +306,34 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
           {/* Step 3: Success Screen */}
           {step === 'success' && paymentResult && (
-            <div style={{ textAlign: 'center', padding: '1.5rem 0.5rem' }}>
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                  color: 'var(--color-success)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2rem',
-                  margin: '0 auto 1.25rem',
-                }}
-              >
-                ✓
+            <div className="stitch-modal-state-box">
+              <div className="stitch-status-icon-circle success">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
               </div>
-              <h3 style={{ margin: '0 0 0.4rem', color: 'var(--color-success)' }}>
-                Payment Successful!
-              </h3>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              <h3 className="stitch-success-title">Payment Successful!</h3>
+              <p className="stitch-success-desc">
                 Your order is confirmed. Multi-vendor payout splits have been created.
               </p>
 
-              <div
-                style={{
-                  backgroundColor: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  textAlign: 'left',
-                  fontSize: '0.85rem',
-                  marginBottom: '1.5rem',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ color: 'var(--color-text-muted)' }}>Payment ID:</span>
-                  <code style={{ fontWeight: 600 }}>{paymentResult.payment_id}</code>
+              <div className="stitch-receipt-box">
+                <div className="stitch-receipt-row">
+                  <span className="stitch-receipt-label">Payment ID</span>
+                  <code className="stitch-receipt-code">{paymentResult.payment_id}</code>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ color: 'var(--color-text-muted)' }}>Payment Method:</span>
-                  <span style={{ textTransform: 'uppercase', fontWeight: 600 }}>{paymentResult.method}</span>
+                <div className="stitch-receipt-row">
+                  <span className="stitch-receipt-label">Payment Method</span>
+                  <span className="stitch-receipt-method">{paymentResult.method}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--color-text-muted)' }}>Status:</span>
-                  <span className="badge badge-connected" style={{ fontSize: '0.72rem' }}>
-                    CAPTURED & PAID
-                  </span>
+                <div className="stitch-receipt-row">
+                  <span className="stitch-receipt-label">Status</span>
+                  <span className="stitch-receipt-status">CAPTURED &amp; PAID</span>
                 </div>
               </div>
 
               <button
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '0.85rem' }}
+                className="stitch-modal-confirm-btn"
                 onClick={onClose}
               >
                 View Order Details
@@ -402,52 +343,46 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
           {/* Step 4: Failure Screen */}
           {step === 'failure' && (
-            <div style={{ textAlign: 'center', padding: '1.5rem 0.5rem' }}>
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                  color: 'var(--color-danger)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2rem',
-                  margin: '0 auto 1.25rem',
-                }}
-              >
-                ✕
+            <div className="stitch-modal-state-box">
+              <div className="stitch-status-icon-circle failure">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </div>
-              <h3 style={{ margin: '0 0 0.4rem', color: 'var(--color-danger)' }}>
-                Payment Failed
-              </h3>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              <h3 className="stitch-failure-title">Payment Failed</h3>
+              <p className="stitch-failure-desc">
                 {errorMessage || 'The payment gateway could not process this transaction.'}
               </p>
 
               {errorCode && (
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <span className="badge badge-degraded" style={{ fontSize: '0.75rem' }}>
+                <div className="stitch-error-code-wrap">
+                  <span className="stitch-error-code-badge">
                     Error Code: {errorCode}
                   </span>
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div className="stitch-failure-actions">
                 <button
-                  className="btn btn-secondary"
-                  style={{ flex: 1, padding: '0.85rem' }}
+                  type="button"
+                  className="stitch-modal-cancel-btn"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className="btn btn-primary"
-                  style={{ flex: 2, padding: '0.85rem' }}
+                  type="button"
+                  className="stitch-modal-retry-btn"
                   onClick={handleRetry}
                 >
-                  🔄 Retry Payment
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                    <path d="M16 21h5v-5" />
+                  </svg>
+                  <span>Retry Payment</span>
                 </button>
               </div>
             </div>
@@ -457,94 +392,71 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
           {step === 'ready' && (
             <div>
               {/* Payment Method Tabs */}
-              <div className="gateway-tabs" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
+              <div className="stitch-modal-tabs">
                 <button
                   type="button"
-                  className={`gateway-tab-btn ${activeTab === 'card' ? 'active' : ''}`}
+                  className={`stitch-modal-tab-btn ${activeTab === 'card' ? 'active' : ''}`}
                   onClick={() => setActiveTab('card')}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    borderRadius: '8px',
-                    border: '1px solid',
-                    borderColor: activeTab === 'card' ? 'var(--color-primary)' : 'var(--color-border)',
-                    backgroundColor: activeTab === 'card' ? 'var(--color-bg-soft)' : 'var(--color-surface)',
-                    color: activeTab === 'card' ? 'var(--color-primary-dark)' : 'var(--color-text)',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                  }}
                 >
-                  <span>💳</span> Credit / Debit Card
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                  </svg>
+                  <span>Credit / Debit Card</span>
                 </button>
 
                 <button
                   type="button"
-                  className={`gateway-tab-btn ${activeTab === 'upi' ? 'active' : ''}`}
+                  className={`stitch-modal-tab-btn ${activeTab === 'upi' ? 'active' : ''}`}
                   onClick={() => setActiveTab('upi')}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    borderRadius: '8px',
-                    border: '1px solid',
-                    borderColor: activeTab === 'upi' ? 'var(--color-primary)' : 'var(--color-border)',
-                    backgroundColor: activeTab === 'upi' ? 'var(--color-bg-soft)' : 'var(--color-surface)',
-                    color: activeTab === 'upi' ? 'var(--color-primary-dark)' : 'var(--color-text)',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                  }}
                 >
-                  <span>📱</span> UPI / QR
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="14" height="20" x="5" y="2" rx="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                  <span>UPI / QR</span>
                 </button>
               </div>
 
               {/* Card Form */}
               {activeTab === 'card' && (
-                <form onSubmit={handlePay}>
-                  <div className="form-group" style={{ marginBottom: '1rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.35rem', display: 'block' }}>
-                      Card Number
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={cardNumber}
-                      onChange={handleCardNumberChange}
-                      placeholder="4111 1111 1111 1111"
-                      required
-                    />
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                    <div className="form-group">
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.35rem', display: 'block' }}>
-                        Expiry (MM/YY)
-                      </label>
+                <form onSubmit={handlePay} className="stitch-modal-form">
+                  <div className="stitch-form-group">
+                    <label className="stitch-form-label">Card Number</label>
+                    <div className="stitch-input-with-icon">
                       <input
                         type="text"
-                        className="form-control"
+                        className="stitch-form-input"
+                        value={cardNumber}
+                        onChange={handleCardNumberChange}
+                        placeholder="4111 1111 1111 1111"
+                        required
+                      />
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="stitch-input-trailing-icon">
+                        <rect width="20" height="14" x="2" y="5" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="stitch-form-row-2">
+                    <div className="stitch-form-group">
+                      <label className="stitch-form-label">Expiry (MM/YY)</label>
+                      <input
+                        type="text"
+                        className="stitch-form-input"
                         value={cardExpiry}
                         onChange={handleExpiryChange}
                         placeholder="MM/YY"
                         required
                       />
                     </div>
-                    <div className="form-group">
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.35rem', display: 'block' }}>
-                        CVV
-                      </label>
+
+                    <div className="stitch-form-group">
+                      <label className="stitch-form-label">CVV</label>
                       <input
                         type="password"
-                        className="form-control"
+                        className="stitch-form-input"
                         value={cardCvv}
                         onChange={(e) => setCardCvv(e.target.value.slice(0, 4))}
                         placeholder="123"
@@ -554,31 +466,20 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                   </div>
 
                   {/* Test Cards Quick Panel */}
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.5rem' }}>
-                      ⚡ Click a test scenario to prefill:
+                  <div className="stitch-scenario-panel">
+                    <span className="stitch-scenario-heading">
+                      ⚡ Quick Test Scenarios (Click to Prefill):
                     </span>
-                    <div className="test-cards-grid">
+                    <div className="stitch-scenario-grid">
                       {TEST_CARDS.map((tc, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => selectTestCard(tc)}
-                          style={{
-                            padding: '0.5rem 0.65rem',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: '6px',
-                            background: 'var(--color-surface)',
-                            textAlign: 'left',
-                            cursor: 'pointer',
-                          }}
+                          className="stitch-scenario-chip"
                         >
-                          <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--color-text)' }}>
-                            {tc.label}
-                          </div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
-                            {tc.desc}
-                          </div>
+                          <span className="stitch-chip-title">{tc.label}</span>
+                          <span className="stitch-chip-desc">{tc.desc}</span>
                         </button>
                       ))}
                     </div>
@@ -586,24 +487,25 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
                   <button
                     type="submit"
-                    className="btn btn-primary"
-                    style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem' }}
+                    className="stitch-modal-submit-pay-btn"
                   >
-                    🔒 Pay ₹{(amountPaise / 100).toFixed(2)}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Pay ₹{(amountPaise / 100).toFixed(2)}</span>
                   </button>
                 </form>
               )}
 
               {/* UPI Form */}
               {activeTab === 'upi' && (
-                <form onSubmit={handlePay}>
-                  <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.35rem', display: 'block' }}>
-                      Virtual Payment Address (UPI ID)
-                    </label>
+                <form onSubmit={handlePay} className="stitch-modal-form">
+                  <div className="stitch-form-group">
+                    <label className="stitch-form-label">Virtual Payment Address (UPI ID)</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className="stitch-form-input"
                       value={upiVpa}
                       onChange={(e) => setUpiVpa(e.target.value)}
                       placeholder="success@mock"
@@ -611,36 +513,45 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     />
                   </div>
 
+                  {/* Simulated QR Box */}
+                  <div className="stitch-upi-qr-box">
+                    <div className="stitch-qr-preview">
+                      <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="5" height="5" x="3" y="3" rx="1" />
+                        <rect width="5" height="5" x="16" y="3" rx="1" />
+                        <rect width="5" height="5" x="3" y="16" rx="1" />
+                        <path d="M21 16h-3a2 2 0 0 0-2 2v3" />
+                        <path d="M21 21v.01" />
+                        <path d="M12 7v3a2 2 0 0 1-2 2H7" />
+                        <path d="M3 12h.01" />
+                        <path d="M12 3h.01" />
+                        <path d="M12 16v.01" />
+                        <path d="M16 12h1" />
+                        <path d="M21 12v.01" />
+                        <path d="M12 21v-1" />
+                      </svg>
+                    </div>
+                    <span className="stitch-qr-hint">Scan with any UPI app or enter ID above</span>
+                  </div>
+
                   {/* Test UPI Quick Panel */}
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.5rem' }}>
-                      ⚡ Click a test scenario to prefill:
+                  <div className="stitch-scenario-panel">
+                    <span className="stitch-scenario-heading">
+                      ⚡ Quick Test Scenarios (Click to Prefill):
                     </span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                    <div className="stitch-scenario-list">
                       {TEST_UPIS.map((tu, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => selectTestUpi(tu)}
-                          style={{
-                            padding: '0.5rem 0.75rem',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: '6px',
-                            background: 'var(--color-surface)',
-                            textAlign: 'left',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
+                          className="stitch-scenario-upi-chip"
                         >
-                          <div>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{tu.label}</span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', display: 'block' }}>
-                              {tu.desc}
-                            </span>
+                          <div className="stitch-upi-chip-left">
+                            <span className="stitch-chip-title">{tu.label}</span>
+                            <span className="stitch-chip-desc">{tu.desc}</span>
                           </div>
-                          <code style={{ fontSize: '0.75rem', color: 'var(--color-primary)' }}>{tu.vpa}</code>
+                          <code className="stitch-chip-code">{tu.vpa}</code>
                         </button>
                       ))}
                     </div>
@@ -648,10 +559,12 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
                   <button
                     type="submit"
-                    className="btn btn-primary"
-                    style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem' }}
+                    className="stitch-modal-submit-pay-btn"
                   >
-                    📱 Pay with UPI ₹{(amountPaise / 100).toFixed(2)}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    <span>Pay with UPI ₹{(amountPaise / 100).toFixed(2)}</span>
                   </button>
                 </form>
               )}

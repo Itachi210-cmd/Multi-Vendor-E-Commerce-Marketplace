@@ -1,8 +1,8 @@
 # Multi-Vendor E-Commerce Marketplace — Project Document
 
-**Track:** Full-Stack Development
-**Timeline:** Start 20 Oct 2026 · Deadline 20 Nov 2026
-**Stack:** React · Node.js (Express) · MongoDB · Elasticsearch · Redis · AWS S3 · Razorpay (Route, test mode)
+**Track:** Full-Stack Development  
+**Timeline:** Start 20 Oct 2026 · Deadline 20 Nov 2026  
+**Stack:** React + React Router + Context API + plain CSS with design tokens · Node.js (Express) · MongoDB · Elasticsearch · Redis · Supabase Storage through its S3-compatible API (AWS S3 replaced, approved by the internship team) · Built-in sandbox gateway behind a provider layer modelled on Razorpay Route (see docs/payments.md)
 
 ---
 
@@ -21,7 +21,7 @@ An Amazon/Meesho-style marketplace where **vendors** list and sell products, **c
 - Give admin full control and visibility (approvals, coupons, analytics).
 
 ### 2.2 Non-goals (out of scope)
-- Real money payments (test mode only)
+- Real money payments (simulated sandbox test mode only)
 - Real shipping/courier integration (status is updated manually by the vendor)
 - Mobile app, multi-currency, multi-language
 - Returns/refund automation beyond basic admin-triggered refund
@@ -47,12 +47,12 @@ An Amazon/Meesho-style marketplace where **vendors** list and sell products, **c
 |---|---|---|
 | FR1 | JWT auth (access + refresh) with role-based access control | Must |
 | FR2 | Vendor application + admin approval | Must |
-| FR3 | Product CRUD with multiple images stored on S3 | Must |
+| FR3 | Product CRUD with multiple images stored via Supabase Storage (S3-compatible API) | Must |
 | FR4 | Search with filters (category, price, rating) and sorting via Elasticsearch | Must |
 | FR5 | Cart stored in Redis | Must |
 | FR6 | Checkout with stock validation and coupon support | Must |
 | FR7 | Order lifecycle: placed → packed → shipped → delivered (per vendor sub-order) | Must |
-| FR8 | Razorpay Route split payment + commission | Must |
+| FR8 | Split payment + commission via built-in sandbox gateway (modeled on Razorpay Route, see `docs/payments.md`) | Must |
 | FR9 | Reviews (only for delivered orders, one per user per product) | Must |
 | FR10 | Coupons (percent/flat, expiry, usage limit, min order) | Must |
 | FR11 | PDF invoice | Must |
@@ -63,14 +63,14 @@ An Amazon/Meesho-style marketplace where **vendors** list and sell products, **c
 | FR16 | Wishlist | Nice |
 
 ### 2.5 Non-Functional Requirements
-- **Security:** hashed passwords (bcrypt), input validation, rate limiting, helmet, CORS whitelist, Razorpay signature verification
+- **Security:** hashed passwords (bcrypt), input validation, rate limiting, helmet, CORS whitelist, HMAC-signed payment & webhook verification
 - **Performance:** search results < 300 ms, cart ops < 50 ms (Redis), product pages cached
 - **Reliability:** idempotent payment verification, webhook as backup to client verify
 - **Maintainability:** modular folders, env-based config, README, API docs (Postman/Swagger)
 - **Testing:** unit + API tests on auth, cart, checkout, payment split logic
 
 ### 2.6 Success Metrics
-- All 7 steps of the brief working end-to-end on the live deployment
+- All core steps of the brief working end-to-end on the live deployment
 - A full demo flow: vendor onboarded → product listed → customer buys from 2 vendors → payment split correctly → delivered → review → invoice → admin sees analytics
 - 70%+ test coverage on core services (auth, cart, order, payment)
 
@@ -86,53 +86,53 @@ flowchart LR
     API --> M[(MongoDB)]
     API --> R[(Redis)]
     API --> ES[(Elasticsearch)]
-    API --> S3[(AWS S3)]
-    API --> RP[Razorpay API]
-    RP -->|webhook| API
-    U -->|presigned PUT| S3
+    API --> SB[(Supabase Storage - S3 API)]
+    API --> PG[Payment Provider Layer / Sandbox Gateway]
+    PG -->|HMAC webhook| API
+    U -->|presigned PUT| SB
 ```
 
 ### 3.2 Components
 | Component | Responsibility |
 |---|---|
-| **React frontend** | UI for customer, vendor, admin; Razorpay Checkout widget |
+| **React frontend** | UI for customer, vendor, admin (React + Router + Context API + plain CSS with design tokens; no Tailwind, no Recharts, no UI kit, hand-made SVG charts); Test Gateway modal; plain CSS with water blue theme |
 | **Express API** | Business logic, auth, validation, orchestration |
 | **MongoDB** | Source of truth (users, vendors, products, orders, reviews, coupons, payouts) |
 | **Redis** | Cart, session/refresh token store, product cache, rate limit counters |
-| **Elasticsearch** | Product search index (text search, filters, sorting) |
-| **AWS S3** | Product/vendor images (uploaded directly from browser via presigned URL) |
-| **Razorpay Route** | Collect payment, transfer vendor share, retain commission |
+| **Elasticsearch** | Product search index (text search, filters, sorting) with MongoDB fallback |
+| **Supabase Storage** | Product/vendor images uploaded directly via presigned S3-compatible URLs (Supabase Storage through its S3-compatible API; AWS S3 replaced, approved by the internship team. MinIO is not used.) |
+| **Sandbox Payment Gateway** | Collect payment, simulate vendor transfers, retain commission (built-in sandbox gateway behind a provider layer modelled on Razorpay Route; see `docs/payments.md`) |
 
 ### 3.3 Key Flows
 
 **Auth:** login → access token (15 min) + refresh token (7 days, stored in Redis) → middleware checks role.
 
-**Image upload:** frontend asks `/uploads/presign` → backend returns signed S3 URL → browser uploads directly → URL saved in product.
+**Image upload:** frontend asks `/uploads/presign` → backend returns signed S3-compatible URL from Supabase Storage → browser uploads directly → URL saved in product.
 
 **Search sync:** product create/update/delete in MongoDB → same operation indexes/updates/removes in Elasticsearch. A `npm run reindex` script rebuilds the index from MongoDB.
 
 **Checkout and payment split:**
 1. Customer hits checkout → backend reads cart from Redis, validates stock and coupon.
 2. Backend splits items per vendor → builds `subOrders` with `subtotal`, `commission`, `vendorPayout`.
-3. Backend creates a Razorpay Order (amount = total).
-4. Customer pays in Razorpay Checkout.
-5. Frontend sends payment id + signature → backend **verifies signature**, marks order paid, reduces stock.
-6. Backend creates Route **transfers** to each vendor's linked account (vendorPayout). Remaining amount stays with the platform as commission.
-7. Webhook (`payment.captured`) acts as a safety net if the client never calls verify.
+3. Backend creates payment session via Payment Provider Layer (`/api/payments/create-order`).
+4. Customer completes payment in the built-in Test Gateway modal (card or UPI).
+5. Frontend sends payment details + signature → backend **verifies signature**, marks order paid, reduces stock.
+6. Backend creates simulated Route **transfers** to each vendor's account (`vendorPayout`). Remaining amount stays with the platform as commission.
+7. Asynchronous HMAC webhook (`/api/payments/webhook`) acts as a safety net if client verification is interrupted.
 8. Cart is cleared from Redis.
 
 **Order lifecycle (per sub-order):** `placed → packed → shipped → delivered` (+ `cancelled`). Only the owning vendor (or admin) can advance status. Review is unlocked when a sub-order is `delivered`.
 
 ### 3.4 Commission example
-Cart ₹1000 = Vendor A ₹600 + Vendor B ₹400, commission 10%.
+Cart ₹1000 = Vendor A ₹600 + Vendor B ₹400, commission 10%.  
 Platform ₹100 · Vendor A ₹540 · Vendor B ₹360.
 
 ### 3.5 Tech Decisions (short justification)
 - **MongoDB:** flexible product attributes per category; nested sub-orders fit naturally.
 - **Redis for cart:** fast, TTL-based expiry, no DB writes for abandoned carts.
 - **Elasticsearch:** better relevance, fuzzy match, and filtering than Mongo text search.
-- **Presigned S3 upload:** server never handles image bytes, so it is cheaper and faster.
-- **Razorpay Route:** built for marketplace splits in India.
+- **Supabase Storage (S3-compatible API):** AWS S3 was replaced because AWS account verification was not possible (approved by the internship team). MinIO is not used. Presigned URLs allow direct browser-to-bucket uploads with zero backend bandwidth overhead.
+- **Sandbox Payment Gateway:** Real gateway test modes (e.g. Razorpay Route live test keys) required formal business registration and merchant KYC (approved by the internship team). A provider-neutral layer with a realistic test gateway simulates order creation, payment capture, HMAC signatures, and automated payout splits (see `docs/payments.md`).
 
 ---
 
@@ -144,7 +144,6 @@ users:     { _id, name, email, passwordHash, role: 'customer|vendor|admin', addr
 vendors:   { _id, userId, storeName, description, logoUrl,
              status: 'pending|approved|rejected',
              commissionPct,
-             razorpayLinkedAccountId,
              createdAt }
 
 products:  { _id, vendorId, title, description, price, stock, category,
@@ -155,7 +154,7 @@ orders:    { _id, customerId, orderNumber, shippingAddress,
              subOrders: [{ vendorId, items[], subtotal, commission, vendorPayout,
                            status: 'placed|packed|shipped|delivered|cancelled' }],
              couponCode, discount, total,
-             payment: { razorpayOrderId, razorpayPaymentId, status: 'pending|paid|failed|refunded' },
+             payment: { providerOrderId, providerPaymentId, status: 'pending|paid|failed|refunded' },
              createdAt }
 
 reviews:   { _id, productId, customerId, orderId, rating, comment, createdAt }   // unique (productId, customerId)
@@ -163,7 +162,7 @@ reviews:   { _id, productId, customerId, orderId, rating, comment, createdAt }  
 coupons:   { _id, code, type: 'percent|flat', value, minOrder, maxDiscount,
              expiresAt, usageLimit, usedCount, isActive }
 
-payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, status }
+payouts:   { _id, orderId, vendorId, amount, commission, transferId, status }
 ```
 
 **Indexes:** `users.email` (unique), `products.vendorId`, `products.category`, `orders.customerId`, `orders.subOrders.vendorId`, `coupons.code` (unique).
@@ -185,7 +184,7 @@ payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, sta
 
 **Products**
 - `GET /api/products?q=&category=&minPrice=&maxPrice=&minRating=&sort=&page=&limit=`
-- `GET /api/products/:id`
+- `GET /api/products/:id` · `GET /api/products/suggest?q=`
 - `POST /api/products` · `PUT /api/products/:id` · `DELETE /api/products/:id` (vendor, own products only)
 - `POST /api/uploads/presign`
 
@@ -194,17 +193,18 @@ payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, sta
 
 **Orders and Payments**
 - `POST /api/orders/checkout`
-- `POST /api/payments/verify` · `POST /api/payments/webhook`
+- `POST /api/payments/create-order` · `POST /api/payments/verify` · `POST /api/payments/webhook`
+- `POST /api/mock-gateway/pay` (sandbox gateway endpoint)
 - `GET /api/orders` · `GET /api/orders/:id` · `GET /api/orders/:id/invoice`
-- `GET /api/vendor/orders` · `PATCH /api/vendor/orders/:id/status`
+- `GET /api/vendor/orders` · `PATCH /api/vendor/orders/:id/status` · `GET /api/vendor/earnings`
 
 **Reviews and Coupons**
-- `POST /api/products/:id/reviews` · `GET /api/products/:id/reviews`
+- `POST /api/products/:id/reviews` · `GET /api/products/:id/reviews` · `GET /api/products/:id/reviews/eligibility`
 - `POST /api/admin/coupons` · `GET /api/admin/coupons` · `PATCH /api/admin/coupons/:id`
 - `POST /api/coupons/validate`
 
 **Admin**
-- `GET /api/admin/analytics` · `GET /api/admin/users` · `GET /api/admin/orders`
+- `GET /api/admin/analytics` · `GET /api/admin/users` · `GET /api/admin/orders` · `POST /api/admin/payouts/:id/retry`
 
 ---
 
@@ -214,15 +214,13 @@ payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, sta
 |---|---|---|
 | **1. Planning and setup** | This doc, schema, API list, repo, Docker compose (Mongo, Redis, ES) | `docker compose up` works, both apps boot |
 | **2. Auth and RBAC** | Register/login/refresh, role middleware, protected routes in React | Role-based route guard tested |
-| **3. Vendor and products** | Vendor apply and approve, product CRUD, S3 upload | Vendor can list a product with images |
-| **4. Search** | Elasticsearch index, sync hooks, filters, sorting, search UI | Filter + sort + pagination work |
+| **3. Vendor and products** | Vendor apply and approve, product CRUD, Supabase S3 presigned upload | Vendor can list a product with images |
+| **4. Search** | Elasticsearch index, sync hooks, filters, sorting, prefix suggestions | Filter + sort + pagination work |
 | **5. Cart and orders** | Redis cart, checkout, sub-orders, status flow | Multi-vendor order created, vendor can update status |
-| **6. Payments** | Razorpay order, verify, Route transfers, webhook, payouts | Test payment splits correctly |
-| **7. Extras** | Reviews, coupons, PDF invoice | Review only after delivered; invoice downloads |
-| **8. Admin and QA** | Analytics page, tests, bug fixes, seed script | Tests pass, seed data loaded |
-| **9. Deploy and docs** | Live deployment, README, Postman collection, demo video | Public URLs working |
-
-**Buffer tip:** if time gets tight, cut the "Nice" items (email, wishlist) first, never the core flow.
+| **6. Payments** | Provider-neutral payment layer, sandbox gateway modal, transfer splits, payouts | Test payment splits correctly |
+| **7. Extras** | Reviews, coupons (largest-remainder paise distribution), PDF invoice | Review only after delivered; invoice downloads |
+| **8. Admin and QA** | Analytics page, tests, bug fixes, seed script (`npm run seed:demo`) | Tests pass, seed data loaded |
+| **9. Deploy and docs** | Live deployment, README, payments guide (`docs/payments.md`), demo seed | Public URLs working |
 
 ---
 
@@ -234,14 +232,37 @@ payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, sta
 
 **Vendor:** Dashboard (sales, pending orders) · My products (list/add/edit) · Orders (update status) · Earnings · Store profile
 
-**Admin:** Dashboard (revenue, commission, orders/day, top vendors/products) · Vendor approvals · Users · Orders · Coupons
+**Admin:** Analytics (revenue, commission, orders/day, top vendors/products, fulfillment breakdown) · Vendor approvals · Users · Orders · Coupons
 
 ### 7.2 UI Guidelines
-- React + React Router + a state lib (Redux Toolkit or Zustand) + Axios with interceptors for token refresh
-- UI kit: Tailwind CSS (optionally shadcn/ui) for speed and consistent look
-- Charts: Recharts for admin analytics
-- Responsive layout (mobile-first), loading skeletons, toast notifications, clear empty states
-- Protected routes by role (`<RequireRole roles={['vendor']}>`)
+- **Core Stack:** React + React Router + Context API for state management (`AuthContext`, `CartContext`) + plain CSS with design tokens (`index.css` CSS variables).
+- **Styling & UI Kit Rule:** Plain CSS only with design tokens tailored to a clean Water Blue and White aesthetic. Strict rule: no Tailwind, no Recharts, no UI kit or component libraries (no Bootstrap, Material UI, Ant Design, shadcn/ui).
+- **Design Tokens:**
+  - `--color-primary`: `#0284C7` (Sky 600)
+  - `--color-primary-dark`: `#0369A1` (Sky 700)
+  - `--color-primary-light`: `#0EA5E9` (Sky 500)
+  - `--color-accent`: `#06B6D4` (Cyan 500)
+  - `--color-bg`: `#F0F9FF` (Sky 50)
+  - `--color-bg-soft`: `#E0F2FE` (Sky 100)
+  - `--color-border`: `#BAE6FD` (Sky 200)
+  - `--color-surface`: `#FFFFFF`
+  - `--color-text`: `#0F172A` (Slate 900)
+  - `--color-text-muted`: `#475569` (Slate 600)
+- **Charts:** Hand-made plain SVG and CSS charts for admin analytics (revenue line, orders bar chart, fulfillment breakdown). No external chart libraries (no Recharts).
+- **Icons & Visuals:** Inline SVG icons only (no icon packages), loading skeletons, empty states, and local `/placeholder.svg` image fallbacks.
+- **Layout & Navigation:** Responsive layout with desktop navbar breakpoint at `1100px`. Below 1100px, navigation cleanly collapses into the slide-out mobile drawer. Touch targets maintain a minimum 44px height.
+- **Feedback:** Loading skeletons, clear empty states, inline SVG icons, and visible focus rings (`#0EA5E9`).
+
+### 7.2.1 UI Rules for AI Agents
+All AI agents working on frontend tasks must strictly adhere to the permanent rules defined in [`AGENTS.md`](./AGENTS.md):
+- **Plain CSS Only:** React with plain CSS only. Never install or use Tailwind CSS, Recharts, or any UI/icon/chart library. Translate Stitch utility classes into standard CSS classes in our stylesheets.
+- **Preserve Business Logic & Scope:** Never change `backend/`, API calls, auth, contexts, hooks, routing, state, or business logic during UI tasks. Only change JSX structure, `className`, and CSS.
+- **Reference vs Source of Truth:** Stitch is for look and layout only. Existing features and real API data are the source of truth (ignore nonexistent Stitch features like escrow, document upload, or fake sample data).
+- **Honest Copy & Demo Notice:** No unverified claims (escrow, certified, guaranteed, bank-grade). Keep the simulated payment notice (*"Demo project: payments are simulated in a test gateway, no real money is charged."*) on footer, checkout, and modal.
+- **Responsive Adaptations:** Derive mobile from desktop (hamburger menu `< 1100px`, multi-column layouts stack, slide-in drawers for filters, sticky top tab bar for vendor/admin, tables scroll horizontally or become stacked cards `< 768px`, sticky bottom action bar for checkout/product detail, full-width 44px min-height buttons `< 600px`, no horizontal page scroll).
+- **Environment & Build Guard:** Demo credentials visible only in DEV mode (`import.meta.env.DEV`). Work on one screen at a time, run `npm run build` in `frontend/` after each task, and list every changed file.
+
+See [`AGENTS.md`](./AGENTS.md) for the complete permanent specification.
 
 ### 7.3 Folder Structure
 
@@ -249,62 +270,69 @@ payouts:   { _id, orderId, vendorId, amount, commission, razorpayTransferId, sta
 marketplace/
 ├── docker-compose.yml
 ├── README.md
-├── docs/                  # this doc, Postman collection, screenshots
+├── AGENTS.md
+├── marketplace-project-doc.md
+├── docs/                  # payments.md, s3-setup.md, project doc copy
 ├── backend/
 │   ├── src/
-│   │   ├── config/        # env, db, redis, es, s3, razorpay
+│   │   ├── config/        # env, db, redis, es, s3 (Supabase)
 │   │   ├── models/
 │   │   ├── routes/
 │   │   ├── controllers/
-│   │   ├── services/      # business logic (order, payment, search, invoice)
+│   │   ├── services/      # business logic (order, payment, search, coupon, invoice)
 │   │   ├── middleware/    # auth, role, validate, rateLimit, error
 │   │   ├── utils/
 │   │   └── app.js / server.js
-│   ├── scripts/           # seed.js, reindex.js
+│   ├── scripts/           # seedAdmin.js, seedVendors.js, seedDemo.js, reindex.js
 │   └── tests/
 └── frontend/
     └── src/
         ├── api/
         ├── components/
         ├── pages/ (customer, vendor, admin)
-        ├── store/
+        ├── context/       # AuthContext, CartContext
         ├── routes/
+        ├── utils/
         └── hooks/
 ```
 
 ### 7.4 Environment variables (backend)
-`PORT, MONGO_URI, REDIS_URL, ES_NODE, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, AWS_REGION, AWS_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, CLIENT_URL`
+`PORT, MONGO_URI, REDIS_URL, ES_NODE, ES_INDEX, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, AWS_REGION, AWS_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_ENDPOINT, S3_FORCE_PATH_STYLE, S3_PUBLIC_URL, PAYMENT_PROVIDER, MOCK_GATEWAY_SECRET, MOCK_WEBHOOK_SECRET, MOCK_WEBHOOK_ENABLED, CLIENT_URL, BACKEND_PUBLIC_URL, ALLOW_DEMO_SEED`
 
 ---
 
 ## 8. Testing Plan
-- **Unit:** commission calculation, coupon validation, cart totals
-- **API (Jest + Supertest):** auth, RBAC (vendor cannot touch another vendor's product), checkout, status transitions, review rule
-- **Payment:** Razorpay test cards, signature verification failure case, duplicate webhook (idempotency)
-- **Manual E2E:** full demo flow listed in the success metrics
-- **Seed data:** DummyJSON / Fake Store API script for products and reviews
+- **Unit:** commission calculation, largest-remainder coupon discount distribution, stock validations
+- **API (Jest + Supertest):** auth, RBAC, product CRUD and boundaries (price 1-1,000,000 INR, stock 0-100,000, title 3-120 chars), checkout, status transitions, review rule
+- **Payment:** sandbox card and UPI simulations, signature verification, duplicate webhook idempotency, payout generation
+- **Search:** Elasticsearch indexing, fuzzy typo tolerance, category/price/rating facets, MongoDB fallback
+- **Demo Seed Data:** `npm run seed:demo` with realistic DummyJSON product data (prices converted by ~x80 to clean INR values)
 
 ---
 
 ## 9. Deployment
-| Part | Suggested host |
-|---|---|
-| Frontend | Vercel or Netlify |
-| Backend | Render, Railway, or AWS EC2 |
-| MongoDB | MongoDB Atlas (free tier) |
-| Redis | Upstash or Redis Cloud (free tier) |
-| Elasticsearch | Elastic Cloud trial or Bonsai |
-| Images | AWS S3 (+ CORS config for the frontend domain) |
 
-Checklist: env vars set, CORS set to the frontend URL, Razorpay webhook URL pointing to the deployed backend, health endpoint `/api/health`.
+The application is deployed across cloud platforms: Vercel, Render, MongoDB Atlas, Upstash Redis, optional Elastic Cloud trial.
+
+| Component | Target Platform |
+|---|---|
+| **Frontend** | Vercel |
+| **Backend** | Render |
+| **MongoDB** | MongoDB Atlas |
+| **Redis** | Upstash Redis |
+| **Elasticsearch** | Optional Elastic Cloud trial (with MongoDB fallback) |
+| **Storage (Images)** | Supabase Storage through its S3-compatible API (AWS S3 replaced, approved by the internship team) |
+
+Checklist: environment variables configured in production dashboards, CORS whitelist set to deployed Vercel domain, Supabase Storage bucket policy set to public read, health check endpoint `/api/health` monitored.
 
 ---
 
 ## 10. Risks and Mitigation
 | Risk | Mitigation |
 |---|---|
-| Razorpay Route linked-account setup is slow/complex | Start the payments phase early; keep a simulated-transfer fallback and document it |
-| Elasticsearch hosting cost/setup | Use Docker locally, free trial in cloud; keep Mongo text search as fallback |
-| Mongo and ES go out of sync | Single `searchService` for all index writes, plus a `reindex` script |
-| Overselling stock | Atomic `$inc` with `stock >= qty` check at payment time |
-| Deadline slip | Build the core flow first, polish and Nice-to-haves last |
+| Real payment gateway KYC / business barrier | Built-in sandbox gateway behind generic provider layer modeled on Razorpay Route (see `docs/payments.md`); approved by internship team |
+| AWS S3 account verification barrier | Replaced with Supabase Storage S3-compatible API; MinIO is not used; approved by internship team |
+| Elasticsearch hosting cost/setup | Docker locally, free trial in cloud; robust MongoDB fallback query service in place |
+| Mongo and ES go out of sync | Single `searchService` for all writes, plus a `reindex` script (`npm run reindex`) |
+| Overselling stock | Atomic `$inc` with `stock >= qty` verification at checkout and payment capture |
+| Deadline slip | Focus on core multi-vendor flow first; keep demo seed scripts reproducible |

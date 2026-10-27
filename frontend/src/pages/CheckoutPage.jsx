@@ -193,30 +193,45 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="content-container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
-        <h2>No items to checkout</h2>
-        <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.5rem' }}>
-          Your shopping cart is currently empty.
-        </p>
-        <Link to="/products" className="btn btn-primary btn-sm">
-          Browse Products
-        </Link>
+      <div className="checkout-page-container">
+        <div className="stitch-empty-checkout-card">
+          <h2>No items to checkout</h2>
+          <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.5rem' }}>
+            Your shopping cart is currently empty.
+          </p>
+          <Link to="/products" className="stitch-explore-btn">
+            Browse Products
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="content-container" style={{ padding: '3rem 1.5rem 5rem' }}>
-      <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-        <h1 className="section-title">Checkout</h1>
-        <p className="section-subtitle">
-          Confirm your delivery address and review multi-vendor order split.
+    <div className="checkout-page-container">
+      {/* Breadcrumb */}
+      <nav className="catalog-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/" className="breadcrumb-link">Home</Link>
+        <span className="breadcrumb-sep">/</span>
+        <Link to="/cart" className="breadcrumb-link">Shopping Cart</Link>
+        <span className="breadcrumb-sep">/</span>
+        <span className="breadcrumb-current">Checkout</span>
+      </nav>
+
+      <div className="stitch-checkout-header">
+        <h1 className="stitch-checkout-title">Checkout &amp; Delivery</h1>
+        <p className="stitch-checkout-subtitle">
+          Confirm your delivery address and review the multi-vendor split order breakdown.
         </p>
       </div>
 
       {serverError && (
-        <div className="alert-box alert-error" style={{ marginBottom: '1.75rem' }}>
-          <span>⚠️</span>
+        <div className="stitch-checkout-error-alert" role="alert">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
           <div>
             <strong>{serverError}</strong>
             {cartIssues.length > 0 && (
@@ -230,70 +245,76 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="checkout-grid-layout">
-        {/* Shipping Address Form */}
-        <div className="checkout-form-pane">
-          <form onSubmit={handlePlaceOrder} className="checkout-address-card">
-            <h2 className="pane-title">1. Delivery Address</h2>
-
-            <div className="form-group">
-              <label htmlFor="name" className="form-label">Full Name *</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="e.g. Priya Sharma"
-                className={`form-input ${errors.name ? 'input-error' : ''}`}
-              />
-              {errors.name && <span className="field-error">{errors.name}</span>}
+      <div className="stitch-checkout-grid">
+        {/* Left Column: Shipping Address & Contact Form */}
+        <div className="stitch-checkout-form-col">
+          <form onSubmit={handlePlaceOrder} className="stitch-checkout-form-card">
+            <div className="stitch-form-section-header">
+              <span className="stitch-step-badge">1</span>
+              <div>
+                <h2 className="stitch-form-section-title">Shipping Address &amp; Contact</h2>
+                <span className="stitch-form-section-desc">Where should the independent vendors deliver your packages?</span>
+              </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="phone" className="form-label">Phone Number * (10 Digits)</label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="e.g. 9876543210"
-                className={`form-input ${errors.phone ? 'input-error' : ''}`}
-              />
-              {errors.phone && <span className="field-error">{errors.phone}</span>}
-            </div>
+            <div className="stitch-form-grid">
+              <div className="stitch-form-group">
+                <label htmlFor="name" className="stitch-form-label">Full Name *</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Priya Sharma"
+                  className={`stitch-form-input ${errors.name ? 'input-error' : ''}`}
+                />
+                {errors.name && <span className="stitch-field-error">{errors.name}</span>}
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="line1" className="form-label">Address Line 1 *</label>
-              <input
-                id="line1"
-                name="line1"
-                type="text"
-                value={formData.line1}
-                onChange={handleChange}
-                placeholder="Flat / House No., Apartment, Street"
-                className={`form-input ${errors.line1 ? 'input-error' : ''}`}
-              />
-              {errors.line1 && <span className="field-error">{errors.line1}</span>}
-            </div>
+              <div className="stitch-form-group">
+                <label htmlFor="phone" className="stitch-form-label">Phone Number * (10 Digits)</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="e.g. 9876543210"
+                  className={`stitch-form-input ${errors.phone ? 'input-error' : ''}`}
+                />
+                {errors.phone && <span className="stitch-field-error">{errors.phone}</span>}
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="line2" className="form-label">Address Line 2 (Optional)</label>
-              <input
-                id="line2"
-                name="line2"
-                type="text"
-                value={formData.line2}
-                onChange={handleChange}
-                placeholder="Landmark, Area"
-                className="form-input"
-              />
-            </div>
+              <div className="stitch-form-group span-full">
+                <label htmlFor="line1" className="stitch-form-label">Address Line 1 (Flat, House No., Building) *</label>
+                <input
+                  id="line1"
+                  name="line1"
+                  type="text"
+                  value={formData.line1}
+                  onChange={handleChange}
+                  placeholder="104, Blue Lagoon Towers, Marine Drive"
+                  className={`stitch-form-input ${errors.line1 ? 'input-error' : ''}`}
+                />
+                {errors.line1 && <span className="stitch-field-error">{errors.line1}</span>}
+              </div>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label htmlFor="city" className="form-label">City *</label>
+              <div className="stitch-form-group span-full">
+                <label htmlFor="line2" className="stitch-form-label">Address Line 2 (Landmark, Area - Optional)</label>
+                <input
+                  id="line2"
+                  name="line2"
+                  type="text"
+                  value={formData.line2}
+                  onChange={handleChange}
+                  placeholder="Near Gateway Point"
+                  className="stitch-form-input"
+                />
+              </div>
+
+              <div className="stitch-form-group">
+                <label htmlFor="city" className="stitch-form-label">City *</label>
                 <input
                   id="city"
                   name="city"
@@ -301,13 +322,13 @@ export default function CheckoutPage() {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="e.g. Mumbai"
-                  className={`form-input ${errors.city ? 'input-error' : ''}`}
+                  className={`stitch-form-input ${errors.city ? 'input-error' : ''}`}
                 />
-                {errors.city && <span className="field-error">{errors.city}</span>}
+                {errors.city && <span className="stitch-field-error">{errors.city}</span>}
               </div>
 
-              <div className="form-group">
-                <label htmlFor="state" className="form-label">State *</label>
+              <div className="stitch-form-group">
+                <label htmlFor="state" className="stitch-form-label">State *</label>
                 <input
                   id="state"
                   name="state"
@@ -315,116 +336,142 @@ export default function CheckoutPage() {
                   value={formData.state}
                   onChange={handleChange}
                   placeholder="e.g. Maharashtra"
-                  className={`form-input ${errors.state ? 'input-error' : ''}`}
+                  className={`stitch-form-input ${errors.state ? 'input-error' : ''}`}
                 />
-                {errors.state && <span className="field-error">{errors.state}</span>}
+                {errors.state && <span className="stitch-field-error">{errors.state}</span>}
               </div>
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="pincode" className="form-label">Pincode * (6 Digits)</label>
-              <input
-                id="pincode"
-                name="pincode"
-                type="text"
-                maxLength={6}
-                value={formData.pincode}
-                onChange={handleChange}
-                placeholder="e.g. 400001"
-                className={`form-input ${errors.pincode ? 'input-error' : ''}`}
-              />
-              {errors.pincode && <span className="field-error">{errors.pincode}</span>}
+              <div className="stitch-form-group span-full">
+                <label htmlFor="pincode" className="stitch-form-label">Postal Pincode * (6 Digits)</label>
+                <input
+                  id="pincode"
+                  name="pincode"
+                  type="text"
+                  maxLength={6}
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  placeholder="400020"
+                  className={`stitch-form-input ${errors.pincode ? 'input-error' : ''}`}
+                />
+                {errors.pincode && <span className="stitch-field-error">{errors.pincode}</span>}
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={submitting || hasIssues}
-              className="btn btn-primary btn-lg place-order-submit-btn"
-              style={{ width: '100%', marginTop: '1rem' }}
+              className="stitch-place-order-btn"
             >
-              {submitting ? 'Creating Order...' : `Place Order (₹${grandTotal.toFixed(2)}) →`}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v20" />
+                <path d="m17 5-5-3-5 3" />
+                <rect width="20" height="14" x="2" y="6" rx="2" />
+              </svg>
+              <span>{submitting ? 'Placing Order...' : `Place Order (₹${grandTotal.toFixed(2)})`}</span>
             </button>
           </form>
         </div>
 
-        {/* Order Summary by Vendor */}
-        <aside className="checkout-summary-pane">
-          <div className="summary-card">
-            <h2 className="summary-title">2. Items &amp; Vendor Split</h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-              Your order contains items from <strong>{vendorSplits.length}</strong> independent {vendorSplits.length === 1 ? 'vendor' : 'vendors'}.
-            </p>
+        {/* Right Column: Multi-Vendor Order Breakdown & Summary */}
+        <aside className="stitch-checkout-summary-col">
+          <div className="stitch-checkout-summary-card">
+            <div className="stitch-form-section-header" style={{ marginBottom: '1.25rem' }}>
+              <span className="stitch-step-badge">2</span>
+              <div>
+                <h2 className="stitch-form-section-title">Items &amp; Vendor Split</h2>
+                <span className="stitch-form-section-desc">
+                  Order across {vendorSplits.length} independent {vendorSplits.length === 1 ? 'vendor' : 'vendors'}
+                </span>
+              </div>
+            </div>
 
-            <div className="vendor-splits-container">
+            <div className="stitch-vendor-splits-container">
               {vendorSplits.map((split) => (
-                <div key={split.storeName} className="vendor-split-box">
-                  <div className="vendor-split-header">
-                    <span className="split-store-name">🏪 {split.storeName}</span>
-                    <span className="split-subtotal">₹{split.subtotal.toFixed(2)}</span>
+                <div key={split.storeName} className="stitch-vendor-split-item-card">
+                  <div className="stitch-split-header">
+                    <div className="stitch-split-store-name">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+                        <path d="M2 7h20" />
+                      </svg>
+                      <span>{split.storeName}</span>
+                    </div>
+                    <span className="stitch-split-subtotal">₹{split.subtotal.toFixed(2)}</span>
                   </div>
 
-                  <div className="split-items-list">
+                  <div className="stitch-split-products-list">
                     {split.vendorItems.map((it) => (
-                      <div key={it.productId} className="split-item-row">
-                        <span className="split-item-title">
-                          {it.title} <span className="split-item-qty">x{it.qty}</span>
+                      <div key={it.productId} className="stitch-split-product-row">
+                        <span className="stitch-split-prod-title">
+                          {it.title} <span className="stitch-split-prod-qty">×{it.qty}</span>
                         </span>
-                        <span className="split-item-price">
-                          ₹{(it.price * it.qty).toLocaleString()}
+                        <span className="stitch-split-prod-price">
+                          ₹{(it.price * it.qty).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                     ))}
                   </div>
 
                   {split.discount > 0 && (
-                    <div style={{ marginTop: '0.5rem', paddingTop: '0.4rem', borderTop: '1px dashed #cbd5e1', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#16a34a', fontWeight: 600 }}>
-                        Coupon Share ({appliedCoupon?.code || 'PROMO'}):
-                      </span>
-                      <span style={{ color: '#16a34a', fontWeight: 700 }}>
-                        - ₹{split.discount.toFixed(2)}
-                      </span>
+                    <div className="stitch-split-discount-row">
+                      <span>Coupon Share ({appliedCoupon?.code || 'PROMO'}):</span>
+                      <span>- ₹{split.discount.toFixed(2)}</span>
                     </div>
                   )}
 
                   {split.discount > 0 && (
-                    <div style={{ marginTop: '0.2rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
-                      <span style={{ color: '#475569' }}>Discounted Vendor Total:</span>
-                      <span style={{ color: '#0f172a' }}>₹{split.discountedSubtotal.toFixed(2)}</span>
+                    <div className="stitch-split-vendor-final-row">
+                      <span>Discounted Vendor Net:</span>
+                      <span>₹{split.discountedSubtotal.toFixed(2)}</span>
                     </div>
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="summary-divider"></div>
+            <div className="stitch-summary-divider"></div>
 
-            <CouponInput
-              appliedCoupon={appliedCoupon}
-              onApplyCoupon={handleApplyCoupon}
-              onRemoveCoupon={handleRemoveCoupon}
-              subtotal={subtotal}
-            />
+            <div className="stitch-coupon-wrap">
+              <CouponInput
+                appliedCoupon={appliedCoupon}
+                onApplyCoupon={handleApplyCoupon}
+                onRemoveCoupon={handleRemoveCoupon}
+                subtotal={subtotal}
+              />
+            </div>
 
             {discountAmount > 0 && (
-              <div className="summary-line" style={{ color: '#16a34a', marginBottom: '0.75rem' }}>
-                <span className="summary-label" style={{ fontWeight: 700, color: '#16a34a' }}>
+              <div className="stitch-summary-row stitch-discount-row">
+                <span className="stitch-discount-label">
                   Discount ({appliedCoupon.code}):
                 </span>
-                <span className="summary-value" style={{ fontWeight: 800 }}>
-                  - ₹{discountAmount.toLocaleString()}
+                <span className="stitch-discount-val">
+                  - ₹{discountAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
             )}
 
-            <div className="summary-total-line">
-              <span>Grand Total:</span>
-              <span className="total-amount">₹{grandTotal.toLocaleString()}</span>
+            <div className="stitch-summary-row" style={{ marginTop: '0.75rem' }}>
+              <span className="stitch-summary-label">Estimated Shipping</span>
+              <span className="stitch-summary-val free">FREE</span>
             </div>
 
-            <div className="checkout-notice-box" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '8px', padding: '0.85rem', marginTop: '1.25rem', display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '1.1rem' }}>ℹ️</span>
-              <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--color-primary-dark)', lineHeight: 1.45 }}>
+            <div className="stitch-summary-divider"></div>
+
+            <div className="stitch-total-row">
+              <span className="stitch-total-label">Grand Total</span>
+              <span className="stitch-total-val">₹{grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+
+            <div className="stitch-demo-notice-card">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <p>
                 <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
               </p>
             </div>
@@ -432,19 +479,19 @@ export default function CheckoutPage() {
         </aside>
       </div>
 
-      {/* Sticky Mobile Checkout Bar */}
-      <div className="checkout-mobile-sticky-bar">
-        <div className="mobile-total-info">
-          <span className="mobile-total-label">Grand Total</span>
-          <span className="mobile-total-price">₹{grandTotal.toLocaleString()}</span>
+      {/* Sticky Mobile Checkout Bar (< 768px) */}
+      <div className="stitch-mobile-sticky-checkout-bar">
+        <div className="stitch-mobile-total-box">
+          <span className="stitch-mobile-label">Grand Total</span>
+          <span className="stitch-mobile-val">₹{grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
         </div>
         <button
           type="button"
           onClick={handlePlaceOrder}
           disabled={submitting || hasIssues}
-          className="btn btn-primary btn-sm mobile-place-order-btn"
+          className="stitch-mobile-place-btn"
         >
-          {submitting ? 'Placing...' : 'Place Order →'}
+          {submitting ? 'Placing...' : 'Place Order'}
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 
 const STATUS_FILTERS = [
-  { label: 'All Orders', value: 'all' },
+  { label: 'All', value: 'all' },
   { label: 'Placed', value: 'placed' },
   { label: 'Packed', value: 'packed' },
   { label: 'Shipped', value: 'shipped' },
@@ -71,29 +71,29 @@ export default function VendorOrdersPage() {
     }
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'delivered':
-        return 'badge-connected';
+        return 'stitch-status-badge delivered';
       case 'shipped':
-        return 'badge-accent';
+        return 'stitch-status-badge shipped';
       case 'packed':
-        return 'badge-degraded';
+        return 'stitch-status-badge packed';
       case 'cancelled':
-        return 'badge-danger';
+        return 'stitch-status-badge cancelled';
       default:
-        return 'badge-secondary';
+        return 'stitch-status-badge placed';
     }
   };
 
   const getActionButtonText = (status) => {
     switch (status) {
       case 'placed':
-        return 'Mark as Packed 📦';
+        return 'Mark as Packed';
       case 'packed':
-        return 'Mark as Shipped 🚚';
+        return 'Mark as Shipped';
       case 'shipped':
-        return 'Mark as Delivered 🏡';
+        return 'Mark as Delivered';
       case 'delivered':
         return 'Delivered ✓';
       default:
@@ -102,102 +102,124 @@ export default function VendorOrdersPage() {
   };
 
   return (
-    <div>
-      <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-        <h1 className="section-title">Store Orders &amp; Fulfillment</h1>
-        <p className="section-subtitle">
-          Process paid customer packages, monitor dispatch timelines, and advance shipment status.
-        </p>
+    <div className="vendor-orders-view">
+      {/* Page Header */}
+      <div className="stitch-orders-page-header">
+        <div>
+          <h1 className="stitch-orders-main-title">Order Management &amp; Fulfillment</h1>
+          <p className="stitch-orders-main-subtitle">
+            Manage fulfillment stages, advance dispatch status, and process store customer packages.
+          </p>
+        </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="vendor-order-filter-tabs">
+      {/* Filter Tabs with counts */}
+      <div className="stitch-status-tabs-row">
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.value}
             type="button"
-            className={`filter-tab-btn ${activeFilter === f.value ? 'active' : ''}`}
+            className={`stitch-status-tab-btn ${activeFilter === f.value ? 'active' : ''}`}
             onClick={() => {
               setActiveFilter(f.value);
               setPage(1);
             }}
           >
-            {f.label}
+            <span>{f.label}</span>
+            {activeFilter === f.value && total > 0 && (
+              <span className="stitch-tab-count-pill">{total}</span>
+            )}
           </button>
         ))}
       </div>
 
       {error && (
-        <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+        <div className="stitch-checkout-error-alert" style={{ marginBottom: '1.5rem' }}>
           <span>⚠️</span>
           <div>{error}</div>
         </div>
       )}
 
       {loading && subOrders.length === 0 ? (
-        <div className="auth-loading-screen" style={{ minHeight: '300px' }}>
-          <div className="spinner"></div>
+        <div className="stitch-cart-loading" style={{ padding: '4rem 1.5rem' }}>
+          <div className="spinner" style={{ margin: '0 auto 1.25rem' }}></div>
           <p>Loading vendor orders...</p>
         </div>
       ) : subOrders.length === 0 ? (
-        <div className="empty-state-card" style={{ padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
-          <h2>No Orders Found</h2>
-          <p style={{ color: 'var(--color-text-muted)', margin: '0.75rem 0 1.5rem' }}>
+        <div className="stitch-empty-orders-card" style={{ margin: '2rem auto', maxWidth: '520px' }}>
+          <div className="stitch-empty-orders-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+              <path d="m3.3 7 8.7 5 8.7-5" />
+              <path d="M12 22V12" />
+            </svg>
+          </div>
+          <h2 className="stitch-empty-orders-title" style={{ fontSize: 'var(--font-lg)' }}>
+            No Orders Found
+          </h2>
+          <p className="stitch-empty-orders-desc" style={{ marginBottom: 0 }}>
             {activeFilter === 'all'
               ? 'Your store does not have any paid customer orders yet.'
-              : `No orders currently matching status "${activeFilter}".`}
+              : `No customer orders currently matching status "${activeFilter}".`}
           </p>
         </div>
       ) : (
-        <div className="vendor-orders-stack">
+        <div className="stitch-vendor-orders-stack">
           {subOrders.map((item) => {
             const { orderId, orderNumber, createdAt, customer, shippingAddress, subOrder } = item;
             const isUpdating = updatingId === orderId;
             const canAdvance = ['placed', 'packed', 'shipped'].includes(subOrder.status);
 
             return (
-              <div key={orderId} className="vendor-order-row-card">
-                <div className="vendor-order-row-header">
-                  <div className="vendor-order-row-meta">
-                    <span className="order-number-bold">{orderNumber}</span>
-                    <span className="order-date-small">
-                      {new Date(createdAt).toLocaleDateString()}
+              <div key={orderId} className="stitch-vendor-order-card">
+                <div className="stitch-vorder-card-header">
+                  <div className="stitch-vorder-meta-group">
+                    <span className="stitch-vorder-number">{orderNumber}</span>
+                    <span className="stitch-order-date-tag">
+                      {new Date(createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </span>
-                    <span className={`badge ${getStatusBadge(subOrder.status)}`}>
+                    <span className={getStatusBadgeClass(subOrder.status)}>
                       {subOrder.status.toUpperCase()}
                     </span>
                   </div>
 
-                  <div className="vendor-payout-box">
-                    <span className="payout-label">Your Payout:</span>
-                    <span className="payout-amount">₹{subOrder.vendorPayout?.toLocaleString()}</span>
-                    <span className="commission-hint">(Comm: ₹{subOrder.commission})</span>
+                  <div className="stitch-vorder-payout-badge">
+                    <span className="stitch-vpayout-label">Vendor Payout</span>
+                    <strong className="stitch-vpayout-val">
+                      ₹{subOrder.vendorPayout?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </strong>
+                    <span className="stitch-vpayout-comm">
+                      (Fee: ₹{subOrder.commission})
+                    </span>
                   </div>
                 </div>
 
-                <div className="vendor-order-body-grid">
+                <div className="stitch-vorder-card-body-grid">
                   {/* Items List */}
-                  <div className="vendor-order-items-col">
-                    <h4 className="vendor-col-heading">Items ({subOrder.items.length})</h4>
-                    <div className="vendor-items-compact-list">
+                  <div className="stitch-vorder-items-column">
+                    <span className="stitch-vorder-section-label">
+                      Items Ordered ({subOrder.items.length})
+                    </span>
+                    <div className="stitch-vorder-items-list">
                       {subOrder.items.map((it, idx) => (
-                        <div key={idx} className="vendor-item-compact-row">
-                          {it.image && (
-                            <img
-                              src={it.image}
-                              alt={it.title}
-                              className="vendor-item-compact-thumb"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = '/placeholder.svg';
-                              }}
-                            />
-                          )}
-                          <div className="vendor-item-info">
-                            <span className="vendor-item-title">{it.title}</span>
-                            <span className="vendor-item-math">
-                              Qty: {it.qty} × ₹{it.price.toLocaleString()} = ₹{(it.price * it.qty).toLocaleString()}
+                        <div key={idx} className="stitch-vorder-item-row">
+                          <img
+                            src={it.image || '/placeholder.svg'}
+                            alt={it.title}
+                            className="stitch-vorder-item-thumb"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/placeholder.svg';
+                            }}
+                          />
+                          <div className="stitch-vorder-item-details">
+                            <span className="stitch-vorder-item-title">{it.title}</span>
+                            <span className="stitch-vorder-item-math">
+                              Qty: {it.qty} × ₹{it.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })} = ₹{(it.price * it.qty).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                             </span>
                           </div>
                         </div>
@@ -206,25 +228,31 @@ export default function VendorOrdersPage() {
                   </div>
 
                   {/* Customer & Shipping */}
-                  <div className="vendor-order-shipping-col">
-                    <h4 className="vendor-col-heading">Ship To</h4>
-                    <div className="vendor-shipping-details">
-                      <strong>{customer?.name || shippingAddress.name}</strong>
-                      <div>{shippingAddress.line1}</div>
-                      {shippingAddress.line2 && <div>{shippingAddress.line2}</div>}
-                      <div>
+                  <div className="stitch-vorder-shipping-column">
+                    <span className="stitch-vorder-section-label">Delivery Address</span>
+                    <div className="stitch-vorder-address-box">
+                      <strong className="stitch-vorder-recipient-name">
+                        {customer?.name || shippingAddress.name}
+                      </strong>
+                      <span className="stitch-vorder-address-line">{shippingAddress.line1}</span>
+                      {shippingAddress.line2 && (
+                        <span className="stitch-vorder-address-line">{shippingAddress.line2}</span>
+                      )}
+                      <span className="stitch-vorder-address-line">
                         {shippingAddress.city}, {shippingAddress.state} - {shippingAddress.pincode}
-                      </div>
-                      <div className="vendor-phone-contact">📞 {shippingAddress.phone}</div>
+                      </span>
+                      <span className="stitch-vorder-phone">
+                        📞 {shippingAddress.phone}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Footer Action */}
-                <div className="vendor-order-actions-bar">
-                  <div className="timeline-mini-preview">
-                    Status:{' '}
-                    <strong>{subOrder.status.toUpperCase()}</strong>
+                {/* Footer Action Bar */}
+                <div className="stitch-vorder-card-footer">
+                  <div className="stitch-vorder-status-indicator">
+                    <span className="stitch-vorder-status-label">Current Stage:</span>
+                    <strong className="stitch-vorder-status-current">{subOrder.status.toUpperCase()}</strong>
                   </div>
 
                   {canAdvance ? (
@@ -232,12 +260,28 @@ export default function VendorOrdersPage() {
                       type="button"
                       disabled={isUpdating}
                       onClick={() => handleAdvanceStatus(orderId, subOrder.status)}
-                      className="btn btn-primary btn-sm advance-status-btn"
+                      className="stitch-advance-step-btn"
                     >
-                      {isUpdating ? 'Updating...' : getActionButtonText(subOrder.status)}
+                      {subOrder.status === 'placed' && (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+                        </svg>
+                      )}
+                      {subOrder.status === 'packed' && (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect width="16" height="13" x="1" y="6" rx="2" />
+                          <path d="M16 8h4l3 3v8h-7V8z" />
+                        </svg>
+                      )}
+                      {subOrder.status === 'shipped' && (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                      <span>{isUpdating ? 'Updating...' : getActionButtonText(subOrder.status)}</span>
                     </button>
                   ) : (
-                    <span className="status-terminal-note">
+                    <span className="stitch-vorder-completed-note">
                       {subOrder.status === 'delivered' ? '✓ Fulfillment Completed' : 'Order Cancelled'}
                     </span>
                   )}
@@ -248,23 +292,25 @@ export default function VendorOrdersPage() {
 
           {/* Pagination */}
           {pages > 1 && (
-            <div className="pagination-bar" style={{ marginTop: '2.5rem' }}>
+            <div className="catalog-pagination-wrap" style={{ marginTop: '2.5rem' }}>
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="btn btn-secondary btn-sm"
+                className="pagination-arrow-btn"
+                aria-label="Previous Page"
               >
-                ← Previous
+                ←
               </button>
-              <span className="pagination-info">
+              <span className="pagination-info" style={{ fontSize: 'var(--font-sm)', color: 'var(--color-text-muted)' }}>
                 Page <strong>{page}</strong> of <strong>{pages}</strong>
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(pages, p + 1))}
                 disabled={page >= pages}
-                className="btn btn-secondary btn-sm"
+                className="pagination-arrow-btn"
+                aria-label="Next Page"
               >
-                Next →
+                →
               </button>
             </div>
           )}

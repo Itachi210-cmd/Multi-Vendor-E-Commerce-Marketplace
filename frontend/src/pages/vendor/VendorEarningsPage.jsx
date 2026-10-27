@@ -43,6 +43,8 @@ export default function VendorEarningsPage() {
         return 'badge-accent';
       case 'failed':
         return 'badge-danger';
+      case 'simulated':
+        return 'badge-primary';
       default:
         return 'badge-warning';
     }
@@ -50,7 +52,7 @@ export default function VendorEarningsPage() {
 
   if (loading && !data) {
     return (
-      <div style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+      <div className="stitch-vendor-earnings-loading">
         <div className="spinner" style={{ margin: '0 auto 1.5rem' }}></div>
         <p>Loading your earnings and payout history...</p>
       </div>
@@ -60,12 +62,17 @@ export default function VendorEarningsPage() {
   const { summary, payouts = [], total = 0, pages = 1 } = data || {};
 
   return (
-    <div className="vendor-earnings-container" style={{ padding: '1rem 0' }}>
-      <div className="section-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-        <h1 className="section-title">Earnings & Payouts</h1>
-        <p className="section-subtitle">
-          Track sales revenue, platform commissions, and automated Route split payouts.
-        </p>
+    <div className="stitch-vendor-earnings-page">
+      <div className="stitch-earnings-header">
+        <div>
+          <h1 className="stitch-earnings-title">Earnings & Payouts</h1>
+          <p className="stitch-earnings-subtitle">
+            Track sales revenue, platform commissions, and automated Route split payouts.
+          </p>
+        </div>
+        <div className="stitch-earnings-badge-meta">
+          <span className="badge badge-neutral">Auto-Split Sandbox Mode</span>
+        </div>
       </div>
 
       {error && (
@@ -76,163 +83,144 @@ export default function VendorEarningsPage() {
       )}
 
       {/* Summary KPI Cards */}
-      <div
-        className="kpi-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.25rem',
-          marginBottom: '2.5rem',
-        }}
-      >
+      <div className="stitch-earnings-kpi-grid">
         {/* Gross Sales */}
-        <div
-          className="kpi-card"
-          style={{
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            borderRadius: '12px',
-            padding: '1.5rem',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              Gross Sales
-            </span>
-            <span style={{ fontSize: '1.25rem' }}>📈</span>
+        <div className="stitch-earnings-kpi-card">
+          <div className="stitch-kpi-top">
+            <span className="stitch-kpi-label">Gross Sales</span>
+            <div className="stitch-kpi-icon-wrap stitch-kpi-icon-sales">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
           </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-text)' }}>
+          <div className="stitch-kpi-amount">
             ₹{(summary?.grossSales || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-            From {summary?.totalProcessedCount || 0} processed orders
-          </p>
+          <div className="stitch-kpi-footer">
+            <span className="stitch-kpi-trend">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+              Processed
+            </span>
+            <span className="stitch-kpi-subtext">from {summary?.totalProcessedCount || 0} orders</span>
+          </div>
         </div>
 
-        {/* Commission Paid */}
-        <div
-          className="kpi-card"
-          style={{
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            borderRadius: '12px',
-            padding: '1.5rem',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              Platform Commission
-            </span>
-            <span style={{ fontSize: '1.25rem' }}>🏛️</span>
+        {/* Platform Commission */}
+        <div className="stitch-earnings-kpi-card">
+          <div className="stitch-kpi-top">
+            <span className="stitch-kpi-label">Platform Commission (10%)</span>
+            <div className="stitch-kpi-icon-wrap stitch-kpi-icon-commission">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+            </div>
           </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-accent)' }}>
-            ₹{(summary?.commissionPaid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          <div className="stitch-kpi-amount stitch-kpi-commission-val">
+            -₹{(summary?.commissionPaid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-            Platform fee retained
-          </p>
+          <div className="stitch-kpi-footer">
+            <span className="stitch-kpi-subtext">Automated platform fee deduction</span>
+          </div>
         </div>
 
         {/* Net Payout */}
-        <div
-          className="kpi-card"
-          style={{
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            borderRadius: '12px',
-            padding: '1.5rem',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              Net Payouts
-            </span>
-            <span style={{ fontSize: '1.25rem' }}>💰</span>
+        <div className="stitch-earnings-kpi-card">
+          <div className="stitch-kpi-top">
+            <span className="stitch-kpi-label">Net Payout</span>
+            <div className="stitch-kpi-icon-wrap stitch-kpi-icon-payout">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
           </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--color-success)' }}>
+          <div className="stitch-kpi-amount stitch-kpi-net-val">
             ₹{(summary?.netPayout || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </div>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-            Transferred to linked account
-          </p>
+          <div className="stitch-kpi-footer">
+            <span className="stitch-kpi-badge-settled">Direct Vendor Settlement</span>
+          </div>
         </div>
       </div>
 
       {/* Payouts History Table */}
-      <div
-        className="payouts-table-container"
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid var(--color-border)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700 }}>Payout History</h3>
-          <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-            {total} total records
+      <div className="stitch-payouts-table-card">
+        <div className="stitch-payouts-card-header">
+          <div>
+            <h3 className="stitch-payouts-title">Payouts & Route Transfers</h3>
+            <p className="stitch-payouts-desc">Detailed log of automated settlements per vendor sub-order</p>
+          </div>
+          <span className="stitch-payouts-count-badge">
+            {total} {total === 1 ? 'record' : 'records'}
           </span>
         </div>
 
         {payouts.length === 0 ? (
-          <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-            <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>No payouts recorded yet.</p>
-            <p style={{ fontSize: '0.85rem' }}>
+          <div className="stitch-empty-state-card" style={{ border: 'none', borderRadius: 0, padding: '4rem 1.5rem' }}>
+            <div className="stitch-empty-icon" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💸</div>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.5rem' }}>No payouts recorded yet</h4>
+            <p style={{ color: 'var(--color-text-muted)', maxWidth: '440px', margin: '0 auto', fontSize: '0.9rem' }}>
               Payouts are automatically generated when customers place and pay for orders containing your products.
             </p>
           </div>
         ) : (
-          <div className="table-responsive" style={{ overflowX: 'auto' }}>
-            <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+          <div className="table-responsive">
+            <table className="stitch-payouts-table">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface-hover)' }}>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Date</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Order</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Gross</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Commission</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Net Payout</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'left' }}>Transfer ID</th>
-                  <th style={{ padding: '0.85rem 1.25rem', textAlign: 'center' }}>Status</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Order</th>
+                  <th className="align-right">Gross</th>
+                  <th className="align-right">Commission</th>
+                  <th className="align-right">Net Payout</th>
+                  <th>Transfer ID</th>
+                  <th className="align-center">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {payouts.map((p) => {
                   const gross = p.amount + p.commission;
                   return (
-                    <tr key={p._id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                      <td style={{ padding: '1rem 1.25rem', whiteSpace: 'nowrap' }}>
-                        {new Date(p.createdAt).toLocaleDateString()}
+                    <tr key={p._id}>
+                      <td className="stitch-payout-cell-date">
+                        {new Date(p.createdAt).toLocaleDateString(undefined, {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
                       </td>
-                      <td style={{ padding: '1rem 1.25rem', fontWeight: 600 }}>
-                        {p.orderId?.orderNumber || 'Order'}
+                      <td className="stitch-payout-cell-order">
+                        <span className="stitch-payout-ordnum">
+                          {p.orderId?.orderNumber || 'Order'}
+                        </span>
                       </td>
-                      <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
+                      <td className="stitch-payout-cell-num align-right">
                         ₹{gross.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '1rem 1.25rem', textAlign: 'right', color: 'var(--color-accent)' }}>
+                      <td className="stitch-payout-cell-commission align-right">
                         -₹{p.commission.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '1rem 1.25rem', textAlign: 'right', fontWeight: 700, color: 'var(--color-success)' }}>
+                      <td className="stitch-payout-cell-net align-right">
                         ₹{p.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '1rem 1.25rem' }}>
-                        <code style={{ fontSize: '0.78rem' }}>{p.transferId || '—'}</code>
+                      <td className="stitch-payout-cell-transfer">
+                        <code className="stitch-transfer-code">{p.transferId || 'tr_simulated'}</code>
                       </td>
-                      <td style={{ padding: '1rem 1.25rem', textAlign: 'center' }}>
+                      <td className="align-center">
                         <span className={`badge ${getStatusBadge(p.status)}`}>
-                          {p.status.toUpperCase()}
+                          <span className="badge-dot"></span>
+                          {p.status}
                         </span>
                         {p.failureReason && (
-                          <div style={{ fontSize: '0.7rem', color: 'var(--color-danger)', marginTop: '0.2rem' }}>
+                          <div className="stitch-payout-fail-msg">
                             {p.failureReason}
                           </div>
                         )}
@@ -247,15 +235,7 @@ export default function VendorEarningsPage() {
 
         {/* Pagination */}
         {pages > 1 && (
-          <div
-            style={{
-              padding: '1rem 1.5rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderTop: '1px solid var(--color-border)',
-            }}
-          >
+          <div className="stitch-payouts-pagination">
             <button
               className="btn btn-secondary btn-sm"
               disabled={page <= 1}
@@ -263,7 +243,7 @@ export default function VendorEarningsPage() {
             >
               Previous
             </button>
-            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            <span className="stitch-pagination-page-label">
               Page {page} of {pages}
             </span>
             <button

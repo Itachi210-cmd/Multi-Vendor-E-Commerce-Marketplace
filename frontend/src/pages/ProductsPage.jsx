@@ -161,25 +161,37 @@ export default function ProductsPage() {
 
   return (
     <div className="content-container products-page-container">
-      {/* Page Header with Stats and Source Badge */}
+      {/* Top Control Bar / Breadcrumb & Results Meta matching Stitch */}
       <div className="products-page-header">
-        <div>
-          <h1 className="section-title">
-            {query ? `Search Results for "${query}"` : 'Marketplace Catalog'}
-          </h1>
-          <p className="section-subtitle">
+        <div className="products-header-left">
+          <div className="catalog-breadcrumb">
+            <Link to="/" className="breadcrumb-link">Home</Link>
+            <span className="breadcrumb-sep">/</span>
+            <span className="breadcrumb-current">
+              {selectedCategories.length === 1 ? selectedCategories[0] : 'All Products'}
+            </span>
+          </div>
+
+          <h1 className="catalog-main-title">
             {loading ? (
               'Searching products...'
+            ) : query ? (
+              <>
+                {total} {total === 1 ? 'result' : 'results'} for <span className="title-highlight">"{query}"</span>
+              </>
+            ) : selectedCategories.length > 0 ? (
+              <>
+                {total} {total === 1 ? 'product' : 'products'} in <span className="title-highlight">{selectedCategories.join(', ')}</span>
+              </>
             ) : (
               <>
-                Showing <strong>{total}</strong> {total === 1 ? 'product' : 'products'}
-                {query && ` matching "${query}"`}
+                Marketplace Catalog <span className="title-count">({total})</span>
               </>
             )}
-          </p>
+          </h1>
         </div>
 
-        {/* Engine Source Badge & Status */}
+        {/* Engine Source Badge & Mobile Trigger */}
         <div className="search-meta-indicators">
           <div
             className={`source-badge ${
@@ -201,14 +213,25 @@ export default function ProductsPage() {
             </span>
           )}
 
-          {/* Mobile filter toggle trigger */}
+          {/* Mobile filter toggle trigger (<1100px) */}
           <button
             type="button"
             className="mobile-filter-trigger btn btn-secondary btn-sm"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
             aria-label="Toggle filters sidebar"
           >
-            ⚙️ Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
+              <line x1="4" y1="21" x2="4" y2="14" />
+              <line x1="4" y1="10" x2="4" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12" y2="3" />
+              <line x1="20" y1="21" x2="20" y2="16" />
+              <line x1="20" y1="12" x2="20" y2="3" />
+              <line x1="1" y1="14" x2="7" y2="14" />
+              <line x1="9" y1="8" x2="15" y2="8" />
+              <line x1="17" y1="16" x2="23" y2="16" />
+            </svg>
+            Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
           </button>
         </div>
       </div>
@@ -218,14 +241,27 @@ export default function ProductsPage() {
         {/* Filter Sidebar */}
         <aside className={`filters-sidebar ${mobileFiltersOpen ? 'mobile-open' : ''}`}>
           <div className="filters-header">
-            <h2 className="filters-title">Filters</h2>
+            <h2 className="filters-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14" />
+                <line x1="4" y1="10" x2="4" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12" y2="3" />
+                <line x1="20" y1="21" x2="20" y2="16" />
+                <line x1="20" y1="12" x2="20" y2="3" />
+                <line x1="1" y1="14" x2="7" y2="14" />
+                <line x1="9" y1="8" x2="15" y2="8" />
+                <line x1="17" y1="16" x2="23" y2="16" />
+              </svg>
+              Filters
+            </h2>
             {activeFiltersCount > 0 && (
               <button
                 type="button"
                 onClick={clearAllFilters}
                 className="clear-filters-link"
               >
-                Clear all
+                Reset All
               </button>
             )}
             <button
@@ -274,19 +310,6 @@ export default function ProductsPage() {
             </div>
           )}
 
-          {/* In Stock Toggle */}
-          <div className="filter-section">
-            <label className="filter-checkbox-label toggle-switch-label">
-              <input
-                type="checkbox"
-                checked={inStockParam}
-                onChange={handleInStockToggle}
-                className="filter-checkbox"
-              />
-              <span className="toggle-switch-text">In Stock Only</span>
-            </label>
-          </div>
-
           {/* Categories with Aggregated Facet Counts */}
           <div className="filter-section">
             <h3 className="filter-section-title">Categories</h3>
@@ -318,25 +341,31 @@ export default function ProductsPage() {
             <h3 className="filter-section-title">Price Range (₹)</h3>
             <form onSubmit={handlePriceApply} className="price-inputs-form">
               <div className="price-inputs-row">
-                <input
-                  type="number"
-                  min="0"
-                  placeholder={`Min (${facets.minPrice || 0})`}
-                  value={localMinPrice}
-                  onChange={(e) => setLocalMinPrice(e.target.value)}
-                  className="price-input"
-                  aria-label="Minimum price"
-                />
+                <div className="price-input-wrap">
+                  <span className="price-currency-prefix">₹</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder={`Min (${facets.minPrice || 0})`}
+                    value={localMinPrice}
+                    onChange={(e) => setLocalMinPrice(e.target.value)}
+                    className="price-input"
+                    aria-label="Minimum price"
+                  />
+                </div>
                 <span className="price-range-separator">-</span>
-                <input
-                  type="number"
-                  min="0"
-                  placeholder={`Max (${facets.maxPrice || 10000})`}
-                  value={localMaxPrice}
-                  onChange={(e) => setLocalMaxPrice(e.target.value)}
-                  className="price-input"
-                  aria-label="Maximum price"
-                />
+                <div className="price-input-wrap">
+                  <span className="price-currency-prefix">₹</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder={`Max (${facets.maxPrice || 10000})`}
+                    value={localMaxPrice}
+                    onChange={(e) => setLocalMaxPrice(e.target.value)}
+                    className="price-input"
+                    aria-label="Maximum price"
+                  />
+                </div>
               </div>
               <button type="submit" className="btn btn-secondary btn-sm price-apply-btn">
                 Apply Price
@@ -355,7 +384,12 @@ export default function ProductsPage() {
                   className={`rating-pill-btn ${minRatingParam === stars.toString() ? 'active' : ''}`}
                   onClick={() => handleRatingChange(stars.toString())}
                 >
-                  <span className="star-icon">★</span> {stars} & above
+                  <span className="rating-pill-stars">
+                    {Array.from({ length: stars }).map((_, i) => (
+                      <span key={i} className="star-icon">★</span>
+                    ))}
+                  </span>
+                  <span className="rating-pill-text">& Up</span>
                 </button>
               ))}
               {minRatingParam && (
@@ -369,6 +403,19 @@ export default function ProductsPage() {
               )}
             </div>
           </div>
+
+          {/* In-Stock Toggle */}
+          <div className="filter-section border-none">
+            <label className="filter-checkbox-label toggle-switch-label">
+              <input
+                type="checkbox"
+                checked={inStockParam}
+                onChange={handleInStockToggle}
+                className="filter-checkbox"
+              />
+              <span className="toggle-switch-text">In-Stock Only</span>
+            </label>
+          </div>
         </aside>
 
         {/* Catalog Results Grid & Controls */}
@@ -376,12 +423,12 @@ export default function ProductsPage() {
           {/* Top Sort & Filter Bar */}
           <div className="catalog-toolbar">
             <div className="results-count-text">
-              Showing <strong>{products.length}</strong> of <strong>{total}</strong> results
+              Showing <strong>{products.length}</strong> of <strong>{total}</strong> products
             </div>
 
             <div className="sort-control-wrapper">
               <label htmlFor="sort-select" className="sort-label">
-                Sort By:
+                Sort by:
               </label>
               <select
                 id="sort-select"
@@ -389,11 +436,11 @@ export default function ProductsPage() {
                 onChange={handleSortChange}
                 className="sort-dropdown"
               >
-                <option value="relevance">Relevance</option>
-                <option value="newest">Newest First</option>
+                <option value="relevance">Featured & Relevance</option>
+                <option value="newest">Newest Arrivals</option>
                 <option value="price_asc">Price: Low to High</option>
                 <option value="price_desc">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
+                <option value="rating">Customer Top Rated</option>
               </select>
             </div>
           </div>
@@ -480,14 +527,18 @@ export default function ProductsPage() {
                       <div className="product-card-body">
                         <div className="product-card-meta-top">
                           <span className="product-vendor-badge">
-                            🏪 {product.storeName || product.vendorId?.storeName || 'Community Vendor'}
+                            {product.storeName || product.vendorId?.storeName || 'Community Vendor'}
                           </span>
-                          {product.ratingAvg > 0 && (
+                          {product.ratingAvg > 0 ? (
                             <span className="product-rating-pill">
                               ★ {product.ratingAvg.toFixed(1)}
                               {product.ratingCount > 0 && (
                                 <span className="rating-count">({product.ratingCount})</span>
                               )}
+                            </span>
+                          ) : (
+                            <span className="product-rating-pill new-rating">
+                              ★ New
                             </span>
                           )}
                         </div>
@@ -503,8 +554,8 @@ export default function ProductsPage() {
                           <div className="product-price">₹{product.price.toLocaleString()}</div>
                           <div className="card-actions-row">
                             <span
-                              className={`badge ${
-                                product.stock > 0 ? 'badge-connected' : 'badge-danger'
+                              className={`stock-indicator-badge ${
+                                product.stock > 0 ? 'in-stock' : 'out-of-stock'
                               }`}
                             >
                               {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
@@ -524,7 +575,12 @@ export default function ProductsPage() {
                                   }
                                 }}
                               >
-                                + 🛒
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="9" cy="21" r="1" />
+                                  <circle cx="20" cy="21" r="1" />
+                                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                </svg>
+                                Add
                               </button>
                             )}
                           </div>
@@ -541,10 +597,10 @@ export default function ProductsPage() {
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage <= 1}
-                    className="btn btn-secondary btn-sm"
+                    className="pagination-arrow-btn"
                     aria-label="Previous Page"
                   >
-                    ← Previous
+                    ←
                   </button>
 
                   <div className="pagination-page-numbers">
@@ -571,10 +627,10 @@ export default function ProductsPage() {
                   <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage >= pages}
-                    className="btn btn-secondary btn-sm"
+                    className="pagination-arrow-btn"
                     aria-label="Next Page"
                   >
-                    Next →
+                    →
                   </button>
                 </div>
               )}

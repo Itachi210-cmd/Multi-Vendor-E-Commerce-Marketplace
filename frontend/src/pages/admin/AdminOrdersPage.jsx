@@ -12,6 +12,7 @@ export default function AdminOrdersPage() {
   const [paymentStatus, setPaymentStatus] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedSplitOrder, setSelectedSplitOrder] = useState(null);
 
   useEffect(() => {
     setOrders([]);
@@ -56,18 +57,20 @@ export default function AdminOrdersPage() {
   };
 
   return (
-    <div className="content-container" style={{ padding: '3rem 1.5rem 5rem' }}>
-      <div className="admin-page-header">
+    <div className="stitch-admin-orders-container">
+      {/* Header */}
+      <div className="stitch-admin-header">
         <div>
-          <h1 className="section-title">Platform Orders</h1>
-          <p className="section-subtitle">
-            Overview of all marketplace customer transactions, multi-vendor splits, and payments.
+          <span className="stitch-admin-control-badge">Order Settlement &amp; Fulfillment</span>
+          <h1 className="stitch-admin-title">Platform Orders &amp; Split Transfers</h1>
+          <p className="stitch-admin-subtitle">
+            Overview of all marketplace customer transactions, multi-vendor split payouts (simulated), and payments.
           </p>
         </div>
 
         {/* Filter by Payment */}
-        <div className="admin-filter-select-wrapper">
-          <label htmlFor="payment-filter" style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>
+        <div className="stitch-payment-filter-wrapper">
+          <label htmlFor="payment-filter" className="stitch-filter-label">
             Payment Status:
           </label>
           <select
@@ -77,7 +80,7 @@ export default function AdminOrdersPage() {
               setPaymentStatus(e.target.value);
               setPage(1);
             }}
-            className="sort-dropdown"
+            className="form-input stitch-payment-select"
           >
             <option value="all">All Payments</option>
             <option value="paid">Paid</option>
@@ -96,92 +99,133 @@ export default function AdminOrdersPage() {
       )}
 
       {loading && orders.length === 0 ? (
-        <div className="auth-loading-screen" style={{ minHeight: '300px' }}>
-          <div className="spinner"></div>
+        <div className="stitch-profile-loading">
+          <div className="spinner" style={{ margin: '0 auto 1.5rem' }}></div>
           <p>Loading platform orders...</p>
         </div>
       ) : orders.length === 0 ? (
-        <div className="empty-state-card" style={{ padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
-          <h2>No Orders Found</h2>
-          <p style={{ color: 'var(--color-text-muted)' }}>No orders match the selected filter.</p>
+        <div className="stitch-payouts-table-card">
+          <div className="stitch-empty-state-card" style={{ border: 'none', padding: '4rem 1.5rem' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.5rem' }}>No Orders Found</h2>
+            <p style={{ color: 'var(--color-text-muted)', margin: 0, fontSize: '0.9rem' }}>
+              No platform orders match the selected filter criteria.
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="admin-orders-table-wrapper">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Order Number</th>
-                <th>Customer</th>
-                <th>Sub-Orders / Vendors</th>
-                <th>Total</th>
-                <th>Payment</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order._id}>
-                  <td>
-                    <strong>{order.orderNumber}</strong>
-                  </td>
-                  <td>
-                    <div>{order.customerId?.name || order.shippingAddress.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                      {order.customerId?.email}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                      {order.subOrders.map((sub, sIdx) => (
-                        <div key={sIdx} style={{ fontSize: '0.8rem' }}>
-                          🏪 {sub.vendorId?.storeName || 'Vendor'}:{' '}
-                          <span className="badge badge-sm badge-secondary">{sub.status}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </td>
-                  <td>
-                    <strong>₹{order.total.toLocaleString()}</strong>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                      <div>
-                        <span className={`badge ${getPaymentBadge(order.payment.status)}`}>
-                          {order.payment.status.toUpperCase()}
-                        </span>
-                        {order.payment.method && (
-                          <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginLeft: '0.4rem', textTransform: 'uppercase' }}>
-                            ({order.payment.method})
+        <div className="stitch-payouts-table-card">
+          <div className="stitch-payouts-card-header">
+            <div>
+              <h3 className="stitch-payouts-title">Customer Order Ledger</h3>
+              <p className="stitch-payouts-desc">Verified transactions and sub-order split allocations</p>
+            </div>
+            <span className="stitch-payouts-count-badge">
+              {total} {total === 1 ? 'order' : 'orders'}
+            </span>
+          </div>
+
+          <div className="table-responsive">
+            <table className="stitch-payouts-table">
+              <thead>
+                <tr>
+                  <th>Order Number</th>
+                  <th>Customer</th>
+                  <th>Sub-Orders / Vendors</th>
+                  <th className="align-right">Total</th>
+                  <th className="align-center">Payment</th>
+                  <th>Date</th>
+                  <th className="align-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id}>
+                    <td>
+                      <span className="stitch-payout-ordnum" style={{ fontSize: '0.92rem' }}>
+                        {order.orderNumber}
+                      </span>
+                    </td>
+                    <td>
+                      <div style={{ fontWeight: 600, color: 'var(--color-text)' }}>
+                        {order.customerId?.name || order.shippingAddress.name}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+                        {order.customerId?.email || 'N/A'}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        {order.subOrders.map((sub, sIdx) => (
+                          <div key={sIdx} className="stitch-suborder-vendor-chip">
+                            <span className="stitch-suborder-chip-store">
+                              🏪 {sub.vendorId?.storeName || 'Vendor'}
+                            </span>
+                            <span className="badge badge-sm badge-neutral">
+                              {sub.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="align-right">
+                      <strong style={{ fontSize: '0.95rem', color: 'var(--color-text)' }}>
+                        ₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </strong>
+                    </td>
+                    <td className="align-center">
+                      <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                        <div>
+                          <span className={`badge ${getPaymentBadge(order.payment.status)}`}>
+                            <span className="badge-dot"></span>
+                            {order.payment.status.toUpperCase()}
                           </span>
+                          {order.payment.method && (
+                            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginLeft: '0.35rem', textTransform: 'uppercase' }}>
+                              ({order.payment.method})
+                            </span>
+                          )}
+                        </div>
+                        {order.payoutSummary?.count > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedSplitOrder(order)}
+                            className="stitch-split-view-link"
+                          >
+                            Split: ₹{order.payoutSummary.totalVendorPayout} vendors • ₹{order.payoutSummary.totalCommission} fee
+                          </button>
                         )}
                       </div>
-                      {order.payoutSummary?.count > 0 && (
-                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                          Split: ₹{order.payoutSummary.totalVendorPayout} to vendors • ₹{order.payoutSummary.totalCommission} fee
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td>
-                    <Link to={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
-                      Inspect
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td>
+                      <span style={{ fontSize: '0.84rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>
+                        {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </td>
+                    <td className="align-right">
+                      <div className="stitch-coupon-actions-cluster">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSplitOrder(order)}
+                          className="btn btn-secondary btn-sm"
+                          title="View Vendor Splits"
+                        >
+                          Split Details
+                        </button>
+                        <Link to={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
+                          Inspect
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
           {pages > 1 && (
-            <div className="pagination-bar" style={{ marginTop: '2.5rem' }}>
+            <div className="stitch-payouts-pagination">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
@@ -189,7 +233,7 @@ export default function AdminOrdersPage() {
               >
                 ← Previous
               </button>
-              <span className="pagination-info">
+              <span className="stitch-pagination-page-label">
                 Page <strong>{page}</strong> of <strong>{pages}</strong>
               </span>
               <button
@@ -201,6 +245,103 @@ export default function AdminOrdersPage() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Vendor Splits Detail Modal */}
+      {selectedSplitOrder && (
+        <div className="modal-backdrop">
+          <div className="stitch-coupon-modal-dialog" style={{ maxWidth: '620px' }}>
+            <div className="stitch-coupon-modal-header">
+              <div>
+                <h2 className="stitch-coupon-modal-title">
+                  Vendor Split Breakdown
+                </h2>
+                <p className="stitch-payouts-desc" style={{ marginTop: '0.2rem' }}>
+                  Order #{selectedSplitOrder.orderNumber} • Gross ₹{selectedSplitOrder.total.toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSplitOrder(null)}
+                className="stitch-modal-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div className="stitch-commission-rate-card" style={{ marginBottom: '1rem', padding: '1rem 1.25rem' }}>
+                <div className="stitch-commission-rate-left">
+                  <div className="stitch-commission-icon-box" style={{ width: '36px', height: '36px' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                      <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="stitch-commission-card-title" style={{ fontSize: '0.92rem' }}>Payment Status: {selectedSplitOrder.payment.status.toUpperCase()}</h4>
+                    <p className="stitch-commission-card-desc" style={{ fontSize: '0.78rem' }}>
+                      Method: {selectedSplitOrder.payment.method?.toUpperCase() || 'SANDBOX'} • Split payouts (simulated)
+                    </p>
+                  </div>
+                </div>
+                <div className="stitch-commission-rate-right">
+                  <span className="badge badge-connected">Simulated Route</span>
+                </div>
+              </div>
+
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, margin: '0 0 0.75rem', color: 'var(--color-text)' }}>
+                Vendor Sub-Orders ({selectedSplitOrder.subOrders?.length || 0})
+              </h4>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {selectedSplitOrder.subOrders?.map((sub, idx) => (
+                  <div key={idx} className="stitch-split-item-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                      <div>
+                        <strong style={{ fontSize: '0.95rem', color: 'var(--color-text)' }}>
+                          🏪 {sub.vendorId?.storeName || 'Vendor'}
+                        </strong>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+                          Status: <span className="badge badge-sm badge-neutral">{sub.status}</span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-text)' }}>
+                          ₹{sub.subtotal?.toLocaleString() || 0}
+                        </span>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Subtotal</div>
+                      </div>
+                    </div>
+
+                    {/* Items */}
+                    <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.5rem', fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
+                      {sub.items?.map((it, itIdx) => (
+                        <div key={itIdx} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.15rem 0' }}>
+                          <span>{it.quantity}x {it.title}</span>
+                          <span>₹{(it.price * it.quantity).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="stitch-coupon-modal-actions">
+              <button
+                type="button"
+                onClick={() => setSelectedSplitOrder(null)}
+                className="btn btn-secondary btn-sm"
+              >
+                Close
+              </button>
+              <Link to={`/orders/${selectedSplitOrder._id}`} className="btn btn-primary btn-sm">
+                Full Order View
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </div>
