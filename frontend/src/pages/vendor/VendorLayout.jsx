@@ -1,10 +1,7 @@
 import React from 'react';
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
 
 export default function VendorLayout() {
-  const { user } = useAuth();
-
   return (
     <div className="stitch-ecosystem-layout">
       {/* Sidebar (Desktop) / Sticky Top Tab Bar (Mobile/Tablet < 900px) */}

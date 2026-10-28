@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 import { env } from './env.js';
 
+let retryTimeoutId = null;
+
 /**
- * Connect to MongoDB using Mongoose
+ * Connect to MongoDB using Mongoose with retry and exponential backoff
  */
-export const connectDB = async () => {
+export const connectDB = async (retryAttempt = 0) => {
   try {
     const conn = await mongoose.connect(env.mongoUri, {
       serverSelectionTimeoutMS: 5000,
@@ -12,7 +14,15 @@ export const connectDB = async () => {
     console.log(`[MongoDB] Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.error(`[MongoDB] Initial connection error: ${error.message}`);
+    const delay = Math.min(1000 * Math.pow(2, retryAttempt), 15000);
+    console.warn(`[MongoDB] Connection failed: ${error.message}. Retrying in ${delay / 1000}s (attempt ${retryAttempt + 1})...`);
+    
+    // Clear any previous scheduled retry
+    if (retryTimeoutId) clearTimeout(retryTimeoutId);
+
+    retryTimeoutId = setTimeout(() => {
+      connectDB(retryAttempt + 1).catch(() => {});
+    }, delay);
   }
 };
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api, {
   setAccessTokenInMemory,
   setLogoutCallback,
@@ -50,10 +50,14 @@ export const AuthProvider = ({ children }) => {
           const { user: restoredUser, accessToken: restoredToken } = response.data;
           setAuthSession(restoredUser, restoredToken);
         }
-      } catch (err) {
-        // Normal on initial visit without cookie
+      } catch {
+        // Normal on initial visit without cookie for guests.
+        // DO NOT call clearAuthSession() or abortAllRequests() here,
+        // because doing so cancels public in-flight requests (such as GET /api/products)
         if (isMounted) {
-          clearAuthSession();
+          setUser(null);
+          setAccessToken(null);
+          setAccessTokenInMemory(null);
         }
       } finally {
         if (isMounted) {

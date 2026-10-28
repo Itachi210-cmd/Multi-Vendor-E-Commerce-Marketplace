@@ -24,7 +24,7 @@ export const abortAllRequests = () => {
   for (const controller of activeAbortControllers) {
     try {
       controller.abort();
-    } catch (e) {
+    } catch {
       // Ignore abort errors
     }
   }

@@ -12,7 +12,6 @@ export default function MyOrdersPage() {
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   const [orders, setOrders] = useState([]);
-  const [total, setTotal] = useState(0);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,7 +21,6 @@ export default function MyOrdersPage() {
   useEffect(() => {
     // Reset state on user change
     setOrders([]);
-    setTotal(0);
   }, [user?._id]);
 
   useEffect(() => {
@@ -32,7 +30,6 @@ export default function MyOrdersPage() {
         setError('');
         const res = await api.get(`/orders?page=${currentPage}&limit=10`);
         setOrders(res.data?.orders || []);
-        setTotal(res.data?.total || 0);
         setPages(res.data?.pages || 1);
       } catch (err) {
         if (!err?.isCanceled) {

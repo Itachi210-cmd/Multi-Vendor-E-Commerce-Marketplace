@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 
@@ -16,7 +16,7 @@ export default function VendorApprovalsPage() {
     setCommissionInputs({});
   }, [user?._id]);
 
-  const fetchVendors = async (status = activeTab) => {
+  const fetchVendors = useCallback(async (status = activeTab) => {
     setLoading(true);
     setError('');
     try {
@@ -38,13 +38,13 @@ export default function VendorApprovalsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchVendors(activeTab);
     }
-  }, [activeTab, user?._id, user?.role]);
+  }, [fetchVendors, activeTab, user?.role]);
 
   const handleApprove = async (vendorId) => {
     if (!window.confirm('Approve this vendor application and grant the user vendor store access?')) return;

@@ -17,15 +17,18 @@ export default function Navbar() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoadingSuggest, setIsLoadingSuggest] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const searchContainerRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const userDropdownRef = useRef(null);
   const debounceTimerRef = useRef(null);
 
-  // Close mobile drawer on route navigation
+  // Close mobile drawer and user dropdown on route navigation
   useEffect(() => {
     setMobileMenuOpen(false);
     setIsOpen(false);
+    setUserDropdownOpen(false);
   }, [location.pathname]);
 
   // Sync input with URL search param if changed externally
@@ -72,11 +75,14 @@ export default function Navbar() {
     };
   }, [searchTerm]);
 
-  // Close suggestions when clicking outside
+  // Close suggestions and user dropdown when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
       }
     };
 
@@ -84,7 +90,19 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
-  // Handle keyboard navigation (ArrowDown, ArrowUp, Enter, Escape)
+  // Close dropdown on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setUserDropdownOpen(false);
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Handle keyboard navigation for search suggestions (ArrowDown, ArrowUp, Enter, Escape)
   const handleKeyDown = (e) => {
     if (!isOpen && e.key !== 'Enter') return;
 
@@ -132,6 +150,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     clearSearch();
+    setUserDropdownOpen(false);
     await logout();
     navigate('/login', { replace: true, state: {} });
   };
@@ -173,7 +192,7 @@ export default function Navbar() {
             <input
               type="text"
               className="navbar-search-input"
-              placeholder="Search products, brands, or vendors..."
+              placeholder="Search products"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => {
@@ -222,46 +241,17 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Desktop Navbar Links */}
         <nav className="navbar-nav desktop-only-nav">
           <ul className="nav-links">
-            <li>
-              <Link
-                to="/"
-                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-              >
-                Home
-              </Link>
-            </li>
             <li>
               <Link
                 to="/products"
                 className={`nav-link ${location.pathname.startsWith('/products') ? 'active' : ''}`}
               >
-                Explore
+                Products
               </Link>
             </li>
-
-            {/* Customer-only Links */}
-            {user?.role === 'customer' && (
-              <>
-                <li>
-                  <Link
-                    to="/orders"
-                    className={`nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`}
-                  >
-                    My Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/become-seller"
-                    className={`nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`}
-                  >
-                    Become a Seller
-                  </Link>
-                </li>
-              </>
-            )}
 
             {/* Guest Links */}
             {!user && (
@@ -275,87 +265,47 @@ export default function Navbar() {
               </li>
             )}
 
-            {/* Vendor-only Links */}
-            {user?.role === 'vendor' && (
-              <>
-                <li>
-                  <Link
-                    to="/vendor/products"
-                    className={`nav-link ${location.pathname.startsWith('/vendor/products') ? 'active' : ''}`}
-                  >
-                    Products
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/vendor/orders"
-                    className={`nav-link ${location.pathname.startsWith('/vendor/orders') ? 'active' : ''}`}
-                  >
-                    Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/vendor/earnings"
-                    className={`nav-link ${location.pathname.startsWith('/vendor/earnings') ? 'active' : ''}`}
-                  >
-                    Earnings
-                  </Link>
-                </li>
-              </>
+            {/* Customer Links */}
+            {user?.role === 'customer' && (
+              <li>
+                <Link
+                  to="/orders"
+                  className={`nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`}
+                >
+                  My Orders
+                </Link>
+              </li>
             )}
 
-            {/* Admin-only Links */}
+            {/* Vendor Links */}
+            {user?.role === 'vendor' && (
+              <li>
+                <Link
+                  to="/vendor/products"
+                  className={`nav-link ${location.pathname.startsWith('/vendor') ? 'active' : ''}`}
+                >
+                  Vendor Studio
+                </Link>
+              </li>
+            )}
+
+            {/* Admin Links */}
             {user?.role === 'admin' && (
-              <>
-                <li>
-                  <Link
-                    to="/admin/analytics"
-                    className={`nav-link ${location.pathname.startsWith('/admin/analytics') ? 'active' : ''}`}
-                  >
-                    Analytics
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admin/vendors"
-                    className={`nav-link ${location.pathname.startsWith('/admin/vendors') ? 'active' : ''}`}
-                  >
-                    Approvals
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admin/orders"
-                    className={`nav-link ${location.pathname.startsWith('/admin/orders') ? 'active' : ''}`}
-                  >
-                    Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admin/coupons"
-                    className={`nav-link ${location.pathname.startsWith('/admin/coupons') ? 'active' : ''}`}
-                  >
-                    Coupons
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/admin/payouts"
-                    className={`nav-link ${location.pathname.startsWith('/admin/payouts') ? 'active' : ''}`}
-                  >
-                    Payouts
-                  </Link>
-                </li>
-              </>
+              <li>
+                <Link
+                  to="/admin/analytics"
+                  className={`nav-link ${location.pathname.startsWith('/admin') ? 'active' : ''}`}
+                >
+                  Admin Panel
+                </Link>
+              </li>
             )}
           </ul>
         </nav>
 
         <div className="nav-actions">
-          {/* Shopping Cart Button - ONLY visible to Customers and Guests, strictly hidden for Vendors and Admins */}
-          {(!user || user.role === 'customer') && (
+          {/* Shopping Cart Button - ONLY visible to Customers, hidden for Guests, Vendors and Admins */}
+          {user?.role === 'customer' && (
             <Link to="/cart" className="nav-cart-btn" title="View Cart" aria-label="Cart">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="9" cy="21" r="1" />
@@ -366,32 +316,168 @@ export default function Navbar() {
             </Link>
           )}
 
+          {/* Desktop Auth / User Dropdown Container */}
           <div className="desktop-auth-container">
             {isAuthenticated ? (
-              <div className="user-profile-menu">
-                <div className="user-avatar-pill">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                </div>
-                <span className="user-name">{user?.name}</span>
-                <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
-                  <span className="badge-dot"></span>
-                  {user?.role}
-                </span>
+              <div className="user-dropdown-wrapper" ref={userDropdownRef}>
                 <button
-                  onClick={handleSignOut}
-                  className="btn btn-secondary btn-sm"
-                  title="Log out of session"
+                  type="button"
+                  className="user-dropdown-btn"
+                  onClick={() => setUserDropdownOpen((prev) => !prev)}
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="true"
+                  aria-label="User account menu"
                 >
-                  Sign Out
+                  <div className="user-avatar-pill">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <span className="user-name" title={user?.name}>{user?.name}</span>
+                  <span className={`badge ${getRoleBadgeClass(user?.role)}`}>
+                    <span className="badge-dot"></span>
+                    {user?.role}
+                  </span>
+                  <svg className={`dropdown-chevron ${userDropdownOpen ? 'open' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </button>
+
+                {userDropdownOpen && (
+                  <div className="user-dropdown-menu" role="menu">
+                    <div className="dropdown-user-header">
+                      <div className="dropdown-user-name">{user?.name}</div>
+                      <div className="dropdown-user-email">{user?.email}</div>
+                    </div>
+
+                    <div className="dropdown-divider" />
+
+                    {/* Role-specific items */}
+                    {user?.role === 'vendor' && (
+                      <div className="dropdown-group" role="group" aria-label="Vendor Studio">
+                        <Link to="/vendor/products" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                          </svg>
+                          <span>Products</span>
+                        </Link>
+                        <Link to="/vendor/orders" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                          </svg>
+                          <span>Orders</span>
+                        </Link>
+                        <Link to="/vendor/earnings" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                          </svg>
+                          <span>Earnings</span>
+                        </Link>
+                        <Link to="/vendor/profile" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                          </svg>
+                          <span>Store profile</span>
+                        </Link>
+                      </div>
+                    )}
+
+                    {user?.role === 'admin' && (
+                      <div className="dropdown-group" role="group" aria-label="Admin Panel">
+                        <Link to="/admin/analytics" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10" />
+                            <line x1="12" y1="20" x2="12" y2="4" />
+                            <line x1="6" y1="20" x2="6" y2="14" />
+                          </svg>
+                          <span>Analytics</span>
+                        </Link>
+                        <Link to="/admin/vendors" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="8.5" cy="7" r="4" />
+                            <polyline points="17 11 19 13 23 9" />
+                          </svg>
+                          <span>Vendor approvals</span>
+                        </Link>
+                        <Link to="/admin/coupons" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="4" width="18" height="16" rx="2" />
+                            <line x1="7" y1="8" x2="17" y2="8" />
+                            <line x1="7" y1="12" x2="17" y2="12" />
+                            <line x1="7" y1="16" x2="12" y2="16" />
+                          </svg>
+                          <span>Coupons</span>
+                        </Link>
+                        <Link to="/admin/orders" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                          </svg>
+                          <span>All orders</span>
+                        </Link>
+                        <Link to="/admin/payouts" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <line x1="2" y1="10" x2="22" y2="10" />
+                          </svg>
+                          <span>Payouts</span>
+                        </Link>
+                      </div>
+                    )}
+
+                    {user?.role === 'customer' && (
+                      <div className="dropdown-group" role="group" aria-label="Customer Account">
+                        <Link to="/orders" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                          </svg>
+                          <span>My Orders</span>
+                        </Link>
+                        <Link to="/become-seller" className="dropdown-item" role="menuitem" onClick={() => setUserDropdownOpen(false)}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                          </svg>
+                          <span>Become a Seller</span>
+                        </Link>
+                      </div>
+                    )}
+
+                    <div className="dropdown-divider" />
+
+                    <button
+                      type="button"
+                      className="dropdown-item dropdown-item-signout"
+                      role="menuitem"
+                      onClick={handleSignOut}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="auth-buttons-group">
                 <Link to="/login" className="btn btn-secondary btn-sm">
-                  Sign In
+                  Login
                 </Link>
                 <Link to="/register" className="btn btn-primary btn-sm">
                   Register
@@ -439,7 +525,7 @@ export default function Navbar() {
               <input
                 type="text"
                 className="navbar-search-input"
-                placeholder="Search products, brands, or vendors..."
+                placeholder="Search products"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 autoComplete="off"
@@ -452,26 +538,31 @@ export default function Navbar() {
 
           <ul className="mobile-nav-links">
             <li>
-              <Link to="/" className={`mobile-nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                Home
-              </Link>
-            </li>
-            <li>
               <Link to="/products" className={`mobile-nav-link ${location.pathname.startsWith('/products') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                Explore Products
+                Products
               </Link>
             </li>
 
+            {/* Guest Mobile Links */}
+            {!user && (
+              <li>
+                <Link to="/become-seller" className={`mobile-nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                  Become a Seller
+                </Link>
+              </li>
+            )}
+
+            {/* Customer Mobile Links */}
             {user?.role === 'customer' && (
               <>
                 <li>
-                  <Link to="/cart" className={`mobile-nav-link ${location.pathname === '/cart' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                    Cart {totalItems > 0 && `(${totalItems})`}
+                  <Link to="/orders" className={`mobile-nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                    My Orders
                   </Link>
                 </li>
                 <li>
-                  <Link to="/orders" className={`mobile-nav-link ${location.pathname.startsWith('/orders') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                    My Orders
+                  <Link to="/cart" className={`mobile-nav-link ${location.pathname === '/cart' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+                    Cart {totalItems > 0 && `(${totalItems})`}
                   </Link>
                 </li>
                 <li>
@@ -482,14 +573,7 @@ export default function Navbar() {
               </>
             )}
 
-            {!user && (
-              <li>
-                <Link to="/become-seller" className={`mobile-nav-link ${location.pathname === '/become-seller' ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-                  Become a Seller
-                </Link>
-              </li>
-            )}
-
+            {/* Vendor Mobile Links */}
             {user?.role === 'vendor' && (
               <>
                 <li className="mobile-section-heading">Vendor Studio</li>
@@ -503,25 +587,26 @@ export default function Navbar() {
                   <Link to="/vendor/earnings" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Earnings</Link>
                 </li>
                 <li>
-                  <Link to="/vendor/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+                  <Link to="/vendor/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Store profile</Link>
                 </li>
               </>
             )}
 
+            {/* Admin Mobile Links */}
             {user?.role === 'admin' && (
               <>
-                <li className="mobile-section-heading">Admin Management</li>
+                <li className="mobile-section-heading">Admin Panel</li>
                 <li>
                   <Link to="/admin/analytics" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Analytics</Link>
                 </li>
                 <li>
-                  <Link to="/admin/vendors" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Vendor Approvals</Link>
-                </li>
-                <li>
-                  <Link to="/admin/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>All Orders</Link>
+                  <Link to="/admin/vendors" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Vendor approvals</Link>
                 </li>
                 <li>
                   <Link to="/admin/coupons" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Coupons</Link>
+                </li>
+                <li>
+                  <Link to="/admin/orders" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>All orders</Link>
                 </li>
                 <li>
                   <Link to="/admin/payouts" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>Payouts</Link>
@@ -551,7 +636,7 @@ export default function Navbar() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                 <Link to="/login" className="btn btn-secondary btn-sm" onClick={() => setMobileMenuOpen(false)}>
-                  Sign In
+                  Login
                 </Link>
                 <Link to="/register" className="btn btn-primary btn-sm" onClick={() => setMobileMenuOpen(false)}>
                   Register

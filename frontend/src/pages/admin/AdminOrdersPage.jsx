@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
@@ -19,7 +19,7 @@ export default function AdminOrdersPage() {
     setTotal(0);
   }, [user?._id]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -35,13 +35,13 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, paymentStatus]);
 
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchOrders();
     }
-  }, [page, paymentStatus, user?._id, user?.role]);
+  }, [fetchOrders, user?.role]);
 
   const getPaymentBadge = (status) => {
     switch (status) {

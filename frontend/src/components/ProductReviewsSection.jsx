@@ -43,7 +43,7 @@ export default function ProductReviewsSection({ productId }) {
       setSummary(res.data?.summary || { average: 0, totalCount: 0, counts: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } });
       setPage(res.data?.page || 1);
       setPages(res.data?.pages || 1);
-    } catch (err) {
+    } catch {
       setError('Failed to load customer reviews');
     } finally {
       setLoading(false);
@@ -79,7 +79,7 @@ export default function ProductReviewsSection({ productId }) {
     } finally {
       setLoadingEligibility(false);
     }
-  }, [productId, isAuthenticated, user?.role, user?._id]);
+  }, [productId, isAuthenticated, user]);
 
   useEffect(() => {
     setEditingId(null);
@@ -232,7 +232,14 @@ export default function ProductReviewsSection({ productId }) {
 
       {/* Review Eligibility & Submission Form */}
       <div className="stitch-review-form-area">
-        {eligibility.canReview ? (
+        {loadingEligibility ? (
+          <div className="stitch-restricted-review-box">
+            <div className="spinner" style={{ width: '20px', height: '20px' }}></div>
+            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+              Checking review eligibility...
+            </span>
+          </div>
+        ) : eligibility.canReview ? (
           <form onSubmit={handleSubmitReview} className="stitch-review-form-card">
             <h3 className="stitch-form-title">
               Write a Verified Review

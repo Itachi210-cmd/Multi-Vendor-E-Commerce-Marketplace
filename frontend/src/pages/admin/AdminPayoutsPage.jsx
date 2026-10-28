@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 
@@ -27,7 +27,7 @@ export default function AdminPayoutsPage() {
     setTotal(0);
   }, [user?._id]);
 
-  const fetchPayouts = async (targetPage = 1, filter = statusFilter) => {
+  const fetchPayouts = useCallback(async (targetPage = 1, filter = statusFilter) => {
     try {
       setLoading(true);
       setError('');
@@ -47,13 +47,13 @@ export default function AdminPayoutsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter]);
 
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchPayouts(1, statusFilter);
     }
-  }, [statusFilter, user?._id, user?.role]);
+  }, [fetchPayouts, statusFilter, user?.role]);
 
   const handleRetryPayout = async (payoutId) => {
     try {

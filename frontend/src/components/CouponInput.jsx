@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
 
-export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoupon, subtotal }) {
+export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoupon }) {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');

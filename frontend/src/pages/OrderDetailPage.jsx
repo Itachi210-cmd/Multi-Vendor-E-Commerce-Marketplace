@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useSearchParams, useLocation } from 'react-router-dom';
 import api from '../api/axios';
 import useAuth from '../hooks/useAuth';
@@ -14,7 +14,6 @@ export default function OrderDetailPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const isNewlyPlaced = searchParams.get('new') === 'true' || location.state?.newlyPlaced;
-  const isJustPaid = searchParams.get('paid') === 'true';
   const shouldAutoPay = searchParams.get('pay') === '1' || location.state?.autoPay === true;
 
   const [order, setOrder] = useState(null);
@@ -47,7 +46,7 @@ export default function OrderDetailPage() {
     }
   };
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -58,11 +57,18 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchOrder();
-  }, [id]);
+  }, [fetchOrder]);
+
+  const canCancel =
+    Boolean(order) &&
+    order.payment?.status !== 'refunded' &&
+    order.subOrders &&
+    order.subOrders.length > 0 &&
+    order.subOrders.every((s) => s.status === 'placed');
 
   // Auto-open Test Gateway modal if directed to pay immediately
   useEffect(() => {

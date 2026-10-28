@@ -8,7 +8,7 @@ import CouponInput from '../components/CouponInput';
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { items, subtotal, totalItems, hasIssues, fetchCart } = useCart();
+  const { items, subtotal, hasIssues, fetchCart, showToast } = useCart();
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -130,18 +130,37 @@ export default function CheckoutPage() {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    if (Object.keys(newErrors).length > 0) {
+      // Scroll smoothly to the first error input field
+      const fieldOrder = ['name', 'phone', 'line1', 'city', 'state', 'pincode'];
+      const firstErrorField = fieldOrder.find((f) => newErrors[f]);
+      if (firstErrorField) {
+        const el = document.getElementById(firstErrorField);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.focus();
+        }
+      }
+      return false;
+    }
+
+    return true;
   };
 
   const handlePlaceOrder = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     setServerError('');
     setCartIssues([]);
 
     if (!validate()) return;
 
     if (hasIssues || items.length === 0) {
-      setServerError('Please fix stock issues in your cart before placing the order.');
+      const msg = 'Please fix stock issues in your cart before placing the order.';
+      setServerError(msg);
+      showToast?.(msg, 'error');
       return;
     }
 
@@ -178,14 +197,21 @@ export default function CheckoutPage() {
         status: err.response?.status || err.status,
         message: err.response?.data?.message || err.data?.message || err.message,
       });
+
+      let errorMsg = 'Failed to place order';
       if (err.response?.status === 409 || err.status === 409) {
-        setServerError('Some items in your cart became unavailable:');
+        errorMsg = 'Some items in your cart became unavailable:';
+        setServerError(errorMsg);
         setCartIssues(err.response?.data?.issues || err.data?.issues || []);
       } else {
-        setServerError(
-          err.response?.data?.message || err.data?.message || err.message || 'Failed to place order'
-        );
+        errorMsg =
+          err.response?.data?.message || err.data?.message || err.message || 'Failed to place order';
+        setServerError(errorMsg);
       }
+      showToast?.(errorMsg, 'error');
+
+      // Scroll to the top error banner so user sees it immediately
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSubmitting(false);
     }
@@ -475,6 +501,21 @@ export default function CheckoutPage() {
                 <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
               </p>
             </div>
+
+            <button
+              type="button"
+              onClick={handlePlaceOrder}
+              disabled={submitting || hasIssues}
+              className="stitch-place-order-btn"
+              style={{ marginTop: '1.25rem' }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v20" />
+                <path d="m17 5-5-3-5 3" />
+                <rect width="20" height="14" x="2" y="6" rx="2" />
+              </svg>
+              <span>{submitting ? 'Placing Order...' : `Place Order (₹${grandTotal.toFixed(2)})`}</span>
+            </button>
           </div>
         </aside>
       </div>

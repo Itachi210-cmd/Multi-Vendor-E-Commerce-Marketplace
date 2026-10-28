@@ -5,13 +5,17 @@ import api from '../api/axios';
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [errorProducts, setErrorProducts] = useState(null);
 
   const fetchFeaturedProducts = async () => {
     try {
       setLoadingProducts(true);
+      setErrorProducts(null);
       const res = await api.get('/products?limit=4');
       setFeaturedProducts(res.data?.products || []);
-    } catch {
+    } catch (err) {
+      if (err?.isCanceled) return;
+      setErrorProducts(err?.response?.data?.message || err?.message || 'Failed to load featured products');
       setFeaturedProducts([]);
     } finally {
       setLoadingProducts(false);
@@ -98,6 +102,21 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
+              ) : errorProducts ? (
+                <div className="stitch-product-empty-card">
+                  <div className="stitch-empty-icon" style={{ color: 'var(--color-danger)' }}>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                  </div>
+                  <h3>Unable to load products</h3>
+                  <p>{errorProducts}</p>
+                  <button type="button" onClick={fetchFeaturedProducts} className="btn btn-secondary btn-sm" style={{ marginTop: '0.75rem' }}>
+                    Retry
+                  </button>
+                </div>
               ) : featuredProducts.length > 0 ? (
                 <div className="stitch-hero-products-grid">
                   {featuredProducts.slice(0, 4).map((p) => {
@@ -155,7 +174,7 @@ export default function HomePage() {
                       <line x1="12" y1="22.08" x2="12" y2="12" />
                     </svg>
                   </div>
-                  <h3>Catalog Ready</h3>
+                  <h3>No products yet</h3>
                   <p>Discover products once community stores list items.</p>
                   <Link to="/products" className="btn btn-primary btn-sm">
                     Explore Catalog

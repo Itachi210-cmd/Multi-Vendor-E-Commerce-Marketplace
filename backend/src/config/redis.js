@@ -31,16 +31,25 @@ redisClient.on('error', (err) => {
   }
 });
 
+let redisRetryTimeout = null;
+
 /**
- * Connect to Redis during app startup
+ * Connect to Redis during app startup with retry and exponential backoff
  */
-export const connectRedis = async () => {
+export const connectRedis = async (retryAttempt = 0) => {
   try {
-    if (redisClient.status === 'wait') {
+    if (redisClient.status === 'wait' || redisClient.status === 'close') {
       await redisClient.connect();
     }
   } catch (error) {
-    console.error(`[Redis] Initial connection error: ${error.message}`);
+    const delay = Math.min(1000 * Math.pow(2, retryAttempt), 15000);
+    console.warn(`[Redis] Connection failed: ${error.message}. Retrying in ${delay / 1000}s (attempt ${retryAttempt + 1})...`);
+
+    if (redisRetryTimeout) clearTimeout(redisRetryTimeout);
+
+    redisRetryTimeout = setTimeout(() => {
+      connectRedis(retryAttempt + 1).catch(() => {});
+    }, delay);
   }
 };
 

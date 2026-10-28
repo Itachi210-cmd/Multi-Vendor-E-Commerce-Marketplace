@@ -64,9 +64,6 @@ export default function AdminAnalyticsPage() {
   const getYRevenue = (val) =>
     padding.top + graphHeight - (val / maxRevenue) * graphHeight;
 
-  const getYOrders = (val) =>
-    padding.top + graphHeight - (val / maxOrders) * graphHeight;
-
   const getX = (idx, totalPoints) => {
     if (totalPoints <= 1) return padding.left + graphWidth / 2;
     return padding.left + (idx / (totalPoints - 1)) * graphWidth;

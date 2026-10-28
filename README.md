@@ -65,11 +65,51 @@ marketplace/
 
 Before running the application, make sure you have the following installed:
 1. **Node.js** (v18.x or v20.x or v22.x) and **npm** (v9+ or v10+)
-2. **Docker** and **Docker Compose** (via Docker Desktop or Docker Engine)
+2. **Docker Desktop** installed (must be installed on your machine so containers can be managed automatically)
 
 ---
 
-## Step-by-Step Local Setup
+## Running Locally
+
+You do not need to run `docker compose` manually. The backend startup script automatically manages and launches the required backing containers (`mongo`, `redis`, `elasticsearch`).
+
+### 1. Terminal 1 — Start Backend
+```bash
+cd backend
+npm run dev
+```
+> **What happens automatically:** `npm run dev` triggers `predev`, which verifies Docker is installed, auto-launches Docker Desktop on Windows if closed, starts `mongo`, `redis`, and `elasticsearch`, waits for their ports to accept connections, and then launches the Express server with `nodemon`.
+
+### 2. Terminal 2 — Start Frontend
+```bash
+cd frontend
+npm run dev
+```
+
+### 3. First-Run Seed & Search Reindex Commands
+If running for the first time, open a terminal in `backend/` and run the seeders:
+```bash
+cd backend
+npm run seed:admin     # Seeds superadmin user
+npm run seed:vendors   # Seeds demo vendor storefronts
+npm run seed:demo      # Seeds realistic catalog products and sample reviews
+npm run reindex        # Indexes products into Elasticsearch (falls back to Mongo if ES is not ready)
+```
+
+### Cloud Database Mode (SKIP_DOCKER)
+If your `MONGO_URI`, `REDIS_URL`, and `ES_NODE` point to hosted cloud services (e.g. MongoDB Atlas, Upstash Redis), skip local Docker entirely:
+```bash
+# In backend/.env:
+SKIP_DOCKER=true
+```
+Or via shell environment variable:
+```bash
+SKIP_DOCKER=true npm run dev
+```
+
+---
+
+## Step-by-Step Manual Setup (Optional)
 
 ### 1. Start Infrastructure Services (Docker Compose)
 

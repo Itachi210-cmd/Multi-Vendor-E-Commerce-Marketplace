@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
 
@@ -26,7 +26,7 @@ export default function VendorOrdersPage() {
     setTotal(0);
   }, [user?._id]);
 
-  const fetchVendorOrders = async () => {
+  const fetchVendorOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -42,13 +42,13 @@ export default function VendorOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeFilter, page]);
 
   useEffect(() => {
     if (user?.role === 'vendor') {
       fetchVendorOrders();
     }
-  }, [activeFilter, page, user?._id, user?.role]);
+  }, [fetchVendorOrders, user?.role]);
 
   const handleAdvanceStatus = async (orderId, currentStatus) => {
     const nextStatusMap = {

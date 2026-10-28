@@ -5,7 +5,7 @@ import CouponInput from '../components/CouponInput';
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const { cart, items, subtotal, totalItems, hasIssues, loading, updateQuantity, removeItem, clearCart } =
+  const { items, subtotal, totalItems, hasIssues, loading, updateQuantity, removeItem, clearCart } =
     useCart();
 
   const [appliedCoupon, setAppliedCoupon] = useState(() => {
