@@ -6,6 +6,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 
 :root {
+  color-scheme: light;
+
   /* Water Blue Brand Palette */
   --color-primary: #0284C7;
   --color-primary-dark: #0369A1;
@@ -54,7 +56,9 @@
   --color-border: #BAE6FD;
   --color-border-subtle: #E0F2FE;
   --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
   --color-surface-hover: #F0F9FF;
+  --color-navbar-bg: rgba(255, 255, 255, 0.92);
 
   /* Text Colors */
   --color-text: #0F172A;
@@ -130,6 +134,88 @@
 }
 
 /* ==========================================================================
+   Dark Mode Design System Tokens (:root[data-theme="dark"])
+   ========================================================================== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Water Blue & Deep Navy Brand Palette */
+  --color-primary: #0284C7;
+  --color-primary-dark: #0369A1;
+  --color-primary-hover: #0369A1;
+  --color-primary-light: #38BDF8;
+  --color-accent: #22D3EE;
+  --color-accent-hover: #06B6D4;
+  --color-accent-light: rgba(34, 211, 238, 0.15);
+
+  /* Status Colors (Optimized for dark backgrounds) */
+  --color-success: #34D399;
+  --color-success-dark: #059669;
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-success-border: #059669;
+
+  --color-warning: #FBBF24;
+  --color-warning-dark: #D97706;
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-warning-border: #D97706;
+
+  --color-danger: #F87171;
+  --color-danger-dark: #DC2626;
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-danger-border: #DC2626;
+
+  /* Info / Shipped status */
+  --color-info: #38BDF8;
+  --color-info-bg: rgba(2, 132, 199, 0.15);
+  --color-info-border: #0284C7;
+
+  /* Neutral Slate / Dark Navy Scale */
+  --color-gray-50: #0B1220;
+  --color-gray-100: #0F1A2E;
+  --color-gray-200: #17243A;
+  --color-gray-300: #1E3A5F;
+  --color-gray-400: #64748B;
+  --color-gray-500: #94A3B8;
+  --color-gray-600: #CBD5E1;
+  --color-gray-700: #E2E8F0;
+  --color-gray-800: #F1F5F9;
+  --color-gray-900: #FFFFFF;
+
+  /* Surface & Background Colors */
+  --color-bg: #0B1220;
+  --color-bg-soft: #0F1A2E;
+  --color-border: #1E3A5F;
+  --color-border-subtle: #1E3A5F;
+  --color-surface: #111C2E;
+  --color-surface-raised: #17243A;
+  --color-surface-hover: #17243A;
+  --color-navbar-bg: rgba(17, 28, 46, 0.92);
+
+  /* Text Colors */
+  --color-text: #E2E8F0;
+  --color-text-main: #E2E8F0;
+  --color-text-muted: #94A3B8;
+  --color-text-light: #64748B;
+  --color-text-inverse: #0F172A;
+
+  /* Semantic extras */
+  --color-star: #F59E0B;
+  --color-star-empty: #1E3A5F;
+  --color-backdrop: rgba(0, 0, 0, 0.75);
+
+  /* Dark mode shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px -1px rgba(0, 0, 0, 0.45), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 16px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+
+  /* Dark mode focus ring */
+  --focus-ring: 0 0 0 3px rgba(56, 189, 248, 0.25);
+  --focus-ring-strong: 0 0 0 3px rgba(56, 189, 248, 0.4);
+}
+
+/* ==========================================================================
    Global Reset & Accessibility Rules
    ========================================================================== */
 
@@ -142,7 +228,7 @@
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -155,7 +241,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -210,7 +296,7 @@ button {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .main-content {
@@ -319,7 +405,7 @@ button {
 }
 
 .btn-secondary {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   color: var(--color-primary-dark);
   border: 1px solid var(--color-border);
   font-weight: 700;
@@ -640,7 +726,7 @@ button {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--color-navbar-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -735,7 +821,7 @@ button {
 
 .navbar-search-input:focus {
   outline: none;
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border-color: var(--color-primary);
   box-shadow: var(--focus-ring);
 }
@@ -906,7 +992,7 @@ button {
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid #ffffff;
+  border: 2px solid var(--color-surface);
 }
 
 .desktop-auth-container {
@@ -937,7 +1023,7 @@ button {
 }
 
 .user-dropdown-btn:hover {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border-color: var(--color-primary);
   box-shadow: var(--shadow-sm);
 }
@@ -957,7 +1043,7 @@ button {
   top: calc(100% + 8px);
   right: 0;
   min-width: 230px;
-  background: #ffffff;
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -1194,7 +1280,7 @@ button {
 
 .hero-section {
   padding: 4.5rem 0 3.5rem;
-  background: linear-gradient(180deg, #FFFFFF 0%, #E0F2FE 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 100%);
   border-bottom: 1px solid var(--color-border);
   position: relative;
   overflow: hidden;
@@ -1225,7 +1311,7 @@ button {
   gap: 0.5rem;
   padding: 0.35rem 1rem;
   border-radius: var(--radius-full);
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   font-size: 0.825rem;
   font-weight: 700;
@@ -1571,7 +1657,7 @@ button {
   position: absolute;
   top: 8px;
   right: 8px;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--color-navbar-bg);
   backdrop-filter: blur(4px);
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-xs);
@@ -2770,7 +2856,7 @@ button {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--color-navbar-bg);
   backdrop-filter: blur(4px);
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-full);
@@ -3086,7 +3172,7 @@ button {
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  background: #ffffff;
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
@@ -3230,8 +3316,29 @@ button {
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   position: sticky;
-  top: 90px;
+  top: calc(var(--navbar-height) + 1.5rem);
+  max-height: calc(100vh - var(--navbar-height) - 2.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.filters-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 9999px;
 }
 
 .filters-header {
@@ -3396,7 +3503,7 @@ button {
 
 .price-input:focus {
   border-color: var(--color-primary);
-  background-color: #fff;
+  background-color: var(--color-surface);
 }
 
 .price-range-separator {
@@ -3665,8 +3772,8 @@ button {
   font-weight: 700;
 }
 
-/* Responsive Media Queries */
-@media (max-width: 860px) {
+/* Responsive Media Queries (< 1100px) */
+@media (max-width: 1100px) {
   .products-layout {
     grid-template-columns: 1fr;
   }
@@ -3676,21 +3783,24 @@ button {
   }
 
   .filters-sidebar {
+    display: none;
+    max-height: none;
+  }
+
+  .filters-sidebar.mobile-open {
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 300px;
+    width: 320px;
+    max-width: 85vw;
     z-index: 10000;
     border-radius: 0;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+    max-height: none;
     overflow-y: auto;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .filters-sidebar.mobile-open {
-    transform: translateX(0);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25);
+    background: var(--color-surface);
   }
 
   .mobile-filter-close {
@@ -5040,12 +5150,19 @@ button {
 .filters-sidebar {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: sticky;
+  top: calc(var(--navbar-height) + 1.5rem);
+  max-height: calc(100vh - var(--navbar-height) - 2.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 .filters-header {
@@ -5359,7 +5476,7 @@ button {
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-navbar-bg);
   backdrop-filter: blur(4px);
   padding: 0.35rem 0.75rem;
   border-radius: var(--radius-full);
@@ -5955,6 +6072,14 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .products-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-filter-trigger {
+    display: inline-flex;
+  }
+
   /* Slide-in drawer for filters sidebar */
   .filters-sidebar {
     display: none;
@@ -5970,9 +6095,21 @@ button {
     max-width: 85vw;
     z-index: 1000;
     border-radius: 0;
+    max-height: none;
     overflow-y: auto;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
     background: var(--color-surface);
+  }
+
+  .mobile-filter-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
   }
 }
 
@@ -5998,7 +6135,7 @@ button {
     z-index: 90;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.98);
+    background: var(--color-surface);
     backdrop-filter: blur(8px);
     padding: 1rem;
     margin: 0 -1rem;
@@ -7309,7 +7446,7 @@ button {
     left: 0;
     right: 0;
     z-index: 95;
-    background: rgba(255, 255, 255, 0.98);
+    background: var(--color-surface);
     backdrop-filter: blur(8px);
     border-top: 1px solid var(--color-border);
     padding: 0.75rem 1.25rem;
@@ -9336,7 +9473,7 @@ button {
   border-radius: 6px;
   object-fit: cover;
   border: 1px solid var(--color-border);
-  background: #ffffff;
+  background: var(--color-surface);
   flex-shrink: 0;
 }
 
@@ -10965,9 +11102,10 @@ button {
 
 .stitch-ecosystem-layout {
   display: flex;
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - var(--navbar-height));
   width: 100%;
   background: var(--color-surface);
+  align-items: flex-start;
 }
 
 /* Desktop Sidebar */
@@ -10979,9 +11117,8 @@ button {
   flex-direction: column;
   flex-shrink: 0;
   position: sticky;
-  top: 72px;
-  height: calc(100vh - 72px);
-  overflow-y: auto;
+  top: var(--navbar-height);
+  height: calc(100vh - var(--navbar-height));
   box-shadow: 1px 0 6px rgba(0, 0, 0, 0.02);
   z-index: 40;
 }
@@ -10992,6 +11129,7 @@ button {
   align-items: center;
   gap: 0.85rem;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .stitch-sidebar-brand-badge {
@@ -11033,6 +11171,24 @@ button {
   flex-direction: column;
   gap: 0.35rem;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.stitch-sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.stitch-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stitch-sidebar-nav::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 9999px;
 }
 
 .stitch-sidebar-item {
@@ -11079,12 +11235,15 @@ button {
 .stitch-sidebar-footer {
   padding: 1rem 0.85rem;
   border-top: 1px solid var(--color-border);
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .stitch-sidebar-back-link {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+
   padding: 0.65rem 1rem;
   border-radius: 8px;
   color: var(--color-text-muted);
@@ -11102,15 +11261,15 @@ button {
 /* Ecosystem Content Canvas */
 .stitch-ecosystem-content {
   flex: 1;
-  padding: 0 2rem 3rem;
+  padding: 1.5rem 2rem 3rem;
   min-width: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ==========================================================================
-   Responsive Sidebar: Sticky Horizontal Top Tab Bar Below 900px
+   Responsive Sidebar: Sticky Horizontal Top Tab Bar Below 1100px
    ========================================================================== */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .stitch-ecosystem-layout {
     flex-direction: column;
   }
@@ -11119,11 +11278,11 @@ button {
     width: 100%;
     height: auto;
     position: sticky;
-    top: 72px;
+    top: var(--navbar-height);
     z-index: 40;
     border-right: none;
     border-bottom: 1px solid var(--color-border);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--color-navbar-bg);
     backdrop-filter: blur(12px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
@@ -11157,17 +11316,110 @@ button {
   }
 
   .stitch-ecosystem-content {
-    padding: 0 1rem 3rem;
+    padding: 1.25rem 1rem 3rem;
   }
 }
 
+/* ==========================================================================
+   Theme Toggle & Test Badge Components
+   ========================================================================== */
 
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
 
+.theme-toggle-btn:hover {
+  background-color: var(--color-bg-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
 
+.theme-toggle-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
 
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+.theme-toggle-btn:hover svg {
+  transform: rotate(15deg);
+}
 
+/* Payment Modal Test Badge & Scenario Details */
+.stitch-test-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.725rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-soft);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
+.stitch-scenario-collapse {
+  margin-top: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-soft);
+}
 
+.stitch-scenario-summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  user-select: none;
+  outline: none;
+}
 
+.stitch-scenario-summary:hover {
+  color: var(--color-primary);
+}
+
+.stitch-scenario-summary:focus-visible {
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-xs);
+}
+
+/* ==========================================================================
+   Accessibility: Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 

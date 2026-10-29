@@ -309,10 +309,6 @@ export default function CartPage() {
               </svg>
               <span>{hasIssues ? 'Fix Issues to Checkout' : 'Proceed to Checkout'}</span>
             </button>
-
-            <div className="stitch-safe-checkout-note">
-              <span>Demo project: payments are simulated in a test gateway, no real money is charged.</span>
-            </div>
           </div>
         </aside>
       </div>

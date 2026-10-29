@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Vendor E-Commerce Marketplace</title>
     <meta name="description" content="A modern multi-vendor e-commerce marketplace platform for customers, vendors, and admin." />
+    <meta name="theme-color" content="#F0F9FF" id="meta-theme-color" />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          var theme = (saved === 'light' || saved === 'dark') ? saved : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.getElementById('meta-theme-color');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#0B1220' : '#F0F9FF');
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">

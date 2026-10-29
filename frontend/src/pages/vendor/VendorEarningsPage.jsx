@@ -67,11 +67,11 @@ export default function VendorEarningsPage() {
         <div>
           <h1 className="stitch-earnings-title">Earnings & Payouts</h1>
           <p className="stitch-earnings-subtitle">
-            Track sales revenue, platform commissions, and automated Route split payouts.
+            Track sales revenue, platform commissions, and automated split payouts.
           </p>
         </div>
         <div className="stitch-earnings-badge-meta">
-          <span className="badge badge-neutral">Auto-Split Sandbox Mode</span>
+          <span className="badge badge-neutral">Automated Split Transfers</span>
         </div>
       </div>
 

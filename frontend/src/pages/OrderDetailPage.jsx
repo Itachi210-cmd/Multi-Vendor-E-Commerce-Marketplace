@@ -99,13 +99,13 @@ export default function OrderDetailPage() {
       setSearchParams(nextParams, { replace: true });
     }
     showToast('Payment captured successfully!', 'success');
-    setActionMessage('Payment captured successfully via Test Gateway!');
+    setActionMessage('Payment captured successfully!');
   };
 
-  const handlePaymentError = (errMsg) => {
+  const handlePaymentError = useCallback((errMsg) => {
     console.error('[Payment Flow] Payment error displayed on OrderDetailPage:', errMsg);
     showToast(errMsg, 'error');
-  };
+  }, [showToast]);
 
   const handleCancelOrder = async () => {
     if (!window.confirm('Are you sure you want to cancel this entire order?')) return;
@@ -272,7 +272,7 @@ export default function OrderDetailPage() {
                 <rect width="20" height="14" x="2" y="5" rx="2" />
                 <line x1="2" y1="10" x2="22" y2="10" />
               </svg>
-              <span>{order.payment?.status === 'failed' ? 'Retry Payment' : 'Pay Now (Sandbox)'}</span>
+              <span>{order.payment?.status === 'failed' ? 'Retry Payment' : 'Pay Now'}</span>
             </button>
           )}
         </div>
@@ -345,7 +345,7 @@ export default function OrderDetailPage() {
             <div className="stitch-payment-method-row">
               <span className="stitch-pm-label">Method</span>
               <span className="stitch-pm-val">
-                {order.payment?.method ? `Test Gateway - ${order.payment.method.toUpperCase()} (Simulated)` : 'Test Gateway Sandbox'}
+                {order.payment?.method ? order.payment.method.toUpperCase() : 'Online Payment'}
               </span>
             </div>
           </div>
@@ -526,7 +526,7 @@ export default function OrderDetailPage() {
           <div className="stitch-cancel-order-info">
             <h3 className="stitch-cancel-card-title">Need to cancel this order?</h3>
             <p className="stitch-cancel-card-desc">
-              You can cancel this order as long as none of the vendor sub-orders have been packed or shipped. If paid, an instant simulation refund is recorded.
+              You can cancel this order as long as none of the vendor sub-orders have been packed or shipped. If paid, a full refund is processed.
             </p>
           </div>
           <button
@@ -539,16 +539,6 @@ export default function OrderDetailPage() {
           </button>
         </div>
       )}
-
-      {/* Demo payment notice */}
-      <div className="stitch-demo-notice-banner" style={{ marginTop: '2rem' }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="16" x2="12" y2="12" />
-          <line x1="12" y1="8" x2="12.01" y2="8" />
-        </svg>
-        <p>Demo project: payments are simulated in a test gateway, no real money is charged.</p>
-      </div>
 
       {order && (
         <TestGatewayModal

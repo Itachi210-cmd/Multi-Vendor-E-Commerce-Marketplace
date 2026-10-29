@@ -31,8 +31,6 @@ export default function ProductsPage() {
   const [total, setTotal] = useState(0);
   const [pages, setPages] = useState(1);
   const [facets, setFacets] = useState({ categories: [], minPrice: 0, maxPrice: 0 });
-  const [source, setSource] = useState('elasticsearch');
-  const [isCached, setIsCached] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -64,8 +62,6 @@ export default function ProductsPage() {
         setTotal(data.total || 0);
         setPages(data.pages || 1);
         setFacets(data.facets || { categories: [], minPrice: 0, maxPrice: 0 });
-        setSource(data.source || 'elasticsearch');
-        setIsCached(data.cached || false);
       } catch (err) {
         setError(err.response?.data?.message || err.message || 'Failed to load products');
       } finally {
@@ -191,28 +187,8 @@ export default function ProductsPage() {
           </h1>
         </div>
 
-        {/* Engine Source Badge & Mobile Trigger */}
+        {/* Mobile Filter Trigger */}
         <div className="search-meta-indicators">
-          <div
-            className={`source-badge ${
-              source === 'elasticsearch' ? 'source-es' : 'source-mongo'
-            }`}
-            title={
-              source === 'elasticsearch'
-                ? 'High-performance faceted full-text search powered by Elasticsearch'
-                : 'Fault-tolerant fallback powered by MongoDB'
-            }
-          >
-            <span className="source-dot"></span>
-            <span>{source === 'elasticsearch' ? '⚡ Elasticsearch Engine' : '🍃 MongoDB Fallback'}</span>
-          </div>
-
-          {isCached && (
-            <span className="cache-pill" title="Loaded from Redis 60s search cache">
-              ⚡ Redis Cached
-            </span>
-          )}
-
           {/* Mobile filter toggle trigger (<1100px) */}
           <button
             type="button"

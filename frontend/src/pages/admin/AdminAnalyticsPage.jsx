@@ -105,12 +105,7 @@ export default function AdminAnalyticsPage() {
         <div>
           <span className="stitch-admin-control-badge">Marketplace Control Tower</span>
           <div className="stitch-admin-title-row">
-            <h1 className="stitch-admin-title">Admin Analytics &amp; KPIs</h1>
-            {data?.cached && (
-              <span className="badge badge-warning" style={{ fontSize: '0.75rem', fontWeight: 700 }}>
-                ⚡ Redis Cached (5m)
-              </span>
-            )}
+            <h1 className="stitch-admin-title">Admin Analytics</h1>
           </div>
           <p className="stitch-admin-subtitle">
             Aggregated revenue (minus refunds), platform commissions (excluding reversed payouts), timeseries, and product metrics.
@@ -214,7 +209,7 @@ export default function AdminAnalyticsPage() {
             <div className="stitch-admin-kpi-card">
               <div className="stitch-kpi-top">
                 <span className="stitch-kpi-label">Average Order Value</span>
-                <div className="stitch-kpi-icon-wrap" style={{ background: '#F0FDF4', color: '#16A34A' }}>
+                <div className="stitch-kpi-icon-wrap" style={{ background: 'var(--color-success-bg)', color: 'var(--color-success)' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                   </svg>
@@ -232,7 +227,7 @@ export default function AdminAnalyticsPage() {
             <div className="stitch-admin-kpi-card">
               <div className="stitch-kpi-top">
                 <span className="stitch-kpi-label">Active Platform Users</span>
-                <div className="stitch-kpi-icon-wrap" style={{ background: '#FAF5FF', color: '#9333EA' }}>
+                <div className="stitch-kpi-icon-wrap" style={{ background: 'var(--color-bg-soft)', color: 'var(--color-primary-light)' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
@@ -269,8 +264,8 @@ export default function AdminAnalyticsPage() {
                 >
                   <defs>
                     <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#0284C7" stopOpacity="0.28" />
-                      <stop offset="100%" stopColor="#0284C7" stopOpacity="0.0" />
+                      <stop offset="0%" stopColor="var(--color-primary-light)" stopOpacity="0.28" />
+                      <stop offset="100%" stopColor="var(--color-primary-light)" stopOpacity="0.0" />
                     </linearGradient>
                   </defs>
 
@@ -285,7 +280,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#E2E8F0"
+                          stroke="var(--color-border)"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -293,7 +288,7 @@ export default function AdminAnalyticsPage() {
                           y={y + 4}
                           textAnchor="end"
                           fontSize="9"
-                          fill="#64748b"
+                          fill="var(--color-text-muted)"
                         >
                           ₹{val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
                         </text>
@@ -306,12 +301,12 @@ export default function AdminAnalyticsPage() {
                     <path d={revenueAreaD} fill="url(#revenueGrad)" />
                   )}
 
-                  {/* Polyline Line (Blue #0284C7) */}
+                  {/* Polyline Line (Blue) */}
                   {revenuePathD && (
                     <path
                       d={revenuePathD}
                       fill="none"
-                      stroke="#0284C7"
+                      stroke="var(--color-primary-light)"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -325,8 +320,8 @@ export default function AdminAnalyticsPage() {
                         cx={p.x}
                         cy={p.y}
                         r="3.5"
-                        fill="#ffffff"
-                        stroke="#0284C7"
+                        fill="var(--color-surface)"
+                        stroke="var(--color-primary-light)"
                         strokeWidth="2"
                         onMouseEnter={() =>
                           setHoveredPoint({ ...p, type: 'revenue' })
@@ -342,7 +337,7 @@ export default function AdminAnalyticsPage() {
                           y={chartHeight - 12}
                           textAnchor="middle"
                           fontSize="8.5"
-                          fill="#64748b"
+                          fill="var(--color-text-muted)"
                         >
                           {p.date.slice(5)}
                         </text>
@@ -359,15 +354,16 @@ export default function AdminAnalyticsPage() {
                         width="90"
                         height="26"
                         rx="4"
-                        fill="#0f172a"
-                        opacity="0.95"
+                        fill="var(--color-surface-raised)"
+                        stroke="var(--color-border)"
+                        strokeWidth="1"
                       />
                       <text
                         x={Math.max(55, Math.min(hoveredPoint.x, chartWidth - 55))}
                         y={Math.max(hoveredPoint.y - 18, 22)}
                         textAnchor="middle"
                         fontSize="9.5"
-                        fill="#ffffff"
+                        fill="var(--color-text)"
                         fontWeight="700"
                       >
                         ₹{hoveredPoint.val.toLocaleString()}
@@ -404,7 +400,7 @@ export default function AdminAnalyticsPage() {
                           y1={y}
                           x2={chartWidth - padding.right}
                           y2={y}
-                          stroke="#E2E8F0"
+                          stroke="var(--color-border)"
                           strokeDasharray="3 3"
                         />
                         <text
@@ -412,7 +408,7 @@ export default function AdminAnalyticsPage() {
                           y={y + 4}
                           textAnchor="end"
                           fontSize="9"
-                          fill="#94a3b8"
+                          fill="var(--color-text-muted)"
                         >
                           {val}
                         </text>
@@ -420,7 +416,7 @@ export default function AdminAnalyticsPage() {
                     );
                   })}
 
-                  {/* SVG Bars (Aqua #06B6D4) */}
+                  {/* SVG Bars (Aqua) */}
                   {dailySeries.map((d, i) => {
                     const barWidth = Math.max(
                       6,
@@ -444,7 +440,7 @@ export default function AdminAnalyticsPage() {
                           width={barWidth}
                           height={barHeight}
                           rx="3"
-                          fill="#06B6D4"
+                          fill="var(--color-accent)"
                           opacity="0.88"
                           onMouseEnter={() =>
                             setHoveredPoint({ x: x + barWidth / 2, y, val: d.orders, date: d.date, type: 'orders' })
@@ -461,7 +457,7 @@ export default function AdminAnalyticsPage() {
                             y={chartHeight - 12}
                             textAnchor="middle"
                             fontSize="8.5"
-                            fill="#64748b"
+                            fill="var(--color-text-muted)"
                           >
                             {d.date.slice(5)}
                           </text>
@@ -479,15 +475,16 @@ export default function AdminAnalyticsPage() {
                         width="70"
                         height="24"
                         rx="4"
-                        fill="#0f172a"
-                        opacity="0.95"
+                        fill="var(--color-surface-raised)"
+                        stroke="var(--color-border)"
+                        strokeWidth="1"
                       />
                       <text
                         x={Math.max(45, Math.min(hoveredPoint.x, chartWidth - 45))}
                         y={Math.max(hoveredPoint.y - 16, 20)}
                         textAnchor="middle"
                         fontSize="9"
-                        fill="#ffffff"
+                        fill="var(--color-text)"
                         fontWeight="700"
                       >
                         {hoveredPoint.val} orders
@@ -509,11 +506,11 @@ export default function AdminAnalyticsPage() {
             {/* Stacked Multi-Color Progress Bar */}
             <div className="stitch-status-stacked-bar">
               {[
-                { key: 'placed', label: 'Placed', color: '#64748b' },
-                { key: 'packed', label: 'Packed', color: '#0284c7' },
-                { key: 'shipped', label: 'Shipped', color: '#06b6d4' },
-                { key: 'delivered', label: 'Delivered', color: '#10b981' },
-                { key: 'cancelled', label: 'Cancelled', color: '#ef4444' },
+                { key: 'placed', label: 'Placed', color: 'var(--color-text-muted)' },
+                { key: 'packed', label: 'Packed', color: 'var(--color-primary)' },
+                { key: 'shipped', label: 'Shipped', color: 'var(--color-accent)' },
+                { key: 'delivered', label: 'Delivered', color: 'var(--color-success)' },
+                { key: 'cancelled', label: 'Cancelled', color: 'var(--color-danger)' },
               ].map((st) => {
                 const count = statusBreakdown[st.key] || 0;
                 const pct = totalSubOrders > 0 ? (count / totalSubOrders) * 100 : 0;
@@ -535,11 +532,11 @@ export default function AdminAnalyticsPage() {
             {/* Status Legend & Counts */}
             <div className="stitch-status-legend-row">
               {[
-                { key: 'placed', label: 'Placed', color: '#64748b' },
-                { key: 'packed', label: 'Packed', color: '#0284c7' },
-                { key: 'shipped', label: 'Shipped', color: '#06b6d4' },
-                { key: 'delivered', label: 'Delivered', color: '#10b981' },
-                { key: 'cancelled', label: 'Cancelled', color: '#ef4444' },
+                { key: 'placed', label: 'Placed', color: 'var(--color-text-muted)' },
+                { key: 'packed', label: 'Packed', color: 'var(--color-primary)' },
+                { key: 'shipped', label: 'Shipped', color: 'var(--color-accent)' },
+                { key: 'delivered', label: 'Delivered', color: 'var(--color-success)' },
+                { key: 'cancelled', label: 'Cancelled', color: 'var(--color-danger)' },
               ].map((st) => (
                 <div key={st.key} className="stitch-legend-item">
                   <div className="stitch-legend-dot" style={{ background: st.color }} />

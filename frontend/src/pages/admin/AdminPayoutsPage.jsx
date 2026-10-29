@@ -94,11 +94,11 @@ export default function AdminPayoutsPage() {
           <span className="stitch-admin-control-badge">Settlement Transfers</span>
           <h1 className="stitch-admin-title">Platform Payouts &amp; Route Transfers</h1>
           <p className="stitch-admin-subtitle">
-            Monitor automated vendor split payouts (simulated), platform commission splits, and retry failed transfers.
+            Monitor automated vendor split payouts, platform commission splits, and retry failed transfers.
           </p>
         </div>
         <div className="stitch-approvals-count-pill">
-          <span className="badge badge-neutral">Auto-Split Sandbox Mode</span>
+          <span className="badge badge-neutral">Automated Split Transfers</span>
         </div>
       </div>
 

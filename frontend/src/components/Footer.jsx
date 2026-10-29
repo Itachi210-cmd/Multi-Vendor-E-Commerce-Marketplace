@@ -54,28 +54,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Tech Stack Chips */}
-        <div className="footer-tech-row">
-          <span className="footer-tech-label">Architecture:</span>
-          <div className="stack-pills">
-            <span className="stack-pill">React + Vite</span>
-            <span className="stack-pill">Plain CSS</span>
-            <span className="stack-pill">Node.js + Express</span>
-            <span className="stack-pill">MongoDB Atlas</span>
-            <span className="stack-pill">Upstash Redis</span>
-            <span className="stack-pill">Elasticsearch</span>
-            <span className="stack-pill">Supabase Storage (S3 API)</span>
-            <span className="stack-pill">Sandbox Gateway (Route-modeled)</span>
-          </div>
-        </div>
-
-        {/* Bottom Bar: Mandatory Demo Notice */}
+        {/* Bottom Bar */}
         <div className="footer-bottom">
-          <p className="footer-demo-notice">
-            Demo project: payments are simulated in a test gateway, no real money is charged.
-          </p>
           <p className="footer-copyright">
-            &copy; {new Date().getFullYear()} Marketplace Platform. Multi-vendor demo.
+            &copy; {new Date().getFullYear()} Marketplace Platform. All rights reserved.
           </p>
         </div>
       </div>

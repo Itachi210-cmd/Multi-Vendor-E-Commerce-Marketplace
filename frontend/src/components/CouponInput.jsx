@@ -57,8 +57,8 @@ export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoup
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#ecfdf5',
-            border: '1px solid #a7f3d0',
+            background: 'var(--color-success-bg)',
+            border: '1px solid var(--color-success-border)',
             padding: '0.75rem 1rem',
             borderRadius: '8px',
           }}
@@ -66,10 +66,10 @@ export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoup
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ fontSize: '1.1rem' }}>🎟️</span>
             <div>
-              <div style={{ fontWeight: 800, color: '#065f46', fontSize: '0.9rem' }}>
+              <div style={{ fontWeight: 800, color: 'var(--color-success)', fontSize: '0.9rem' }}>
                 {appliedCoupon.code}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#047857' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-success)' }}>
                 Saved ₹{appliedCoupon.discount.toLocaleString()} on this order
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoup
             type="button"
             onClick={handleRemove}
             className="btn btn-secondary btn-sm"
-            style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', color: '#dc2626' }}
+            style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', color: 'var(--color-danger)' }}
           >
             Remove
           </button>
@@ -96,12 +96,14 @@ export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoup
             style={{
               flex: 1,
               padding: '0.6rem 0.85rem',
-              border: '1px solid #cbd5e1',
+              border: '1px solid var(--color-border)',
               borderRadius: '6px',
               fontSize: '0.85rem',
               textTransform: 'uppercase',
               fontWeight: 600,
               letterSpacing: '0.04em',
+              backgroundColor: 'var(--color-surface)',
+              color: 'var(--color-text-main)',
             }}
           />
           <button
@@ -117,13 +119,13 @@ export default function CouponInput({ appliedCoupon, onApplyCoupon, onRemoveCoup
       )}
 
       {errorMsg && (
-        <div style={{ color: '#dc2626', fontSize: '0.8rem', marginTop: '0.4rem', fontWeight: 600 }}>
+        <div style={{ color: 'var(--color-danger)', fontSize: '0.8rem', marginTop: '0.4rem', fontWeight: 600 }}>
           ⚠️ {errorMsg}
         </div>
       )}
 
       {successMsg && !appliedCoupon && (
-        <div style={{ color: '#16a34a', fontSize: '0.8rem', marginTop: '0.4rem', fontWeight: 600 }}>
+        <div style={{ color: 'var(--color-success)', fontSize: '0.8rem', marginTop: '0.4rem', fontWeight: 600 }}>
           ✓ {successMsg}
         </div>
       )}

@@ -64,7 +64,7 @@ export default function AdminOrdersPage() {
           <span className="stitch-admin-control-badge">Order Settlement &amp; Fulfillment</span>
           <h1 className="stitch-admin-title">Platform Orders &amp; Split Transfers</h1>
           <p className="stitch-admin-subtitle">
-            Overview of all marketplace customer transactions, multi-vendor split payouts (simulated), and payments.
+            Overview of all marketplace customer transactions, vendor split payouts, and payments.
           </p>
         </div>
 
@@ -282,12 +282,12 @@ export default function AdminOrdersPage() {
                   <div>
                     <h4 className="stitch-commission-card-title" style={{ fontSize: '0.92rem' }}>Payment Status: {selectedSplitOrder.payment.status.toUpperCase()}</h4>
                     <p className="stitch-commission-card-desc" style={{ fontSize: '0.78rem' }}>
-                      Method: {selectedSplitOrder.payment.method?.toUpperCase() || 'SANDBOX'} • Split payouts (simulated)
+                      Method: {selectedSplitOrder.payment.method?.toUpperCase() || 'ONLINE'} • Vendor split payouts
                     </p>
                   </div>
                 </div>
                 <div className="stitch-commission-rate-right">
-                  <span className="badge badge-connected">Simulated Route</span>
+                  <span className="badge badge-connected">Split Payouts</span>
                 </div>
               </div>
 

@@ -66,6 +66,8 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
   const initProviderOrder = useCallback(async () => {
     if (!order?._id) return;
+    // Don't try to create a payment session for an already-paid or refunded order
+    if (order.payment?.status === 'paid' || order.payment?.status === 'refunded') return;
     try {
       setStep('init');
       setErrorMessage('');
@@ -91,13 +93,15 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
         onError(errorMsg);
       }
     }
-  }, [order?._id, onError]);
+  }, [order?._id, order?.payment?.status, onError]);
 
   // Initialize or fetch provider order on modal open
   useEffect(() => {
     if (!isOpen || !order?._id) return;
+    // Skip if the order is already paid or refunded
+    if (order.payment?.status === 'paid' || order.payment?.status === 'refunded') return;
     initProviderOrder();
-  }, [isOpen, order?._id, initProviderOrder]);
+  }, [isOpen, order?._id, order?.payment?.status, initProviderOrder]);
 
   if (!isOpen) return null;
 
@@ -233,14 +237,11 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
             </div>
             <div>
               <div className="stitch-modal-title-row">
-                <h3 className="stitch-modal-title">Test Gateway</h3>
-                <span className="stitch-sandbox-badge">
-                  SANDBOX MODE
+                <h3 className="stitch-modal-title">Payment</h3>
+                <span className="stitch-test-badge">
+                  Test mode
                 </span>
               </div>
-              <p className="stitch-modal-subtitle">
-                Simulated Payment Provider Layer • No real money charged
-              </p>
             </div>
           </div>
           {step !== 'processing' && (
@@ -255,18 +256,6 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
 
         {/* Modal Body */}
         <div className="stitch-modal-body">
-          {/* Demo Notice Banner */}
-          <div className="stitch-modal-demo-notice">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-            <span>
-              <strong>Demo project:</strong> payments are simulated in a test gateway, no real money is charged.
-            </span>
-          </div>
-
           {/* Amount Summary Row */}
           <div className="stitch-modal-amount-box">
             <div>
@@ -299,7 +288,7 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
               <div className="spinner" style={{ margin: '0 auto 1.25rem', width: '42px', height: '42px' }}></div>
               <h4>Processing Payment...</h4>
               <p>
-                Simulating banking network handshakes, card/UPI verification, and HMAC authorization.
+                Authorizing transaction with payment provider...
               </p>
             </div>
           )}
@@ -465,25 +454,25 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     </div>
                   </div>
 
-                  {/* Test Cards Quick Panel */}
-                  <div className="stitch-scenario-panel">
-                    <span className="stitch-scenario-heading">
-                      ⚡ Quick Test Scenarios (Click to Prefill):
-                    </span>
-                    <div className="stitch-scenario-grid">
-                      {TEST_CARDS.map((tc, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => selectTestCard(tc)}
-                          className="stitch-scenario-chip"
-                        >
-                          <span className="stitch-chip-title">{tc.label}</span>
-                          <span className="stitch-chip-desc">{tc.desc}</span>
-                        </button>
-                      ))}
+                  {/* Test Cards Collapsible Panel */}
+                  <details className="stitch-scenario-collapse">
+                    <summary className="stitch-scenario-summary">Test cards</summary>
+                    <div className="stitch-scenario-panel">
+                      <div className="stitch-scenario-grid">
+                        {TEST_CARDS.map((tc, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => selectTestCard(tc)}
+                            className="stitch-scenario-chip"
+                          >
+                            <span className="stitch-chip-title">{tc.label}</span>
+                            <span className="stitch-chip-desc">{tc.desc}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </details>
 
                   <button
                     type="submit"
@@ -534,28 +523,28 @@ export default function TestGatewayModal({ order, isOpen, onClose, onSuccess, on
                     <span className="stitch-qr-hint">Scan with any UPI app or enter ID above</span>
                   </div>
 
-                  {/* Test UPI Quick Panel */}
-                  <div className="stitch-scenario-panel">
-                    <span className="stitch-scenario-heading">
-                      ⚡ Quick Test Scenarios (Click to Prefill):
-                    </span>
-                    <div className="stitch-scenario-list">
-                      {TEST_UPIS.map((tu, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => selectTestUpi(tu)}
-                          className="stitch-scenario-upi-chip"
-                        >
-                          <div className="stitch-upi-chip-left">
-                            <span className="stitch-chip-title">{tu.label}</span>
-                            <span className="stitch-chip-desc">{tu.desc}</span>
-                          </div>
-                          <code className="stitch-chip-code">{tu.vpa}</code>
-                        </button>
-                      ))}
+                  {/* Test UPI Collapsible Panel */}
+                  <details className="stitch-scenario-collapse">
+                    <summary className="stitch-scenario-summary">Test VPAs</summary>
+                    <div className="stitch-scenario-panel">
+                      <div className="stitch-scenario-list">
+                        {TEST_UPIS.map((tu, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => selectTestUpi(tu)}
+                            className="stitch-scenario-upi-chip"
+                          >
+                            <div className="stitch-upi-chip-left">
+                              <span className="stitch-chip-title">{tu.label}</span>
+                              <span className="stitch-chip-desc">{tu.desc}</span>
+                            </div>
+                            <code className="stitch-chip-code">{tu.vpa}</code>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </details>
 
                   <button
                     type="submit"

@@ -164,7 +164,7 @@ export default function ProductReviewsSection({ productId }) {
           className={`star-icon ${isFilled ? 'filled' : 'empty'}`}
           style={{
             cursor: interactive ? 'pointer' : 'default',
-            color: isFilled ? '#f59e0b' : '#cbd5e1',
+            color: isFilled ? 'var(--color-star)' : 'var(--color-star-empty)',
             fontSize: interactive ? '1.8rem' : '1.1rem',
             marginRight: '2px',
             userSelect: 'none',
@@ -416,7 +416,7 @@ export default function ProductReviewsSection({ productId }) {
                               key={s}
                               onClick={() => setEditRating(s)}
                               className={`star-icon ${s <= editRating ? 'filled' : 'empty'}`}
-                              style={{ cursor: 'pointer', fontSize: '1.4rem', color: s <= editRating ? '#f59e0b' : '#cbd5e1', marginRight: '4px' }}
+                              style={{ cursor: 'pointer', fontSize: '1.4rem', color: s <= editRating ? 'var(--color-star)' : 'var(--color-star-empty)', marginRight: '4px' }}
                             >
                               ★
                             </span>

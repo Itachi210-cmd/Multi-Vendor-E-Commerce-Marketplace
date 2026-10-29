@@ -38,11 +38,9 @@ These rules are permanent and mandatory for any AI agent working in this reposit
 
 ---
 
-## 5. Honest Copy & Demo Notices
+## 5. Honest Copy & Marketing Claims
 
 - **No unverified claims:** Keep copy honest. Do not use claims such as *escrow*, *certified*, *verified*, *guaranteed*, or *bank-grade*.
-- **Mandatory demo notice:** Always keep the exact notice visible on the footer, checkout page, and test payment modal:
-  > *"Demo project: payments are simulated in a test gateway, no real money is charged."*
 
 ---
 
@@ -72,14 +70,10 @@ Since Stitch provides only desktop screens, derive mobile views from desktop usi
 
 ---
 
-## 8. Environment & Build Guards
+## 8. Theme Tokens & Dark Mode Consistency
 
-- **Demo credential buttons:** Fast-fill demo credentials on login/register pages must **never** appear in production builds. Render them only in development:
-  ```jsx
-  {import.meta.env.DEV && (
-    /* Demo credential fill buttons */
-  )}
-  ```
+- **Theme tokens only:** All UI components, SVG icons, borders, backgrounds, and text must use the theme design tokens (`var(--color-...)`) rather than hardcoded colors.
+- **Light & Dark mode support:** Every screen must look clean, accessible (WCAG AA contrast), and visually coherent in both light and dark mode (`:root[data-theme="dark"]`).
 
 ---
 

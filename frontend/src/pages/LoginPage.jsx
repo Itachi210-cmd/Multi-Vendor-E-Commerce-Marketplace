@@ -53,12 +53,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleFillDemo = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setError('');
-  };
-
   return (
     <div className="auth-page">
       <div className="auth-container">
@@ -125,39 +119,6 @@ export default function LoginPage() {
               {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          {/* Demo helper buttons - ONLY in dev per AGENTS.md */}
-          {import.meta.env.DEV && (
-            <div className="stitch-demo-logins-box">
-              <span className="stitch-demo-title">⚡ Quick Demo Logins:</span>
-              <div className="stitch-demo-buttons-grid">
-                <button
-                  type="button"
-                  className="stitch-demo-btn"
-                  onClick={() => handleFillDemo('customer@example.com', 'Password@123')}
-                >
-                  <span className="stitch-demo-role">Customer</span>
-                  <span className="stitch-demo-user">customer@example.com</span>
-                </button>
-                <button
-                  type="button"
-                  className="stitch-demo-btn"
-                  onClick={() => handleFillDemo('vendor@audio.com', 'Password@123')}
-                >
-                  <span className="stitch-demo-role">Vendor</span>
-                  <span className="stitch-demo-user">vendor@audio.com</span>
-                </button>
-                <button
-                  type="button"
-                  className="stitch-demo-btn"
-                  onClick={() => handleFillDemo('admin@marketplace.com', 'Admin@123456')}
-                >
-                  <span className="stitch-demo-role">Admin</span>
-                  <span className="stitch-demo-user">admin@marketplace.com</span>
-                </button>
-              </div>
-            </div>
-          )}
 
           <div className="stitch-auth-footer">
             <p>
