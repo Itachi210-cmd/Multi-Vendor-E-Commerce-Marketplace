@@ -417,6 +417,6 @@ Multi-Vendor-E-Commerce-Marketplace/
 
 ## Author & Contact
 
-- **Author**: Sujit Behera
+- **Author**: Sujal Kate
 - **Repository**: [https://github.com/Itachi210-cmd/Multi-Vendor-E-Commerce-Marketplace](https://github.com/Itachi210-cmd/Multi-Vendor-E-Commerce-Marketplace)
 - **Track**: Full-Stack Development Internship Project
